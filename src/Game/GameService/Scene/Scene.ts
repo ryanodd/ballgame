@@ -8,7 +8,7 @@ export interface SceneProps {
   world: b2World;
   unitWidth: number;
   unitHeight: number;
-  gameObjects: GameObject[] //lol
+  gameObjects: GameObject[];
 }
 
 export class Scene {
@@ -16,7 +16,7 @@ export class Scene {
   world: b2World;
   unitWidth: number;
   unitHeight: number;
-  gameObjects: GameObject[] //lol
+  gameObjects: GameObject[];
 
   constructor(props: SceneProps){
     this.canvas = props.canvas;
@@ -31,7 +31,7 @@ export class Scene {
   setup() {
     const xScaling = this.canvas.pixelWidth / this.unitWidth;
     const yScaling = this.canvas.pixelHeight / this.unitHeight;
-    this.canvas.context.scale(xScaling, yScaling)
+    this.canvas.context.scale(xScaling, yScaling);
   }
 
   render() {

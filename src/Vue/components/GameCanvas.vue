@@ -15,7 +15,7 @@ export default Vue.extend({
 <style scoped lang="scss">
 .canvas-wrapper {
   position: relative;
-  $width-px: 1000px;
+  $width-px: 1500px;
   width: $width-px;
   height: 0;
   padding-bottom: calc(#{$width-px} * (9/16));

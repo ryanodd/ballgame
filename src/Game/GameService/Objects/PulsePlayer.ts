@@ -4,46 +4,48 @@ import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import GameObject from "./GameObject";
 
-export interface BallProps {
+export interface PulsePlayerProps {
   world: b2World;
   x: number;
   y: number;
   r: number;
-  options: Object;
+  options: Record<string, any>;
 }
 
 export default class PulsePlayer extends GameObject { // extend something general?
-  fixture: b2Fixture
+  body: b2Body;
   
-  constructor(props: BallProps){
+  constructor(props: PulsePlayerProps){
     super();
-    this.fixture = this.createFixture(props);
+    this.body = this.createBody(props);
   }
 
-  createFixture(props: BallProps){
-    var body_def = new b2BodyDef();
-    var fix_def = new b2FixtureDef;
+  createBody(props: PulsePlayerProps){
+    const bodyDef = new b2BodyDef();
+    const fixDef = new b2FixtureDef;
     
-    fix_def.density = 1.0;
-    fix_def.friction = 0.5;
-    fix_def.restitution = 0.5;
+    fixDef.density = 0.5;
+    fixDef.friction = 0.5;
+    fixDef.restitution = 0.0;
     
-    var shape = new b2CircleShape(props.r);
-    fix_def.shape = shape;
+    const shape = new b2CircleShape(props.r);
+    fixDef.shape = shape;
     
-    body_def.position.Set(props.x , props.y);
+    bodyDef.position.Set(props.x , props.y);
     
-    body_def.linearDamping = 0.0;
-    body_def.angularDamping = 0.0;
+    bodyDef.linearDamping = 0.0;
+    bodyDef.angularDamping = 0.0;
     
-    body_def.type = b2BodyType.b2_dynamicBody;
-    body_def.userData = props.options;
+    bodyDef.type = b2BodyType.b2_dynamicBody;
+    bodyDef.userData = props.options;
     
-    return props.world.CreateBody( body_def ).CreateFixture(fix_def);
+    const returnBody = props.world.CreateBody(bodyDef);
+    returnBody.CreateFixture(fixDef);
+    return returnBody;
   }
 
-  tick(input: InputResult, msPassed: number){
-    const body: b2Body = this.fixture.GetBody();
+  tick(input: InputResult){
+    const body: b2Body = this.body;
     const vel: b2Vec2 = body.GetLinearVelocity();
 
     const ACCELERATION_CONSTANT_X = 5;
@@ -60,11 +62,12 @@ export default class PulsePlayer extends GameObject { // extend something genera
     let yInputForce = yInput * ACCELERATION_CONSTANT_Y;
 
     // top speed & quick turnaround
+    // Makes force which tends velocity toward orignal input force AT SOME RATE. Is instant? Or does it take a few frames to turn around?
     xInputForce -= vel.x
     yInputForce -= vel.y
 
     // Don't know how to scalar multiply yet
-    const impulseX = body.GetMass() * xInputForce; //disregard time factor
+    const impulseX = body.GetMass() * xInputForce; //disregard time factor. < ??what does this mean?
     const impulseY = body.GetMass() * yInputForce;
     const impulse:  b2Vec2 = new b2Vec2(impulseX, impulseY);
 
@@ -78,8 +81,8 @@ export default class PulsePlayer extends GameObject { // extend something genera
     const c = canvas.context;
     c.fillStyle = 'rgb(126, 226, 151)';
 
-    const shape: b2CircleShape = this.fixture.GetShape() as b2CircleShape;
-    const body: b2Body = this.fixture.GetBody();
+    const shape: b2CircleShape = this.body.GetFixtureList().GetShape() as b2CircleShape;
+    const body: b2Body = this.body;
     const position: b2Vec2 = body.GetPosition();
 
     c.beginPath();

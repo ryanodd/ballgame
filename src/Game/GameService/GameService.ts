@@ -20,13 +20,19 @@ export default class GameController {
   }
 
   gameLoop(timestamp: number) {
+    const MS_PER_GAME_TICK = 17;
     const msPassed = (timestamp - this.previousTimestamp);
     this.previousTimestamp = timestamp;
     const fps = Math.round(1000 / msPassed); // TODO pass this somewhere
-    
+    const enoughMsToReachExtraFrame: boolean = (((this.previousTimestamp % MS_PER_GAME_TICK) + (msPassed % MS_PER_GAME_TICK)) >= MS_PER_GAME_TICK)
+    const frameAdvancesNeeded = Math.floor(msPassed / MS_PER_GAME_TICK) + (enoughMsToReachExtraFrame ? 1 : 0)
+
     const input = this.inputController.getInput();
 
-    this.tickGameObjects(input, msPassed)
+    for (let x = 0; x < frameAdvancesNeeded; x++){
+      this.tickGameObjects(input)
+    }
+
     this.tickWorld(msPassed); // TODO verify - pass in correct ms.
 
     this.scene.render();
@@ -35,14 +41,14 @@ export default class GameController {
     window.requestAnimationFrame(this.gameLoop.bind(this));
   }
 
-  tickGameObjects(input: InputResult, msPassed: number) {
+  tickGameObjects(input: InputResult,) {
     this.scene.gameObjects.forEach(gameObject => {
-      gameObject.tick(input, msPassed)
+      gameObject.tick(input);
     })
   }
 
   tickWorld(msPassed: number) {
     this.scene.world.Step((msPassed / 1000), 8 , 3);
-	  //this.world.ClearForces();
+    //this.world.ClearForces();
   }
 }

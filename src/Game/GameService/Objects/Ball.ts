@@ -1,7 +1,7 @@
 import CanvasController from "@/Game/CanvasService/CanvasService";
 import { InputResult } from "@/Game/InputService/model/InputResult";
 import { LogService } from "@/Game/LogService/LogService";
-import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
+import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2FixtureDef, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import GameObject from "./GameObject";
 
 export interface BallProps {
@@ -9,40 +9,42 @@ export interface BallProps {
   x: number;
   y: number;
   r: number;
-  options: Object;
+  options: Record<string, any>;
 }
 
 export default class Ball extends GameObject { // extend something general?
-  fixture: b2Fixture
+  body: b2Body;
   
   constructor(props: BallProps){
     super();
-    this.fixture = this.createFixture(props);
+    this.body = this.createBody(props);
   }
 
-  createFixture(props: BallProps){
-    var body_def = new b2BodyDef();
-    var fix_def = new b2FixtureDef;
+  createBody(props: BallProps){
+    const bodyDef = new b2BodyDef();
+    const fixDef = new b2FixtureDef;
     
-    fix_def.density = 1.0;
-    fix_def.friction = 0.2;
-    fix_def.restitution = 0.8;
+    fixDef.density = 1.0;
+    fixDef.friction = 0.6;
+    fixDef.restitution = 0.9;
     
-    var shape = new b2CircleShape(props.r);
-    fix_def.shape = shape;
+    const shape = new b2CircleShape(props.r);
+    fixDef.shape = shape;
     
-    body_def.position.Set(props.x , props.y);
+    bodyDef.position.Set(props.x , props.y);
     
-    body_def.linearDamping = 0.8;
-    body_def.angularDamping = 0.2;
+    bodyDef.linearDamping = 0.8;
+    bodyDef.angularDamping = 1.0;
     
-    body_def.type = b2BodyType.b2_dynamicBody;
-    body_def.userData = props.options;
+    bodyDef.type = b2BodyType.b2_dynamicBody;
+    bodyDef.userData = props.options;
     
-    return props.world.CreateBody( body_def ).CreateFixture(fix_def);
+    const returnBody = props.world.CreateBody(bodyDef);
+    returnBody.CreateFixture(fixDef);
+    return returnBody;
   }
 
-  tick(input: InputResult, msPassed: number){
+  tick(input: InputResult){
     // Check input, change physics, whatevs
 
     // Not sure if msPassed is necessary here
@@ -52,8 +54,8 @@ export default class Ball extends GameObject { // extend something general?
     const c = canvas.context;
     c.fillStyle = 'rgb(200, 0, 0)';
 
-    const shape: b2CircleShape = this.fixture.GetShape() as b2CircleShape;
-    const body: b2Body = this.fixture.GetBody();
+    const shape: b2CircleShape = this.body.GetFixtureList().GetShape() as b2CircleShape;
+    const body: b2Body = this.body;
     const position: b2Vec2 = body.GetPosition();
 
     c.beginPath();

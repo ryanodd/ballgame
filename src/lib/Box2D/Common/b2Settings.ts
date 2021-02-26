@@ -75,7 +75,7 @@ export const b2_maxTOIContacts: number = 32;
 
 /// A velocity threshold for elastic collisions. Any collision with a relative linear
 /// velocity below this threshold will be treated as inelastic.
-export const b2_velocityThreshold: number = 1;
+export const b2_velocityThreshold: number = 0.2;
 
 /// The maximum linear position correction used when solving constraints. This helps to
 /// prevent overshoot.

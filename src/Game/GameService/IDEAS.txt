@@ -1,0 +1,25 @@
+Pulse
+- simple circle, simple movement
+- burst outward, briefly increasing circle radius. Pushes ball
+- suck inward (creates a magnetic force?)
+
+Double
+- control 2 bodies at once
+- create rope between?
+
+Bucket
+- can "pick up" ball in C-shape body (or should it be a sticky shape?)
+- can launch ball
+- I get the feeling that its movement should suck, cuz it seems real good
+- How do players make it lose the ball?
+
+Shooter
+- shoot other players (lowering their resource meter)
+- shoot the ball to propel it!
+- 1 powerful shot (revolver) or lots of little shots (gatling gun)?
+
+Line
+- defensive character
+- pong-like shape
+- ability to increase width for resource meter?
+
