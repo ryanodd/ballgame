@@ -9,6 +9,9 @@ export interface PulsePlayerProps {
   x: number;
   y: number;
   r: number;
+  density: number;
+  friction: number;
+  restitution: number;
   options: Record<string, any>;
 }
 
@@ -23,10 +26,10 @@ export default class PulsePlayer extends GameObject { // extend something genera
   createBody(props: PulsePlayerProps){
     const bodyDef = new b2BodyDef();
     const fixDef = new b2FixtureDef;
-    
-    fixDef.density = 0.5;
-    fixDef.friction = 0.5;
-    fixDef.restitution = 0.0;
+  
+    fixDef.density = props.density;
+    fixDef.friction = props.friction;
+    fixDef.restitution = props.restitution;
     
     const shape = new b2CircleShape(props.r);
     fixDef.shape = shape;

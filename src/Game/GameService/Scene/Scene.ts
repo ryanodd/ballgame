@@ -25,13 +25,14 @@ export class Scene {
     this.unitHeight = props.unitHeight;
     this.gameObjects = props.gameObjects;
 
-    this.setup()
+    this.setup();
   }
 
   setup() {
     const xScaling = this.canvas.pixelWidth / this.unitWidth;
     const yScaling = this.canvas.pixelHeight / this.unitHeight;
-    this.canvas.context.scale(xScaling, yScaling);
+    const squareScaling = Math.min(xScaling, yScaling);
+    this.canvas.context.scale(squareScaling, squareScaling);
   }
 
   render() {

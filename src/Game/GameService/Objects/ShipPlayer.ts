@@ -14,6 +14,10 @@ export interface ShipPlayerProps {
   tailLength: number;
   tailWidth: number;
 
+  density: number;
+  friction: number;
+  restitution: number;
+
   options: Record<string, any>;
 }
 
@@ -30,19 +34,30 @@ export default class ShipPlayer extends GameObject { // extend something general
     const fixADef = new b2FixtureDef;
     const fixBDef = new b2FixtureDef;
     
-    fixADef.density = 2;
-    fixADef.friction = 0.5;
-    fixADef.restitution = 0.0;
+    fixADef.density = props.density;
+    fixADef.friction = props.friction;
+    fixADef.restitution = props.restitution;
+
     const shapeA = new b2PolygonShape();
-    shapeA.Set([new b2Vec2(0, 0), new b2Vec2(props.noseLength, 0), new b2Vec2(props.noseLength, props.noseWidth / 2), new b2Vec2(-props.tailLength, props.tailWidth / 2)])
+    shapeA.Set([
+      new b2Vec2(0, 0),
+      new b2Vec2(props.noseLength, 0),
+      new b2Vec2(props.noseLength, props.noseWidth / 2),
+      new b2Vec2(-props.tailLength, props.tailWidth / 2)
+    ])
     fixADef.shape = shapeA;
 
-    fixBDef.density = 2;
-    fixBDef.friction = 0.5;
-    fixBDef.restitution = 0.0;
+    fixBDef.density = props.density;
+    fixBDef.friction = props.friction;
+    fixBDef.restitution = props.restitution;
+
     const shapeB = new b2PolygonShape();
-    shapeB.Set([new b2Vec2(0, 0), new b2Vec2(props.noseLength, 0), new b2Vec2(props.noseLength, -props.noseWidth / 2), new b2Vec2(-props.tailLength, -props.tailWidth / 2)])
-    LogService.log(shapeB);
+    shapeB.Set([
+      new b2Vec2(0, 0),
+      new b2Vec2(props.noseLength, 0),
+      new b2Vec2(props.noseLength, -props.noseWidth / 2),
+      new b2Vec2(-props.tailLength, -props.tailWidth / 2)
+    ])
     fixBDef.shape = shapeB;
     
     bodyDef.position.Set(props.x , props.y);
