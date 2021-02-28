@@ -1,19 +1,19 @@
 <template>
   <div id="app">
-    <game-canvas v-once/>
+    <aspect-ratio-letterbox/>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import GameCanvas from "./components/GameCanvas.vue";
 import GameService from "@/Game/GameService/GameService";
+import AspectRatioLetterbox from "./components/AspectRatioLetterbox.vue";
 
 let game: GameService;
 
 export default Vue.extend({
   name: "App",
-  components: { GameCanvas },
+  components: { AspectRatioLetterbox },
   mounted() {
     game = new GameService();
   }
@@ -37,5 +37,10 @@ export default Vue.extend({
   justify-content: center;
   align-items: center;
   background: linear-gradient(to top right,rgb(20, 20, 20), rgb(29, 29, 29));
+}
+
+#testbed {
+  // This is literally just so I can use the color picker in VS Code while working in js
+  color: rgb(240, 82, 82);
 }
 </style>

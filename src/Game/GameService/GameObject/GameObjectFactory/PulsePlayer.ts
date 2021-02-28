@@ -2,7 +2,7 @@ import CanvasController from "@/Game/CanvasService/CanvasService";
 import { InputResult } from "@/Game/InputService/model/InputResult";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
-import GameObject from "./GameObject";
+import GameObject from "../GameObject";
 
 export interface PulsePlayerProps {
   world: b2World;

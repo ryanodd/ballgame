@@ -1,7 +1,7 @@
 import CanvasService from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2World } from "@/lib/Box2D/Box2D";
-import GameObject from "../Objects/GameObject";
+import GameObject from "../GameObject/GameObject";
 
 export interface SceneProps {
   canvas: CanvasService;

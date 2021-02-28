@@ -1,7 +1,7 @@
 <template>
   <div class="canvas-wrapper">
     <canvas-overlay class="canvas-overlay-from-parent"/>
-    <canvas id="game-canvas" />
+    <canvas id="game-canvas" v-once/>
   </div>
 </template>
 
@@ -18,16 +18,16 @@ export default Vue.extend({
 <style scoped lang="scss">
 .canvas-wrapper {
   position: relative;
-  $width-px: 1600px;
-  width: $width-px;
-  height: 0;
-  padding-bottom: calc(#{$width-px} * (9 / 16));
+  width: 100%;
+  height: 100%;
   background-color: rgb(42, 43, 49)
 }
 #game-canvas {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  bottom: 0;
+  height: 100%;
 }
 .canvas-overlay-from-parent{
   position: absolute;

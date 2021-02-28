@@ -2,19 +2,30 @@
   <div class="player-meter-wrapper">
     <div class="player-meter">
       <div class="meter-bg">
-        <div class="meter-fg">
+        <div class="meter-fg" :style="'--width-precent: ' + displayNumber + '%'">
         </div>
       </div>  
     </div> 
-    <div class="amount-text"> {{50}} </div>
+    <div class="amount-text"> {{displayNumber}} </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+import { VueService } from "@/Game/VueService/VueService.ts"
 
 export default Vue.extend({
-  name: "PlayerMeter"
+  name: "PlayerMeter",
+  data: function() {
+    return {
+      vueService: VueService
+    }
+  },
+  computed: {
+    displayNumber() {
+      return Math.min(100, Math.floor(this.vueService.primaryPlayerResourceMeter))
+    }
+  }
 });
 </script>
 
@@ -39,7 +50,7 @@ export default Vue.extend({
   background: linear-gradient(to top right,rgb(158, 158, 158), rgb(170, 170, 170));
 }
 .meter-fg{
-  width: 100px; //programatially?
+  width: --width-percent;
   height: 16px;
   
   border-radius: 5px;

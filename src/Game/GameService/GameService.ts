@@ -1,7 +1,7 @@
 import { InputResult } from '@/Game/InputService/model/InputResult';
 import CanvasController from '@/Game/CanvasService/CanvasService'
 import InputController from '@/Game/InputService/InputService';
-import { createScene1 } from './Scene/sceneFactory/Scene1';
+import { createScene1 } from './Scene/SceneFactory/Scene1';
 import { LogService } from '@/Game/LogService/LogService';
 import { Scene } from './Scene/Scene';
 import { b2BodyDef, b2Fixture, b2FixtureDef, b2PolygonShape, b2World } from '@/lib/Box2D/Box2D';
