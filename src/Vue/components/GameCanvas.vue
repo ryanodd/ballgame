@@ -37,9 +37,4 @@ export default Vue.extend({
   height: 100%;
   z-index: 2;
 }
-
-#testbed {
-  // This is literally just so I can use the color picker in VS Code while working in js
-  color: rgb(126, 226, 151);
-}
 </style>

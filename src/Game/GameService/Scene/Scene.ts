@@ -40,13 +40,17 @@ export class Scene {
     this.renderGameObjects()
   }
 
-  renderGameObjects() {
+  addGameObject(newObject: GameObject){
+    this.gameObjects.push(newObject);
+  }
+  
+  private renderGameObjects() {
     this.gameObjects.forEach(gameObject => {
       gameObject.render(this.canvas)
     })
   }
 
-  renderBackground() {
+  private renderBackground() {
     const c = this.canvas.context;
     c.fillStyle = 'rgb(42, 43, 49)';
     c.fillRect(0, 0, this.canvas.pixelWidth, this.canvas.pixelHeight);

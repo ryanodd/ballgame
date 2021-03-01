@@ -1,11 +1,12 @@
 import CanvasController from "@/Game/CanvasService/CanvasService";
-import { InputResult } from "@/Game/InputService/model/InputResult";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2PolygonShape, b2Transform, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
+import { Scene } from "../../Scene/Scene";
 import GameObject from "../GameObject";
+import ShipBullet from "./ShipBullet";
 
 export interface ShipPlayerProps {
-  world: b2World;
+  scene: Scene;
   x: number;
   y: number;
   
@@ -21,11 +22,14 @@ export interface ShipPlayerProps {
   options: Record<string, any>;
 }
 
-export default class ShipPlayer extends GameObject { // extend something general?
+export default class ShipPlayerObject extends GameObject { // extend something general?
+  scene: Scene;
   body: b2Body
+
   
   constructor(props: ShipPlayerProps){
     super();
+    this.scene = props.scene;
     this.body = this.createBody(props);
   }
 
@@ -66,32 +70,45 @@ export default class ShipPlayer extends GameObject { // extend something general
     bodyDef.type = b2BodyType.b2_dynamicBody;
     bodyDef.userData = props.options;
     
-    const returnBody = props.world.CreateBody( bodyDef )
+    const returnBody = this.scene.world.CreateBody( bodyDef )
     returnBody.CreateFixture(fixADef)
     returnBody.CreateFixture(fixBDef);
     
     return returnBody;
   }
 
-  tick(input: InputResult){
-    const body: b2Body = this.body;
-    const vel: b2Vec2 = body.GetLinearVelocity();
+  //No tick function needed
 
+  handleRotation(rotationAxisInput: number){
     const ROTATION_CONSTANT = 4;
+
+    const body: b2Body = this.body;
+  
+    const rotationAxisForce = rotationAxisInput * ROTATION_CONSTANT;
+    const currentTorque = body.GetAngularVelocity() //max speed, quick decleration.
+    
+    body.ApplyTorque(-rotationAxisForce - currentTorque);
+  }
+
+  thrust(){
     const ACCELERATION_CONSTANT = 0.025;
 
-    const xInput = input.primaryPlayerInput.leftStickXAxis;
-    const xInputForce = xInput * ROTATION_CONSTANT;
-    const currentTorque = body.GetAngularVelocity()
-    
-    body.ApplyTorque(-xInputForce - currentTorque);
+    const body: b2Body = this.body;
+    const rotation = body.GetTransform().GetRotation()
+    const forceToApply: b2Vec2 = new b2Vec2(rotation.c * ACCELERATION_CONSTANT, rotation.s * ACCELERATION_CONSTANT);
+    body.ApplyLinearImpulseToCenter(forceToApply);
+  }
 
-    const button1Input: boolean = input.primaryPlayerInput.button1
-    if (button1Input){
-      const rotation = body.GetTransform().GetRotation()
-      const forceToApply: b2Vec2 = new b2Vec2(rotation.c * ACCELERATION_CONSTANT, rotation.s * ACCELERATION_CONSTANT);
-      body.ApplyLinearImpulseToCenter(forceToApply);
-    }
+  createBullet(): ShipBullet {
+    return new ShipBullet({
+      scene: this.scene,
+      x: this.body.GetPosition().x,
+      y: this.body.GetPosition().y,
+      w: 0.05,
+      h: 0.08,
+      angle: 0,
+      options: {},
+    });
   }
 
   render(canvas: CanvasController){

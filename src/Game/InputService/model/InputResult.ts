@@ -1,4 +1,4 @@
-export interface PlayerInputResult {
+export interface GamepadInputResult {
   button1: boolean;
   button2: boolean;
   button3: boolean;
@@ -14,6 +14,12 @@ export interface PlayerInputResult {
   rightTriggerAxis: number;
 }
 
-export interface InputResult {
-  primaryPlayerInput: PlayerInputResult
+export interface KeyboardMouseInputResult {
+  key1: boolean;
+  key2: boolean;
+  key3: boolean;
+  key4: boolean;
+  
+  mouseXAxis: number;
+  mouseYAxis: number; 
 }

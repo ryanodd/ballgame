@@ -14,9 +14,16 @@ export interface GamepadInputMapping {
   rightTriggerAxisIndex: number;
 }
 
+export interface KeyboardMouseInputMapping {
+  button1Key: number;
+  button2Key: number;
+  button3Key: number;
+  button4Key: number;
+}
+
 export interface InputConfig {
-  primaryPlayerGamepadIndex: number;
-  primaryPlayerInputMapping: GamepadInputMapping;
-  primaryPlayerLeftStickDeadzone: number;
-  primaryPlayerRightStickDeadzone: number;
+  gamepadInputMapping: GamepadInputMapping;
+  keyboardMouseInputMapping: KeyboardMouseInputMapping;
+  leftStickDeadzone: number;
+  rightStickDeadzone: number;
 }

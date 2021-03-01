@@ -1,6 +1,6 @@
-import { GamepadInputMapping, InputConfig } from "../model/InputConfig"
+import { GamepadInputMapping, InputConfig, KeyboardMouseInputMapping } from "../model/InputConfig"
 
-const xboxOneInputMapping: GamepadInputMapping = {
+const defaultXboxOneInputMapping: GamepadInputMapping = {
   button1Index: 0,
   button2Index: 1,
   button3Index: 2,
@@ -16,9 +16,16 @@ const xboxOneInputMapping: GamepadInputMapping = {
   rightTriggerAxisIndex: 5,
 }
 
+const defaultKeyboardMouseInputMapping: KeyboardMouseInputMapping = {
+  button1Key: 0,
+  button2Key: 1,
+  button3Key: 2,
+  button4Key: 3,
+}
+
 export const defaultInputConfig: InputConfig = {
-  primaryPlayerGamepadIndex: 0,
-  primaryPlayerInputMapping: xboxOneInputMapping,
-  primaryPlayerLeftStickDeadzone: 0.15,
-  primaryPlayerRightStickDeadzone: 0.15,
+  gamepadInputMapping: defaultXboxOneInputMapping,
+  keyboardMouseInputMapping: defaultKeyboardMouseInputMapping,
+  leftStickDeadzone: 0.15,
+  rightStickDeadzone: 0.15,
 }

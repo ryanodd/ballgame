@@ -1,11 +1,11 @@
 import CanvasController from "@/Game/CanvasService/CanvasService";
-import { InputResult } from "@/Game/InputService/model/InputResult";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2FixtureDef, b2PolygonShape, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
+import { Scene } from "../../Scene/Scene";
 import GameObject from "../GameObject";
 
 export interface GoalAreaProps {
-  world: b2World;
+  scene: Scene;
   x: number;
   y: number;
   w: number;
@@ -14,10 +14,12 @@ export interface GoalAreaProps {
 }
 
 export default class GoalArea extends GameObject { // extend something general?
+  scene: Scene;
   body: b2Body;
   
   constructor(props: GoalAreaProps){
     super();
+    this.scene = props.scene;
     this.body = this.createBody(props);
   }
 
@@ -39,16 +41,12 @@ export default class GoalArea extends GameObject { // extend something general?
     bodyDef.type = b2BodyType.b2_staticBody;
     bodyDef.userData = props.options;
     
-    const returnBody = props.world.CreateBody( bodyDef );
+    const returnBody = this.scene.world.CreateBody( bodyDef );
     returnBody.CreateFixture(fixDef);
     return returnBody;
   }
 
-  tick(input: InputResult){
-    // Check input, change physics, whatevs
-
-    // Not sure if msPassed is necessary here
-  }
+  // No tick
 
   render(canvas: CanvasController){
     const c = canvas.context;

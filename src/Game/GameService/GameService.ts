@@ -1,21 +1,20 @@
-import { InputResult } from '@/Game/InputService/model/InputResult';
-import CanvasController from '@/Game/CanvasService/CanvasService'
-import InputController from '@/Game/InputService/InputService';
 import { createScene1 } from './Scene/SceneFactory/Scene1';
 import { LogService } from '@/Game/LogService/LogService';
 import { Scene } from './Scene/Scene';
-import { b2BodyDef, b2Fixture, b2FixtureDef, b2PolygonShape, b2World } from '@/lib/Box2D/Box2D';
+import { Player } from './Player/Player';
+import { ShipPlayer } from './Player/PlayerFactory.ts/ShipPlayer';
+import { PulsePlayer } from './Player/PlayerFactory.ts/PulsePlayer';
 
 export default class GameController {
   scene: Scene
-  inputController: InputController
+  players: Player[]
   previousTimestamp: number //type?
   
   constructor(){
-    this.inputController = new InputController();
     this.previousTimestamp = 0;
+    this.players = [this.initPlayerOne()]
+    this.scene = createScene1({players: this.players});
     
-    this.scene = createScene1();
     window.requestAnimationFrame(this.gameLoop.bind(this))
   }
 
@@ -27,13 +26,13 @@ export default class GameController {
     const enoughMsToReachExtraFrame: boolean = (((this.previousTimestamp % MS_PER_GAME_TICK) + (msPassed % MS_PER_GAME_TICK)) >= MS_PER_GAME_TICK)
     const frameAdvancesNeeded = Math.floor(msPassed / MS_PER_GAME_TICK) + (enoughMsToReachExtraFrame ? 1 : 0)
 
-    const input = this.inputController.getInput();
-
     for (let x = 0; x < frameAdvancesNeeded; x++){
-      this.tickGameObjects(input)
+      this.tickGameObjects()
+      this.tickPlayers();
     }
 
-    this.tickWorld(msPassed); // TODO verify - pass in correct ms.
+    // Physics runs out of sync with game (runs on msPassed). May need to change to frame-advance model like players/objects above 
+    this.tickWorld(msPassed);
 
     this.scene.render();
 
@@ -41,14 +40,35 @@ export default class GameController {
     window.requestAnimationFrame(this.gameLoop.bind(this));
   }
 
-  tickGameObjects(input: InputResult,) {
+  // Tick non-input, non-physics things for GameObjects. currently there are none.
+  tickGameObjects() {
     this.scene.gameObjects.forEach(gameObject => {
-      gameObject.tick(input);
+      gameObject.tick();
     })
   }
 
+  // Tick Players: Input handling, mostly
+  tickPlayers(){
+    this.players.forEach(player => {
+      player.tick();
+    })
+  }
+
+  // Physics tick
   tickWorld(msPassed: number) {
     this.scene.world.Step((msPassed / 1000), 8 , 3);
     //this.world.ClearForces();
+  }
+
+  //Temporary. This don't belong here
+  private initPlayerOne(): Player {
+    return new PulsePlayer({
+      playerIndex: 0,
+      gamepadIndex: 0
+    });
+    // return new ShipPlayer({
+    //   playerIndex: 0,
+    //   gamepadIndex: 0
+    // });
   }
 }

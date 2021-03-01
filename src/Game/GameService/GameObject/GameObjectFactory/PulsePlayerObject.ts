@@ -1,11 +1,11 @@
 import CanvasController from "@/Game/CanvasService/CanvasService";
-import { InputResult } from "@/Game/InputService/model/InputResult";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
+import { Scene } from "../../Scene/Scene";
 import GameObject from "../GameObject";
 
 export interface PulsePlayerProps {
-  world: b2World;
+  scene: Scene;
   x: number;
   y: number;
   r: number;
@@ -15,15 +15,17 @@ export interface PulsePlayerProps {
   options: Record<string, any>;
 }
 
-export default class PulsePlayer extends GameObject { // extend something general?
+export default class PulsePlayerObject extends GameObject { // extend something general?
+  scene: Scene;
   body: b2Body;
   
   constructor(props: PulsePlayerProps){
     super();
+    this.scene = props.scene;
     this.body = this.createBody(props);
   }
 
-  createBody(props: PulsePlayerProps){
+  createBody = (props: PulsePlayerProps) => {
     const bodyDef = new b2BodyDef();
     const fixDef = new b2FixtureDef;
   
@@ -42,30 +44,31 @@ export default class PulsePlayer extends GameObject { // extend something genera
     bodyDef.type = b2BodyType.b2_dynamicBody;
     bodyDef.userData = props.options;
     
-    const returnBody = props.world.CreateBody(bodyDef);
+    const returnBody = this.scene.world.CreateBody(bodyDef);
     returnBody.CreateFixture(fixDef);
     return returnBody;
   }
 
-  tick(input: InputResult){
+  // No tick
+
+  handleMovement(xAxisInput: number, yAxisInput: number){
     const body: b2Body = this.body;
     const vel: b2Vec2 = body.GetLinearVelocity();
 
-    const ACCELERATION_CONSTANT_X = 5;
-    const ACCELERATION_CONSTANT_Y = 5;
+    const ACCELERATION_CONSTANT_X = 3;
+    const ACCELERATION_CONSTANT_Y = 3;
 
-    const FRICTION_I_THINK = 0.1
+    // const FRICTION_I_THINK = 0.1
+    // const TOP_SPEED_X = 5;
+    // const TOP_SPEED_Y = 5;
 
-    const TOP_SPEED_X = 5;
-    const TOP_SPEED_Y = 5;
 
-    const xInput = input.primaryPlayerInput.leftStickXAxis;
-    const yInput = input.primaryPlayerInput.leftStickYAxis;
-    let xInputForce = xInput * ACCELERATION_CONSTANT_X;
-    let yInputForce = yInput * ACCELERATION_CONSTANT_Y;
+    let xInputForce = xAxisInput * ACCELERATION_CONSTANT_X;
+    let yInputForce = yAxisInput * ACCELERATION_CONSTANT_Y;
 
     // top speed & quick turnaround
     // Makes force which tends velocity toward orignal input force AT SOME RATE. Is instant? Or does it take a few frames to turn around?
+    // I call this strategy "VELOCITY CANCELLING": input/target velocity minus current velocity.
     xInputForce -= vel.x
     yInputForce -= vel.y
 
@@ -75,6 +78,8 @@ export default class PulsePlayer extends GameObject { // extend something genera
     const impulse:  b2Vec2 = new b2Vec2(impulseX, impulseY);
 
     body.ApplyLinearImpulse(impulse, body.GetWorldCenter());
+
+    // Example of slow turning I think?
     //case MS_LEFT:  desiredVel = b2Max( vel.x - 0.1f, -5.0f ); break;
     //case MS_STOP:  desiredVel = 0; break;
     //case MS_RIGHT: desiredVel = b2Min( vel.x + 0.1f,  5.0f ); break;

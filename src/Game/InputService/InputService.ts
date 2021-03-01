@@ -1,40 +1,26 @@
 import { InputConfig, GamepadInputMapping } from './model/InputConfig';
-import { InputResult, PlayerInputResult } from './model/InputResult';
+import { GamepadInputResult, KeyboardMouseInputResult } from './model/InputResult';
 import { defaultInputConfig } from './contants/InputConfigDefaults';
-import { noInputResult } from './contants/noInputResult';
 import { LogService } from '../LogService/LogService';
+import { gamepadNoInputResult, keyboardMouseNoInputResult } from './contants/noInputResult';
 
-export default class InputService {
-  config: InputConfig;
-
+export class InputServiceImplementation {
   constructor(){
-    this.config = defaultInputConfig;
   }
 
-  getInput(): InputResult {
-    const gamepads = navigator.getGamepads() as Gamepad[];
-    const primaryPlayerInput = this.getPlayerInput(gamepads, this.config.primaryPlayerGamepadIndex, this.config.primaryPlayerInputMapping);
-    if (!primaryPlayerInput) return noInputResult;
-    const inputResult: InputResult = {
-      primaryPlayerInput: primaryPlayerInput
-    }
-    return inputResult
-  }
+  getGamepadInput(gamepadIndex: number, config: InputConfig): GamepadInputResult {
+    const gamepad: Gamepad = navigator.getGamepads()[gamepadIndex];
+    if (!gamepad) return gamepadNoInputResult;
 
-  getPlayerInput(gamepads: Gamepad[], gamepadIndex: number, mapping: GamepadInputMapping): PlayerInputResult | undefined {
-    const gamepad: Gamepad = gamepads[gamepadIndex];
-
-    if (!gamepad) {
-      return
-    }
-
+    const mapping = config.gamepadInputMapping;
+    
     const leftStickMagnitude = Math.sqrt(Math.pow(Math.abs(gamepad.axes[mapping.leftStickXAxisIndex]), 2) + Math.pow(Math.abs(gamepad.axes[mapping.leftStickYAxisIndex]), 2));
     const rightStickMagnitude = Math.sqrt(Math.pow(Math.abs(gamepad.axes[mapping.rightStickXAxisIndex]), 2) + Math.pow(Math.abs(gamepad.axes[mapping.rightStickYAxisIndex]), 2));
 
-    const isLeftStickDeadzoned = leftStickMagnitude < this.config.primaryPlayerLeftStickDeadzone;
-    const isRightStickDeadzoned = rightStickMagnitude < this.config.primaryPlayerRightStickDeadzone;
+    const isLeftStickDeadzoned = leftStickMagnitude < config.leftStickDeadzone;
+    const isRightStickDeadzoned = rightStickMagnitude < config.rightStickDeadzone;
 
-    const detectedInput: PlayerInputResult = {
+    const detectedInput: GamepadInputResult = {
       button1: gamepad.buttons[mapping.button1Index].pressed,
       button2: gamepad.buttons[mapping.button2Index].pressed,
       button3: gamepad.buttons[mapping.button3Index].pressed,
@@ -51,4 +37,11 @@ export default class InputService {
     }
     return detectedInput;
   }
+
+  getKeyboardMouseInput(config): KeyboardMouseInputResult {
+    //const mapping = config.keyboardMouseInputMapping;
+    return keyboardMouseNoInputResult;
+  }
 }
+
+export const InputService = new InputServiceImplementation();

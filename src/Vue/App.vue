@@ -41,6 +41,6 @@ export default Vue.extend({
 
 #testbed {
   // This is literally just so I can use the color picker in VS Code while working in js
-  color: rgb(240, 82, 82);
+  color: rgb(16, 121, 89);
 }
 </style>

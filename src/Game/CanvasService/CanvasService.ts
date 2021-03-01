@@ -20,7 +20,7 @@ export default class CanvasService {
     this.pixelWidth = canvas.width;
     this.pixelHeight = canvas.height;
 
-    // flip canvas y-axis: to make box2d & canvas coordinate systems match y-direction
+    // flip canvas y-axis: to make box2d & canvas coordinate systems match y-direction (bottom-up)
     this.context.transform(1, 0, 0, -1, 0, canvas.height)
   }
 }

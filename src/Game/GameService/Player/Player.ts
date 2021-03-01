@@ -1,10 +1,17 @@
+import { defaultInputConfig } from "@/Game/InputService/contants/InputConfigDefaults";
+import { InputService } from "@/Game/InputService/InputService";
+import { GamepadInputResult, KeyboardMouseInputResult } from "@/Game/InputService/model/InputResult";
 import { VueService } from "@/Game/VueService/VueService";
+import { Scene } from "../Scene/Scene";
 
 export interface PlayerProps {
-  placeholder: string
+  playerIndex: number;
+  gamepadIndex: number;
 }
 
-export class Player {
+export abstract class Player {
+  playerIndex: number;
+  gamepadIndex: number;
   resourceMeter: number;
   
   // 101 for rounding issues. I want fractional costs like 1/3 which is 33.33
@@ -15,7 +22,18 @@ export class Player {
   
 
   constructor(props: PlayerProps){
+    this.playerIndex = props.playerIndex;
+    this.gamepadIndex = props.gamepadIndex;
     this.resourceMeter = this.RESOURCE_METER_BEGIN;
+  }
+
+  abstract createObjects(scene: Scene, x: number, y: number);
+  // Detect input, do stuff
+  abstract tick();
+
+  getInput(): GamepadInputResult | KeyboardMouseInputResult{
+    // TODO if (this.gamepadIndex === -1) get keyboard & mouse 
+    return InputService.getGamepadInput(this.gamepadIndex, defaultInputConfig); // TODO store input config in.... ConfigService? or Player.. 
   }
 
   setResourceMeter(value: number){
