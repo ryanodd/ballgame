@@ -2,7 +2,7 @@
   <div class="player-meter-wrapper">
     <div class="player-meter">
       <div class="meter-bg">
-        <div class="meter-fg" :style="'--width-precent: ' + displayNumber + '%'">
+        <div class="meter-fg" :style="injectBarWidthStyle()">
         </div>
       </div>  
     </div> 
@@ -16,14 +16,27 @@ import { VueService } from "@/Game/VueService/VueService.ts"
 
 export default Vue.extend({
   name: "PlayerMeter",
+  props: {
+    playerIndex: Number
+  },
   data: function() {
     return {
       vueService: VueService
     }
   },
   computed: {
+    player() {
+      return this.vueService.state.playerDict[this.playerIndex]
+    },
     displayNumber() {
-      return Math.min(100, Math.floor(this.vueService.primaryPlayerResourceMeter))
+      return Math.min(100, Math.floor(this.player.resourceMeter))
+    }
+  },
+  methods: {
+    injectBarWidthStyle() {
+      return {
+        'width': this.displayNumber + '%'
+      }
     }
   }
 });
@@ -50,7 +63,7 @@ export default Vue.extend({
   background: linear-gradient(to top right,rgb(158, 158, 158), rgb(170, 170, 170));
 }
 .meter-fg{
-  width: --width-percent;
+  // width injected from js
   height: 16px;
   
   border-radius: 5px;

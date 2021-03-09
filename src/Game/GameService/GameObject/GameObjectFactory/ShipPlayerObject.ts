@@ -1,15 +1,12 @@
 import CanvasController from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2PolygonShape, b2Transform, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
+import { CollisionType } from "../../CollisionListener/Collision";
 import { Scene } from "../../Scene/Scene";
-import GameObject from "../GameObject";
+import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
 import ShipBullet from "./ShipBullet";
 
-export interface ShipPlayerProps {
-  scene: Scene;
-  x: number;
-  y: number;
-  
+export interface ShipPlayerProps extends GameObjectProps {
   noseLength: number;
   noseWidth: number;
   tailLength: number;
@@ -18,19 +15,18 @@ export interface ShipPlayerProps {
   density: number;
   friction: number;
   restitution: number;
-
-  options: Record<string, any>;
 }
 
 export default class ShipPlayerObject extends GameObject { // extend something general?
   scene: Scene;
   body: b2Body
-
+  props: ShipPlayerProps;
   
   constructor(props: ShipPlayerProps){
     super();
     this.scene = props.scene;
     this.body = this.createBody(props);
+    this.props = props;
   }
 
   createBody(props: ShipPlayerProps){
@@ -68,7 +64,11 @@ export default class ShipPlayerObject extends GameObject { // extend something g
     bodyDef.linearDamping = 1.0;
     bodyDef.angularDamping = 0.0;
     bodyDef.type = b2BodyType.b2_dynamicBody;
-    bodyDef.userData = props.options;
+    const userData: BodyUserData = {
+      gameObject: this,
+      collisionType: CollisionType.DEFAULT,
+    }
+    bodyDef.userData = userData;
     
     const returnBody = this.scene.world.CreateBody( bodyDef )
     returnBody.CreateFixture(fixADef)
@@ -100,15 +100,24 @@ export default class ShipPlayerObject extends GameObject { // extend something g
   }
 
   createBullet(): ShipBullet {
-    return new ShipBullet({
+    const BULLET_WIDTH = 0.25;
+    const BULLET_HEIGHT = 0.2;
+    const BULLET_SEPARATION = 0.1; // Hack so the bullet don't collide with the ship
+
+    const noseTipShapePositionOutput = new b2Vec2(0, 0);
+    this.body.GetWorldPoint(new b2Vec2(this.props.noseLength + BULLET_SEPARATION, -(BULLET_HEIGHT / 2)), noseTipShapePositionOutput) 
+
+    LogService.log(noseTipShapePositionOutput)
+    const bulletObject = new ShipBullet({
       scene: this.scene,
-      x: this.body.GetPosition().x,
-      y: this.body.GetPosition().y,
-      w: 0.05,
-      h: 0.08,
-      angle: 0,
-      options: {},
+      x: noseTipShapePositionOutput.x,
+      y: noseTipShapePositionOutput.y,
+      w: 0.25,
+      h: 0.2,
+      angle: this.body.GetAngle(),
     });
+    this.scene.addGameObject(bulletObject);
+    return bulletObject;
   }
 
   render(canvas: CanvasController){

@@ -1,16 +1,27 @@
 <template>
   <div class="hud-section">
-    <player-meter/>
+    <player-meter v-for="player in players" :key="player.index" :playerIndex="player.index"/>
   </div>
 </template>
 
 <script lang="ts">
+import { VueService } from "@/Game/VueService/VueService";
 import Vue from "vue";
 import PlayerMeter from "./PlayerMeter.vue"
 
 export default Vue.extend({
   name: "HudSection",
-  components: { PlayerMeter }
+  components: { PlayerMeter },
+  data: function() {
+    return {
+      vueService: VueService,
+    }
+  },
+  computed: {
+    players() {
+      return Object.values(this.vueService.state.playerDict);
+    }
+  }
 });
 </script>
 

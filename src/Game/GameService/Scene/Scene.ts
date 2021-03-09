@@ -1,6 +1,7 @@
 import CanvasService from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2World } from "@/lib/Box2D/Box2D";
+import { ContactListener } from "../CollisionListener/CollisionListener";
 import GameObject from "../GameObject/GameObject";
 
 export interface SceneProps {
@@ -29,6 +30,8 @@ export class Scene {
   }
 
   setup() {
+    this.world.SetContactListener(ContactListener);
+
     const xScaling = this.canvas.pixelWidth / this.unitWidth;
     const yScaling = this.canvas.pixelHeight / this.unitHeight;
     const squareScaling = Math.min(xScaling, yScaling);

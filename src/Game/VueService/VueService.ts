@@ -4,17 +4,32 @@ export interface VueServiceConfig {
   placeholder: string;
 } 
 
+export interface VueServicePlayer {
+  index: number;
+  resourceMeter: number;
+}
+
+export interface VueServiceState {
+  playerDict: Record<number, VueServicePlayer>;
+} 
+
 // Information interface between the game (TS) and the UI elements (Vue) 
 export class VueServiceImplementation {
-  primaryPlayerResourceMeter: number; 
+  state: VueServiceState; 
   constructor(config: VueServiceConfig){
-    this.primaryPlayerResourceMeter = 101;
+    this.state = {
+      playerDict: {}
+    };
   }
 
   // SET BY GAME
   ////////////////
-  setPrimaryPlayerResourceMeter(value: number){
-    Vue.set(this, 'primaryPlayerResourceMeter', value);
+  addPlayer(playerState: VueServicePlayer){
+    Vue.set(this.state.playerDict, playerState.index, playerState);
+  }
+
+  setPlayerResourceMeter(playerIndex: number, value: number){
+    Vue.set(this.state.playerDict[playerIndex], 'resourceMeter', value);
   }
 }
 

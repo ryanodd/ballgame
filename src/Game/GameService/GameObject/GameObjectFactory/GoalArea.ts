@@ -1,16 +1,13 @@
 import CanvasController from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2FixtureDef, b2PolygonShape, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
+import { CollisionType } from "../../CollisionListener/Collision";
 import { Scene } from "../../Scene/Scene";
-import GameObject from "../GameObject";
+import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
 
-export interface GoalAreaProps {
-  scene: Scene;
-  x: number;
-  y: number;
+export interface GoalAreaProps extends GameObjectProps {
   w: number;
   h: number;
-  options: Record<string, any>;
 }
 
 export default class GoalArea extends GameObject { // extend something general?
@@ -39,7 +36,11 @@ export default class GoalArea extends GameObject { // extend something general?
     // bodyDef.angularDamping = 0.0;
     
     bodyDef.type = b2BodyType.b2_staticBody;
-    bodyDef.userData = props.options;
+    const userData: BodyUserData = {
+      gameObject: this,
+      collisionType: CollisionType.GOAL,
+    }
+    bodyDef.userData = userData;
     
     const returnBody = this.scene.world.CreateBody( bodyDef );
     returnBody.CreateFixture(fixDef);

@@ -1952,6 +1952,11 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+bezierjs@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/bezierjs/-/bezierjs-0.0.4.tgz#396cebdcdf11ef1087c878d1b2e310df1a05acd6"
+  integrity sha1-OWzr3N8R7xCHyHjRsuMQ3xoFrNY=
+
 bfj@^6.1.1:
   version "6.1.2"
   resolved "https://registry.yarnpkg.com/bfj/-/bfj-6.1.2.tgz#325c861a822bcb358a41c78a33b8e6e2086dde7f"

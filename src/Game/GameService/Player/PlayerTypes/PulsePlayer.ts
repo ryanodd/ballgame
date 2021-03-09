@@ -1,14 +1,35 @@
 import { GamepadInputResult } from "@/Game/InputService/model/InputResult";
 import { VueService } from "@/Game/VueService/VueService";
+import { CollisionType } from "../../CollisionListener/Collision";
 import PulsePlayerObject from "../../GameObject/GameObjectFactory/PulsePlayerObject";
 import { Scene } from "../../Scene/Scene";
 import { Player, PlayerProps } from "../Player";
 
+export interface PulsePlayerProps extends PlayerProps {
+  DENSITY: number;
+  FRICTION: number;
+  RESTITUTION: number;
+  RADIUS: number;
+}
+
 export class PulsePlayer extends Player {
+  DENSITY: number;
+  FRICTION: number;
+  RESTITUTION: number;
+  RADIUS: number;
+
   pulseObject: PulsePlayerObject | undefined;
 
-  constructor(props: PlayerProps){
-    super(props);
+  constructor(props: PulsePlayerProps){
+    super({
+      playerIndex: props.playerIndex,
+      gamepadIndex: props.gamepadIndex
+    });
+    this.DENSITY = props.DENSITY;
+    this.FRICTION = props.FRICTION;
+    this.RESTITUTION = props.RESTITUTION;
+    this.RADIUS = props.RADIUS;
+
     this.pulseObject = undefined;
   }
 
@@ -18,11 +39,10 @@ export class PulsePlayer extends Player {
       scene: scene,
       x: x,
       y: y,
-      r: 0.240,
-      density: 0.5,
-      friction: 0.5,
-      restitution: 0.0,
-      options: {}
+      r: this.RADIUS,
+      density: this.DENSITY,
+      friction: this.FRICTION,
+      restitution: this.RESTITUTION
     });
     scene.addGameObject(this.pulseObject);
   }

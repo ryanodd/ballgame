@@ -1,17 +1,14 @@
 import CanvasController from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2FixtureDef, b2PolygonShape, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
+import { CollisionType } from "../../CollisionListener/Collision";
 import { Scene } from "../../Scene/Scene";
-import GameObject from "../GameObject";
+import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
 
-export interface ShipBulletProps {
-  scene: Scene;
-  x: number;
-  y: number;
+export interface ShipBulletProps extends GameObjectProps {
   w: number;
   h: number;
   angle: number;
-  options: Record<string, any>;
 }
 
 export default class ShipBullet extends GameObject { // extend something general?
@@ -26,6 +23,8 @@ export default class ShipBullet extends GameObject { // extend something general
   }
 
   createBody(props: ShipBulletProps){
+    const SHOOT_FORCE_MULTIPLIER = 1;
+  
     const bodyDef = new b2BodyDef();
     const fixDef = new b2FixtureDef();
 
@@ -34,21 +33,36 @@ export default class ShipBullet extends GameObject { // extend something general
     fixDef.restitution = 0.5;
 
     bodyDef.linearDamping = 0.0;
-    bodyDef.angularDamping = 1.0;
+    bodyDef.angularDamping = 0.0;
     
     fixDef.shape = new b2PolygonShape().SetAsBox(props.w / 2 , props.h / 2);
     bodyDef.angle = props.angle;
     bodyDef.position.Set(props.x + (props.w / 2) , props.y + (props.h / 2));
+    LogService.log(bodyDef.position.x)
+    LogService.log(bodyDef.position.y)
     
     bodyDef.type = b2BodyType.b2_dynamicBody;
-    bodyDef.userData = props.options;
+    const userData: BodyUserData = {
+      gameObject: this,
+      collisionType: CollisionType.BULLET,
+    }
+    bodyDef.userData = userData;
     
     const returnBody = this.scene.world.CreateBody( bodyDef );
-    returnBody.CreateFixture(fixDef);
+    returnBody.CreateFixture(fixDef)
+
+    // Before returning: add a huge force to this bullet
+    const shootForceDirection = new b2Vec2(Math.cos(props.angle), Math.sin(props.angle)) 
+    returnBody.ApplyLinearImpulseToCenter(shootForceDirection.SelfMul(SHOOT_FORCE_MULTIPLIER))
+
     return returnBody;
   }
 
   // No tick
+
+  afterCollisionWithAny(){
+    this.markedForDeletion = true;
+  }
 
   render(canvas: CanvasController){
     const c = canvas.context;
@@ -58,20 +72,18 @@ export default class ShipBullet extends GameObject { // extend something general
     const body: b2Body = this.body;
     const position: b2Vec2 = body.GetPosition();
 
-    const vertices: b2Vec2[] = shape.m_vertices.slice(0, 4);
+    const vertices = shape.m_vertices;
     c.beginPath();
-    
     for (let i = 0; i < shape.m_count; i++){
-      const xPos = position.x + vertices[i].x;
-      const yPos = position.y + vertices[i].y;
+      const outputVec = new b2Vec2(0, 0);
+      body.GetWorldPoint(vertices[i], outputVec);
       if (i === 0){
-        c.moveTo(xPos, yPos);
+        c.moveTo(outputVec.x, outputVec.y);
       }
       else{
-        c.lineTo(xPos, yPos);
+        c.lineTo(outputVec.x, outputVec.y);
       }
     }
-      
     c.fill();
   }
 }

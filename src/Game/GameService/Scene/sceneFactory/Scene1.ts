@@ -53,8 +53,7 @@ export function createScene1(props: Scene1Props): Scene {
     scene: returnScene,
     x: 8,
     y: 7,
-    r: 0.120,
-    options: {}
+    r: 0.120
   }));
 
 
@@ -64,8 +63,7 @@ export function createScene1(props: Scene1Props): Scene {
     x: ARENA_HORIZONTAL_PADDING,
     y: ARENA_VERTICAL_PADDING,
     w: ARENA_WIDTH,
-    h: WALL_THICKNESS,
-    options: {}
+    h: WALL_THICKNESS
   }));
 
   // Top Wall
@@ -74,8 +72,7 @@ export function createScene1(props: Scene1Props): Scene {
     x: ARENA_HORIZONTAL_PADDING,
     y: ARENA_VERTICAL_PADDING + ARENA_HEIGHT - WALL_THICKNESS,
     w: ARENA_WIDTH,
-    h: WALL_THICKNESS,
-    options: {}
+    h: WALL_THICKNESS
   }));
 
   // Left Side
@@ -84,48 +81,42 @@ export function createScene1(props: Scene1Props): Scene {
     x: ARENA_HORIZONTAL_PADDING,
     y: ARENA_VERTICAL_PADDING,
     w: WALL_THICKNESS,
-    h: NON_NET_HEIGHT,
-    options: {}
+    h: NON_NET_HEIGHT
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
     w: WALL_THICKNESS,
-    h: NON_NET_HEIGHT,
-    options: {}
+    h: NON_NET_HEIGHT
   }));
   returnScene.addGameObject(new GoalArea({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING - NET_DEPTH + WALL_THICKNESS,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,
     w: NET_DEPTH,
-    h: NET_HEIGHT,
-    options: {}
+    h: NET_HEIGHT
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
     w: NET_DEPTH + WALL_THICKNESS,
-    h: WALL_THICKNESS,
-    options: {}
+    h: WALL_THICKNESS
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
     w: NET_DEPTH + WALL_THICKNESS,
-    h: WALL_THICKNESS,
-    options: {}
+    h: WALL_THICKNESS
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
     w: WALL_THICKNESS,
-    h: NET_HEIGHT + (WALL_THICKNESS * 2),
-    options: {}
+    h: NET_HEIGHT + (WALL_THICKNESS * 2)
   }));
 
 
@@ -135,48 +126,42 @@ export function createScene1(props: Scene1Props): Scene {
     x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
     y: ARENA_VERTICAL_PADDING,
     w: WALL_THICKNESS,
-    h: NON_NET_HEIGHT,
-    options: {}
+    h: NON_NET_HEIGHT
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
     w: WALL_THICKNESS,
-    h: NON_NET_HEIGHT,
-    options: {}
+    h: NON_NET_HEIGHT
   }));
   returnScene.addGameObject(new GoalArea({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,
     w: NET_DEPTH,
-    h: NET_HEIGHT,
-    options: {}
+    h: NET_HEIGHT
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
     w: NET_DEPTH + WALL_THICKNESS,
-    h: WALL_THICKNESS,
-    options: {}
+    h: WALL_THICKNESS
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
     w: NET_DEPTH + WALL_THICKNESS,
-    h: WALL_THICKNESS,
-    options: {}
+    h: WALL_THICKNESS
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH + NET_DEPTH - WALL_THICKNESS,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
     w: WALL_THICKNESS,
-    h: NET_HEIGHT + (WALL_THICKNESS * 2),
-    options: {}
+    h: NET_HEIGHT + (WALL_THICKNESS * 2)
   }));
   return returnScene;
 }

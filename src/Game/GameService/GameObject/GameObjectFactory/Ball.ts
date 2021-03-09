@@ -1,18 +1,15 @@
 import CanvasController from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2FixtureDef, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
+import { CollisionType } from "../../CollisionListener/Collision";
 import { Scene } from "../../Scene/Scene";
-import GameObject from "../GameObject";
+import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
 
-export interface BallProps {
-  scene: Scene;
-  x: number;
-  y: number;
+export interface BallProps extends GameObjectProps {
   r: number;
-  options: Record<string, any>;
 }
 
-export default class Ball extends GameObject { // extend something general?
+export default class Ball extends GameObject {
   scene: Scene;
   body: b2Body;
   
@@ -39,7 +36,11 @@ export default class Ball extends GameObject { // extend something general?
     bodyDef.angularDamping = 1.0;
     
     bodyDef.type = b2BodyType.b2_dynamicBody;
-    bodyDef.userData = props.options;
+    const userData: BodyUserData = {
+      gameObject: this,
+      collisionType: CollisionType.BALL,
+    }
+    bodyDef.userData = userData;
     
     const returnBody = this.scene.world.CreateBody(bodyDef);
     returnBody.CreateFixture(fixDef);

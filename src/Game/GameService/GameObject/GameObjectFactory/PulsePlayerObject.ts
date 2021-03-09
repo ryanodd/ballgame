@@ -1,28 +1,28 @@
 import CanvasController from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
+import { CollisionType } from "../../CollisionListener/Collision";
 import { Scene } from "../../Scene/Scene";
-import GameObject from "../GameObject";
+import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
+import Bezier from "bezierjs"
 
-export interface PulsePlayerProps {
-  scene: Scene;
-  x: number;
-  y: number;
+export interface PulsePlayerProps extends GameObjectProps {
   r: number;
   density: number;
   friction: number;
   restitution: number;
-  options: Record<string, any>;
 }
 
 export default class PulsePlayerObject extends GameObject { // extend something general?
   scene: Scene;
   body: b2Body;
+  props: PulsePlayerProps;
   
   constructor(props: PulsePlayerProps){
     super();
     this.scene = props.scene;
     this.body = this.createBody(props);
+    this.props = props;
   }
 
   createBody = (props: PulsePlayerProps) => {
@@ -42,7 +42,11 @@ export default class PulsePlayerObject extends GameObject { // extend something 
     bodyDef.angularDamping = 0.0;
     
     bodyDef.type = b2BodyType.b2_dynamicBody;
-    bodyDef.userData = props.options;
+    const userData: BodyUserData = {
+      gameObject: this,
+      collisionType: CollisionType.DEFAULT,
+    }
+    bodyDef.userData = userData;
     
     const returnBody = this.scene.world.CreateBody(bodyDef);
     returnBody.CreateFixture(fixDef);
@@ -83,6 +87,10 @@ export default class PulsePlayerObject extends GameObject { // extend something 
     //case MS_LEFT:  desiredVel = b2Max( vel.x - 0.1f, -5.0f ); break;
     //case MS_STOP:  desiredVel = 0; break;
     //case MS_RIGHT: desiredVel = b2Min( vel.x + 0.1f,  5.0f ); break;
+  }
+
+  pulse(){
+    const pulseRadiusBez = new Bezier(0,0, 0,0, 0,0, 0,0);
   }
 
   render(canvas: CanvasController){

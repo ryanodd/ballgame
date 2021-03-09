@@ -37,9 +37,8 @@ export abstract class Player {
   }
 
   setResourceMeter(value: number){
-    const newValue = Math.max(value, this.RESOURCE_METER_MAXIMUM);
-
-    VueService.primaryPlayerResourceMeter = newValue; // the frontend service plants its dirty fingers everywhere
+    const newValue = Math.min(value, this.RESOURCE_METER_MAXIMUM);
     this.resourceMeter = newValue;
+    VueService.setPlayerResourceMeter(this.playerIndex, newValue); // the frontend service plants its dirty fingers everywhere
   }
 }
