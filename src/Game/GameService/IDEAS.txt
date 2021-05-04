@@ -23,3 +23,23 @@ Line
 - pong-like shape
 - ability to increase width for resource meter?
 
+
+UI
+- energy bar needs player icon
+- gradient (diagonal) bars
+
+
+Trap laying
+
+ball sticks to you
+
+laser (reflects once off of surfaces)
+
+force explosion (affects momentum of all players)
+
+
+NETCODE
+--------
+- going to use netplay.js
+- netplay.js requires that the draw function be independent of the tick. Probably a good idea anyway
+- natplay.js doesn't support gamepad controls? weird. Going to have to modify it
