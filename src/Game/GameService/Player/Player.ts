@@ -9,6 +9,7 @@ export interface PlayerProps {
   gamepadIndex: number;
 }
 
+// A Player is everything that needs to be stored/done per-player.
 export abstract class Player {
   playerIndex: number;
   gamepadIndex: number;

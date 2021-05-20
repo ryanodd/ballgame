@@ -6,9 +6,23 @@ export default class CanvasService {
   pixelHeight: number;
   displayWidth: number;
   displayHeight: number;
+  clickListeners: {(x: number, y: number): void}[] = [];
   
-  constructor (){
+  onClick = (e) => {
+    console.log(this.displayWidth, this.displayHeight)
+    this.clickListeners.forEach(listener => {
+      listener(e.layerX, e.layerY)
+    })
+  }
+
+  addClickListener = (listener) => {
+    this.clickListeners.push(listener)
+  }
+
+  constructor (clickListeners: {(x: number, y: number): void}[] = []){
     const canvas: HTMLCanvasElement = document.getElementById('game-canvas') as HTMLCanvasElement;
+    this.clickListeners = clickListeners
+    canvas.addEventListener('click', this.onClick)
     this.context = canvas.getContext('2d') as CanvasRenderingContext2D,
     
     this.displayWidth = canvas.getBoundingClientRect().width,

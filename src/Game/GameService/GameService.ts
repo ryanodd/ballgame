@@ -1,3 +1,4 @@
+import CanvasService from '@/Game/CanvasService/CanvasService';
 import { createScene1 } from './Scene/SceneFactory/Scene1';
 import { LogService } from '@/Game/LogService/LogService';
 import { Scene } from './Scene/Scene';
@@ -10,14 +11,20 @@ import { gamepadNoInputResult } from '../InputService/contants/noInputResult';
 export default class GameService {
   scene: Scene
   players: Player[]
+  canvas: CanvasService
   previousTimestamp: number //type?
   
   constructor(){
     this.previousTimestamp = 0;
     this.players = [this.initPlayerOne()]
-    this.scene = createScene1({players: this.players});
+    this.canvas = new CanvasService([this.onClick]);
+    this.scene = createScene1({canvas: this.canvas, players: this.players});
     
     window.requestAnimationFrame(this.gameLoop.bind(this))
+  }
+
+  onClick = (x: number, y: number) => {
+    console.log (x, y)
   }
 
   gameLoop(timestamp: number) {

@@ -90,7 +90,7 @@ export class ShipPlayer extends Player {
       this.bulletObject = undefined;
     }
     if(input.button2 &&! this.bulletObject && this.resourceMeter >= this.SHOOT_COST){
-      this.setResourceMeter(this.resourceMeter - this.SHOOT_COST)
+      //this.setResourceMeter(this.resourceMeter - this.SHOOT_COST)
       this.bulletObject = this.shipObject.createBullet();
     }
   }

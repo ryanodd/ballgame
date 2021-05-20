@@ -19,6 +19,11 @@ export default Vue.extend({
   display: grid;
   grid-template-rows: min-content 1fr;
   grid-template-columns: min-content 1fr;
+  
+  pointer-events: none;
+  > {
+    pointer-events: auto;
+  } 
 }
 .hud-section-from-parent{
   grid-row: 1 / 1;

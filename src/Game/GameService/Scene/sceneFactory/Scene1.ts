@@ -29,17 +29,17 @@ const NON_NET_HEIGHT = (ARENA_HEIGHT - NET_HEIGHT) / 2;
 const WALL_THICKNESS = 0.1;
 
 export interface Scene1Props {
+  canvas: CanvasService;
   players: Player[];
 }
 
 
 export function createScene1(props: Scene1Props): Scene {
   const world = new b2World(new b2Vec2(0, 0))
-  const canvas = new CanvasService();
   
   const returnScene: Scene = new Scene({
     world: world,
-    canvas: canvas,
+    canvas: props.canvas,
     unitWidth: SCENE_WIDTH,
     unitHeight: SCENE_HEIGHT,
     gameObjects: []
