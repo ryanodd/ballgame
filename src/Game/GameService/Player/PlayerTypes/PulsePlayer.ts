@@ -1,6 +1,4 @@
 import { GamepadInputResult } from "@/Game/InputService/model/InputResult";
-import { VueService } from "@/Game/VueService/VueService";
-import { CollisionType } from "../../CollisionListener/Collision";
 import PulsePlayerObject from "../../GameObject/GameObjectFactory/PulsePlayerObject";
 import { Scene } from "../../Scene/Scene";
 import { Player, PlayerProps } from "../Player";

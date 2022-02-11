@@ -15,6 +15,7 @@ export default class CanvasService {
     })
   }
 
+  // This might belong in Input code
   addClickListener = (listener) => {
     this.clickListeners.push(listener)
   }

@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { VueService } from "@/Game/VueService/VueService.ts"
+import { VueService } from "@/Game/VueService/VueService"
 
 export default Vue.extend({
   name: "PlayerMeter",
