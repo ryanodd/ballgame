@@ -1,4 +1,3 @@
-import CanvasService from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import Ball from "../../GameObject/GameObjectFactory/Ball";
@@ -29,7 +28,6 @@ const NON_NET_HEIGHT = (ARENA_HEIGHT - NET_HEIGHT) / 2;
 const WALL_THICKNESS = 0.1;
 
 export interface Scene1Props {
-  canvas: CanvasService;
   players: Player[];
 }
 
@@ -39,7 +37,6 @@ export function createScene1(props: Scene1Props): Scene {
   
   const returnScene: Scene = new Scene({
     world: world,
-    canvas: props.canvas,
     unitWidth: SCENE_WIDTH,
     unitHeight: SCENE_HEIGHT,
     gameObjects: []

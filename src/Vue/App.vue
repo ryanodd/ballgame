@@ -6,16 +6,16 @@
 
 <script lang="ts">
 import Vue from "vue";
-import GameService from "@/Game/GameService/GameService";
 import AspectRatioLetterbox from "./components/AspectRatioLetterbox.vue";
-
-let game: GameService;
 
 export default Vue.extend({
   name: "App",
   components: { AspectRatioLetterbox },
   mounted() {
-    game = new GameService();
+    require('@/Game/GameService/netplayjs/myGame')
+
+    // the pre-netplayjs way of kicking things off
+    //game = new GameService();
   }
 });
 

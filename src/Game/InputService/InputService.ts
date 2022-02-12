@@ -1,15 +1,15 @@
-import { InputConfig, GamepadInputMapping } from './model/InputConfig';
+import { InputConfig } from './model/InputConfig';
 import { GamepadInputResult, KeyboardMouseInputResult } from './model/InputResult';
-import { defaultInputConfig } from './contants/InputConfigDefaults';
-import { LogService } from '../LogService/LogService';
 import { gamepadNoInputResult, keyboardMouseNoInputResult } from './contants/noInputResult';
+import { MyInput } from '../GameService/netplayjs/MyInput';
 
 export class InputServiceImplementation {
-  constructor(){
+  constructor() {
+    0;
   }
 
-  getGamepadInput(gamepadIndex: number, config: InputConfig): GamepadInputResult {
-    const gamepad: Gamepad = navigator.getGamepads()[gamepadIndex];
+  getGamepadInput(input: MyInput, gamepadIndex: number, config: InputConfig): GamepadInputResult {
+    const gamepad: Gamepad = input.gamepads[gamepadIndex];
     if (!gamepad) return gamepadNoInputResult;
 
     const mapping = config.gamepadInputMapping;
@@ -38,6 +38,7 @@ export class InputServiceImplementation {
     return detectedInput;
   }
 
+  // TODO
   getKeyboardMouseInput(config): KeyboardMouseInputResult {
     //const mapping = config.keyboardMouseInputMapping;
     return keyboardMouseNoInputResult;

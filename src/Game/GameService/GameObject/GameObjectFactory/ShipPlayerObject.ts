@@ -1,4 +1,3 @@
-import CanvasController from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2PolygonShape, b2Transform, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import { CollisionType } from "../../CollisionListener/Collision";
@@ -120,8 +119,8 @@ export default class ShipPlayerObject extends GameObject { // extend something g
     return bulletObject;
   }
 
-  render(canvas: CanvasController){
-    const c = canvas.context;
+  render(canvas: HTMLCanvasElement){
+    const c = canvas.getContext('2d');
     c.fillStyle = 'rgb(126, 226, 151)';
 
     const body: b2Body = this.body;

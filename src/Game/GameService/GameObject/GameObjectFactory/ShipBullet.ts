@@ -1,4 +1,3 @@
-import CanvasController from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2FixtureDef, b2PolygonShape, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import { CollisionType } from "../../CollisionListener/Collision";
@@ -64,8 +63,8 @@ export default class ShipBullet extends GameObject { // extend something general
     this.markedForDeletion = true;
   }
 
-  render(canvas: CanvasController){
-    const c = canvas.context;
+  render(canvas: HTMLCanvasElement){
+    const c = canvas.getContext('2d');
     c.fillStyle = 'rgb(209, 225, 235)';
 
     const shape: b2PolygonShape = this.body.GetFixtureList().GetShape() as b2PolygonShape;

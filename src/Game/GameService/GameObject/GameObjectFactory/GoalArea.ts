@@ -1,4 +1,3 @@
-import CanvasController from "@/Game/CanvasService/CanvasService";
 import { LogService } from "@/Game/LogService/LogService";
 import { b2Body, b2BodyDef, b2BodyType, b2FixtureDef, b2PolygonShape, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import { CollisionType } from "../../CollisionListener/Collision";
@@ -49,8 +48,8 @@ export default class GoalArea extends GameObject { // extend something general?
 
   // No tick
 
-  render(canvas: CanvasController){
-    const c = canvas.context;
+  render(canvas: HTMLCanvasElement){
+    const c = canvas.getContext('2d');
     c.fillStyle = 'rgb(16, 121, 89)';
 
     const shape: b2PolygonShape = this.body.GetFixtureList().GetShape() as b2PolygonShape;

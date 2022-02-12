@@ -1,11 +1,8 @@
-import CanvasService from "@/Game/CanvasService/CanvasService";
-import { LogService } from "@/Game/LogService/LogService";
 import { b2World } from "@/lib/Box2D/Box2D";
 import { ContactListener } from "../CollisionListener/CollisionListener";
 import GameObject from "../GameObject/GameObject";
 
 export interface SceneProps {
-  canvas: CanvasService;
   world: b2World;
   unitWidth: number;
   unitHeight: number;
@@ -13,14 +10,12 @@ export interface SceneProps {
 }
 
 export class Scene {
-  canvas: CanvasService;
   world: b2World;
   unitWidth: number;
   unitHeight: number;
   gameObjects: GameObject[];
 
   constructor(props: SceneProps){
-    this.canvas = props.canvas;
     this.world = props.world;
     this.unitWidth = props.unitWidth;
     this.unitHeight = props.unitHeight;
@@ -31,31 +26,31 @@ export class Scene {
 
   setup() {
     this.world.SetContactListener(ContactListener);
-
-    const xScaling = this.canvas.pixelWidth / this.unitWidth;
-    const yScaling = this.canvas.pixelHeight / this.unitHeight;
-    const squareScaling = Math.min(xScaling, yScaling);
-    this.canvas.context.scale(squareScaling, squareScaling);
   }
 
-  render() {
-    this.renderBackground()
-    this.renderGameObjects()
+  render(canvas: HTMLCanvasElement) {
+    const xScaling = canvas.width / this.unitWidth;
+    const yScaling = canvas.height / this.unitHeight;
+    const squareScaling = Math.min(xScaling, yScaling);
+    canvas.getContext('2d').scale(squareScaling, squareScaling);
+
+    this.renderBackground(canvas)
+    this.renderGameObjects(canvas)
   }
 
   addGameObject(newObject: GameObject){
     this.gameObjects.push(newObject);
   }
   
-  private renderGameObjects() {
+  private renderGameObjects(canvas: HTMLCanvasElement) {
     this.gameObjects.forEach(gameObject => {
-      gameObject.render(this.canvas)
+      gameObject.render(canvas)
     })
   }
 
-  private renderBackground() {
-    const c = this.canvas.context;
+  private renderBackground(canvas: HTMLCanvasElement) {
+    const c = canvas.getContext('2d');
     c.fillStyle = 'rgb(42, 43, 49)';
-    c.fillRect(0, 0, this.canvas.pixelWidth, this.canvas.pixelHeight);
+    c.fillRect(0, 0, canvas.width, canvas.height);
   }
 }

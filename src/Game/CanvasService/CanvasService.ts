@@ -1,4 +1,3 @@
-import { LogService } from "@/Game/LogService/LogService";
 
 export default class CanvasService {
   context: CanvasRenderingContext2D;

@@ -21,6 +21,7 @@ export class PulsePlayer extends Player {
   constructor(props: PulsePlayerProps){
     super({
       playerIndex: props.playerIndex,
+      netplayPlayerIndex: props.netplayPlayerIndex,
       gamepadIndex: props.gamepadIndex
     });
     this.DENSITY = props.DENSITY;
@@ -46,9 +47,8 @@ export class PulsePlayer extends Player {
   }
 
   // Detect input, do stuff
-  tick(){
-    const input = this.getInput() as GamepadInputResult;
-    this.handleMovement(input);
+  tick(input){
+    this.handleMovement(this.getInput(input) as GamepadInputResult);
   }
 
   handleMovement(input: GamepadInputResult){

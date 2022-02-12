@@ -1,8 +1,7 @@
 import { GamepadInputResult } from "@/Game/InputService/model/InputResult";
-import { LogService } from "@/Game/LogService/LogService";
-import { CollisionType } from "../../CollisionListener/Collision";
 import ShipBullet from "../../GameObject/GameObjectFactory/ShipBullet";
 import ShipPlayerObject from "../../GameObject/GameObjectFactory/ShipPlayerObject";
+import { MyInput } from "../../netplayjs/MyInput";
 import { Scene } from "../../Scene/Scene";
 import { Player, PlayerProps } from "../Player";
 
@@ -35,6 +34,7 @@ export class ShipPlayer extends Player {
   constructor(props: ShipPlayerProps){
     super({
       playerIndex: props.playerIndex,
+      netplayPlayerIndex: props.netplayPlayerIndex,
       gamepadIndex: props.gamepadIndex
     });
 
@@ -67,11 +67,11 @@ export class ShipPlayer extends Player {
   }
 
   // Detect input, do stuff
-  tick(){
-    const input = this.getInput() as GamepadInputResult;
-    this.handleRotation(input);
-    this.handleThrust(input);
-    this.handleShoot(input);
+  tick(input: MyInput){
+    const playerInput = this.getInput(input) as GamepadInputResult
+    this.handleRotation(playerInput);
+    this.handleThrust(playerInput);
+    this.handleShoot(playerInput);
   }
 
   handleRotation(input: GamepadInputResult){
