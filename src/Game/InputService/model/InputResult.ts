@@ -22,4 +22,6 @@ export interface KeyboardMouseInputResult {
   
   mouseXAxis: number;
   mouseYAxis: number; 
+
+  // TODO mouse clicks? No need yet?
 }

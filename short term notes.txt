@@ -1,0 +1,7 @@
+Get game to run with rollback.
+	- assertion failure somewhere input-related. expected frame 2 to equal 1
+	- does serialization work?
+	- no gamepad causes errors
+		- support for keyboard controls
+			- Convert to Pulse Players only DONE I THINK
+			- Pulse plyaer keyboard support w.r.t. netplayjs input class

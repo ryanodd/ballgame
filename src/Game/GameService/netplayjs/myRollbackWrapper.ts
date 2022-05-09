@@ -4,7 +4,6 @@ import EWMASD from '@/lib/netplayjs/ewmasd'
 import { NetplayPlayer } from '@/lib/netplayjs/types'
 
 import * as log from "loglevel"
-import { GameWrapper } from '@/lib/netplayjs/gamewrapper'
 import { Game, GameClass } from '@/lib/netplayjs/game'
 import { RollbackNetcode } from '@/lib/netplayjs/netcode/rollback'
 import { MyInputReader } from './MyInput'
@@ -60,19 +59,7 @@ export class MyRollbackWrapper {
     this.stateSyncPeriod = this.gameClass.stateSyncPeriod || 1;
 
     // Create canvas for game.
-    this.canvas = document.createElement("canvas");
-    this.canvas.width = gameClass.canvasSize.width;
-    this.canvas.height = gameClass.canvasSize.height;
-
-    this.canvas.style.backgroundColor = "black";
-    this.canvas.style.position = "absolute";
-    this.canvas.style.zIndex = "0";
-    this.canvas.style.boxShadow = "0px 0px 10px black";
-
-    this.resize();
-    window.addEventListener("resize", () => this.resize());
-
-    document.body.appendChild(this.canvas);
+    this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement
 
     // Create stats UI
     this.stats = document.createElement("div");
@@ -116,54 +103,6 @@ export class MyRollbackWrapper {
     );
   }
 
-  /**
-   * Calculate a scaling for our canvas so that it fits the whole screen.
-   * Center the canvas with an offset.
-   */
-   calculateLayout(
-    container: { width: number; height: number },
-    canvas: { width: number; height: number }
-  ): { width: number; height: number; left: number; top: number } {
-    const widthRatio = container.width / canvas.width;
-    const heightRatio = container.height / canvas.height;
-
-    // We are constrained by the height of the canvas.
-    const heightLimited = canvas.width * heightRatio >= container.width;
-
-    const ratio = heightLimited ? widthRatio : heightRatio;
-
-    const width = canvas.width * ratio;
-    const height = canvas.height * ratio;
-
-    let left = 0;
-    let top = 0;
-
-    if (heightLimited) {
-      top = container.height / 2 - height / 2;
-    } else {
-      left = container.width / 2 - width / 2;
-    }
-
-    return { width, height, left, top };
-  }
-
-  /**
-   * Recalculate canvas scaling / offset.
-   */
-  resize() {
-    const layout = this.calculateLayout(
-      { width: window.innerWidth, height: window.innerHeight },
-      this.gameClass.canvasSize
-    );
-    console.debug("Calculating new layout: %o", layout);
-
-    this.canvas.style.width = `${layout.width}px`;
-    this.canvas.style.height = `${layout.height}px`;
-
-    this.canvas.style.top = `${layout.top}px`;
-    this.canvas.style.left = `${layout.left}px`;
-  }
-
   peer?: Peer;
 
   start() {
@@ -188,7 +127,6 @@ export class MyRollbackWrapper {
         const conn = this.peer!.connect(parsedHash.room as string, {
           serialization: "json",
           reliable: true,
-          // @ts-ignore
           _payload: {
             // This is a hack to get around a bug in PeerJS
             originator: true,

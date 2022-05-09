@@ -1,3 +1,5 @@
+// RYAN: I am editing this file. It's not vanilla box2d.
+
 /*
 * Copyright (c) 2006-2009 Erin Catto http://www.box2d.org
 *

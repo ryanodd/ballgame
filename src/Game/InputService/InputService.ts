@@ -3,6 +3,9 @@ import { GamepadInputResult, KeyboardMouseInputResult } from './model/InputResul
 import { gamepadNoInputResult, keyboardMouseNoInputResult } from './contants/noInputResult';
 import { MyInput } from '../GameService/netplayjs/MyInput';
 
+// Applies config to raw input data to produce gameplay-usable inputs.
+// TODO? maybe? apply this for the netplay-js layer (instead of Player layer) so simpler input is serialized.
+
 export class InputServiceImplementation {
   constructor() {
     0;
@@ -39,7 +42,7 @@ export class InputServiceImplementation {
   }
 
   // TODO
-  getKeyboardMouseInput(config): KeyboardMouseInputResult {
+  getKeyboardMouseInput(input: MyInput, gamepadIndex: number,): KeyboardMouseInputResult {
     //const mapping = config.keyboardMouseInputMapping;
     return keyboardMouseNoInputResult;
   }

@@ -2,8 +2,6 @@ import { LogService } from "@/Game/LogService/LogService";
 import { b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import Ball from "../../GameObject/GameObjectFactory/Ball";
 import GoalArea from "../../GameObject/GameObjectFactory/GoalArea";
-import PulsePlayer from "../../GameObject/GameObjectFactory/PulsePlayerObject";
-import ShipPlayer from "../../GameObject/GameObjectFactory/ShipPlayerObject";
 import Wall from "../../GameObject/GameObjectFactory/Wall";
 import { Player } from "../../Player/Player";
 import { Scene } from "../Scene";
