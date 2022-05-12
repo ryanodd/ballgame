@@ -2,7 +2,7 @@
   <div :class="this.shouldUseHorizontalLetterbox ? 'aspect-ratio-wrapper-h' : 'aspect-ratio-wrapper-v'" ref="aspectRatioWrapper">
     <div :class="this.shouldUseHorizontalLetterbox ? 'aspect-ratio-div-h' : 'aspect-ratio-div-v'">
       <div class="content-wrapper">
-        <game-canvas />
+        <slot />
       </div>
     </div>
   </div>
@@ -10,13 +10,11 @@
 
 <script lang="ts">
 import Vue from "vue";
-import GameCanvas from "./GameCanvas.vue"
 
 // forces 16:9. Not using consts for 16:9 because css is involved 
 
 export default Vue.extend({
   name: "AspectRatioLetterbox",
-  components: { GameCanvas },
   data: function() {
     return {
       shouldUseHorizontalLetterbox: true
@@ -47,7 +45,7 @@ export default Vue.extend({
   justify-content: center;
   align-items: center;
 
-  background-color: rgb(88, 223, 166);
+  background-color: rgb(50, 119, 90);
 }
 
 .aspect-ratio-wrapper-h {

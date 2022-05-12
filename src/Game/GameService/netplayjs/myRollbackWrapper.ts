@@ -20,7 +20,7 @@ export class MyRollbackWrapper {
   /** The canvas that the game will be rendered onto. */
   canvas: HTMLCanvasElement;
 
-  vueService: typeof VueService;
+  vueService: typeof VueService = VueService;
 
   inputReader: MyInputReader;
 
@@ -98,7 +98,7 @@ export class MyRollbackWrapper {
 
       if (isClient) {
         // We are a client, so connect to the room from the hash.
-        // TODO call something like vueService.hideMenu?
+        this.vueService.setNetplayConnectedToPeer(true)
 
         console.info(`Connecting to room ${parsedHash.room}.`);
 

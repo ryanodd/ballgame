@@ -10,7 +10,7 @@ export interface VueServicePlayer {
 }
 
 export interface VueServiceState {
-  netplayData: {
+  netplay: {
     connectingToServer: boolean;
     connectedToPeer: boolean;
     joinUrl: string | null;
@@ -31,7 +31,7 @@ export class VueServiceImplementation {
   state: VueServiceState; 
   constructor(config: VueServiceConfig){
     this.state = {
-      netplayData: {
+      netplay: {
         connectingToServer: false,
         connectedToPeer: false,
         joinUrl: null,
@@ -59,37 +59,37 @@ export class VueServiceImplementation {
   }
 
   setNetplayConnectingToServer(value: boolean){
-    Vue.set(this.state.netplayData, 'connectingToServer', value);
+    Vue.set(this.state.netplay, 'connectingToServer', value);
   }
   setNetplayConnectedToPeer(value: boolean){
-    Vue.set(this.state.netplayData, 'connectedToPeer', value);
+    Vue.set(this.state.netplay, 'connectedToPeer', value);
   }
   setNetplayErrorMessage(value: any){
-    Vue.set(this.state.netplayData, 'errorMessage', value);
+    Vue.set(this.state.netplay, 'errorMessage', value);
   }
   setNetplayJoinUrl(value: any){
-    Vue.set(this.state.netplayData, 'joinUrl', value);
+    Vue.set(this.state.netplay, 'joinUrl', value);
   }
   setNetplayPing(value: string) {
-    Vue.set(this.state.netplayData, 'ping', value);
+    Vue.set(this.state.netplay, 'ping', value);
   }
   setNetplayPingStdDev(value: string) {
-    Vue.set(this.state.netplayData, 'pingStdDev', value);
+    Vue.set(this.state.netplay, 'pingStdDev', value);
   }
   setNetplayHistoryLength(value: number) {
-    Vue.set(this.state.netplayData, 'historyLength', value);
+    Vue.set(this.state.netplay, 'historyLength', value);
   }
   setNetplayFrame(value: number) {
-    Vue.set(this.state.netplayData, 'frame', value);
+    Vue.set(this.state.netplay, 'frame', value);
   }
   setNetplayLargestFutureSize(value: number) {
-    Vue.set(this.state.netplayData, 'futureSize', value);
+    Vue.set(this.state.netplay, 'futureSize', value);
   }
   setNetplayPredictedFrames(value: number) {
-    Vue.set(this.state.netplayData, 'predictedFrames', value);
+    Vue.set(this.state.netplay, 'predictedFrames', value);
   }
   setNetplayStalling(value: boolean) {
-    Vue.set(this.state.netplayData, 'stalling', value);
+    Vue.set(this.state.netplay, 'stalling', value);
   }
 }
 

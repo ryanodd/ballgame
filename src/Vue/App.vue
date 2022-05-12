@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <aspect-ratio-letterbox/>
+    <main-layout />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import AspectRatioLetterbox from "./components/AspectRatioLetterbox.vue";
+import MainLayout from "./components/MainLayout.vue";
 
 export default Vue.extend({
   name: "App",
-  components: { AspectRatioLetterbox },
+  components: { MainLayout },
   mounted() {
     require('@/Game/GameService/netplayjs/myGame')
 
@@ -33,9 +33,6 @@ export default Vue.extend({
   width: 100vw;
   height: 100vh;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background: linear-gradient(to top right,rgb(20, 20, 20), rgb(29, 29, 29));
 }
 
