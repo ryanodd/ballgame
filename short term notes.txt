@@ -1,7 +1,10 @@
 Get game to run with rollback.
 	- assertion failure somewhere input-related. expected frame 2 to equal 1
-	- does serialization work?
+	- convert to simpler configged inputs BEFORE serialization
+	- hook up netplayjs stats & menu to vueservice data
+		- done. now need to display it
 	- no gamepad causes errors
+
+
+Input remapping. Currently all input handling is hardcoded
 		- support for keyboard controls
-			- Convert to Pulse Players only DONE I THINK
-			- Pulse plyaer keyboard support w.r.t. netplayjs input class

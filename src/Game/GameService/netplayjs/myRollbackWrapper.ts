@@ -10,6 +10,7 @@ import { MyInputReader } from './MyInput'
 
 import * as query from "query-string";
 import { assert } from "chai";
+import { VueService } from '@/Game/VueService/VueService'
 
 const PING_INTERVAL = 100;
 
@@ -19,11 +20,7 @@ export class MyRollbackWrapper {
   /** The canvas that the game will be rendered onto. */
   canvas: HTMLCanvasElement;
 
-  /** The network stats UI. */
-  stats: HTMLDivElement;
-
-  /** The floating menu used to select a match. */
-  menu: HTMLDivElement;
+  vueService: typeof VueService;
 
   inputReader: MyInputReader;
 
@@ -61,30 +58,6 @@ export class MyRollbackWrapper {
     // Create canvas for game.
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement
 
-    // Create stats UI
-    this.stats = document.createElement("div");
-    this.stats.style.zIndex = "1";
-    this.stats.style.position = "absolute";
-    this.stats.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-    this.stats.style.color = "white";
-    this.stats.style.padding = "5px";
-    this.stats.style.display = "none";
-
-    document.body.appendChild(this.stats);
-
-    // Create menu UI
-    this.menu = document.createElement("div");
-    this.menu.style.zIndex = "1";
-    this.menu.style.position = "absolute";
-    this.menu.style.backgroundColor = "white";
-    this.menu.style.padding = "5px";
-    this.menu.style.left = "50%";
-    this.menu.style.top = "50%";
-    this.menu.style.boxShadow = "0px 0px 10px black";
-    this.menu.style.transform = "translate(-50%, -50%)";
-
-    document.body.appendChild(this.menu);
-
     if (
       this.gameClass.touchControls &&
       window.navigator.userAgent.toLowerCase().includes("mobile")
@@ -107,12 +80,17 @@ export class MyRollbackWrapper {
 
   start() {
     console.info("Creating a PeerJS instance.");
-    this.menu.innerHTML = "Connecting to PeerJS...";
+    this.vueService.setNetplayConnectingToServer(true)
 
     this.peer = new Peer();
-    this.peer.on("error", (err) => console.error(err));
+    this.peer.on("error", (err) => {
+      this.vueService.setNetplayErrorMessage(JSON.stringify(err))
+      console.error(err);
+    });
 
     this.peer!.on("open", (id) => {
+      this.vueService.setNetplayConnectingToServer(false)
+
       // Try to parse the room from the hash. If we find one,
       // we are a client.
       const parsedHash = query.parse(window.location.hash);
@@ -120,21 +98,24 @@ export class MyRollbackWrapper {
 
       if (isClient) {
         // We are a client, so connect to the room from the hash.
-        this.menu.style.display = "none";
+        // TODO call something like vueService.hideMenu?
 
         console.info(`Connecting to room ${parsedHash.room}.`);
 
         const conn = this.peer!.connect(parsedHash.room as string, {
           serialization: "json",
           reliable: true,
+          // @ts-ignore: This is a hack written by netplayjs to get around a bug in PeerJS
           _payload: {
-            // This is a hack to get around a bug in PeerJS
             originator: true,
             reliable: true,
           },
         });
 
-        conn.on("error", (err) => console.error(err));
+        conn.on("error", (err) => {
+          this.vueService.setNetplayErrorMessage(JSON.stringify(err))
+          console.error(err)
+        });
 
         // Construct the players array.
         const players = [
@@ -144,15 +125,16 @@ export class MyRollbackWrapper {
 
         this.startClient(players, conn);
       } else {
+        // HOST
         // We are host, so we need to show a join link.
         console.info("Showing join link.");
 
         // Show the join link.
         const joinURL = `${window.location.href}#room=${id}`;
-        this.menu.innerHTML = `<div>Join URL (Open in a new window or send to a friend): <a href="${joinURL}">${joinURL}<div>`;
+        this.vueService.setNetplayJoinUrl(joinURL)
 
         // Construct the players array.
-        const players: Array<NetplayPlayer> = [
+        const players = [
           new NetplayPlayer(0, true, true), // Player 0 is us, acting as a host.
           new NetplayPlayer(1, false, false), // Player 1 is our peer, acting as a client.
         ];
@@ -160,39 +142,17 @@ export class MyRollbackWrapper {
         // Wait for a connection from a client.
         this.peer!.on("connection", (conn) => {
           // Make the menu disappear.
-          this.menu.style.display = "none";
-          conn.on("error", (err) => console.error(err));
+          this.vueService.setNetplayConnectedToPeer(true)
+          
+          conn.on("error", (err) => {
+            this.vueService.setNetplayErrorMessage(JSON.stringify(err))
+            console.error(err)
+          });
 
           this.startHost(players, conn);
         });
       }
     });
-  }
-
-  formatRTCStats(stats: RTCStatsReport): string {
-    let output = "";
-    stats.forEach((report) => {
-      output += `<details>`;
-      output += `<summary>${report.type}</summary>`;
-
-      Object.keys(report).forEach((key) => {
-        if (key !== "type") {
-          output += `<div>${key}: ${report[key]}</div> `;
-        }
-      });
-
-      output += `</details>`;
-    });
-    return output;
-  }
-
-  rtcStats = "";
-  watchRTCStats(connection: RTCPeerConnection) {
-    setInterval(() => {
-      connection
-        .getStats()
-        .then((stats) => (this.rtcStats = this.formatRTCStats(stats)));
-    }, 1000);
   }
 
   getInitialInputs(
@@ -295,8 +255,6 @@ export class MyRollbackWrapper {
   }
 
   startGameLoop() {
-    this.stats.style.display = "inherit";
-
     // Start the netcode game loop.
     this.rollbackNetcode!.start();
 
@@ -305,17 +263,13 @@ export class MyRollbackWrapper {
       this.game!.draw(this.canvas);
 
       // Update stats
-      this.stats.innerHTML = `
-        <div>Netcode Algorithm: Rollback</div>
-        <div>Ping: ${this.pingMeasure
-          .average()
-          .toFixed(2)} ms +/- ${this.pingMeasure.stddev().toFixed(2)} ms</div>
-        <div>History Size: ${this.rollbackNetcode!.history.length}</div>
-        <div>Frame Number: ${this.rollbackNetcode!.currentFrame()}</div>
-        <div>Largest Future Size: ${this.rollbackNetcode!.largestFutureSize()}</div>
-        <div>Predicted Frames: ${this.rollbackNetcode!.predictedFrames()}</div>
-        <div title="If true, then the other player is running slow, so we wait for them.">Stalling: ${this.rollbackNetcode!.shouldStall()}</div>
-        `;
+      this.vueService.setNetplayPing(this.pingMeasure.average().toFixed(2))
+      this.vueService.setNetplayPingStdDev(this.pingMeasure.stddev().toFixed(2))
+      this.vueService.setNetplayHistoryLength(this.rollbackNetcode!.history.length)
+      this.vueService.setNetplayFrame(this.rollbackNetcode!.currentFrame())
+      this.vueService.setNetplayLargestFutureSize(this.rollbackNetcode!.largestFutureSize())
+      this.vueService.setNetplayPredictedFrames(this.rollbackNetcode!.predictedFrames())
+      this.vueService.setNetplayStalling(this.rollbackNetcode!.shouldStall())
 
       // Request another frame.
       requestAnimationFrame(animate);

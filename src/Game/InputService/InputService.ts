@@ -4,7 +4,7 @@ import { gamepadNoInputResult, keyboardMouseNoInputResult } from './contants/noI
 import { MyInput } from '../GameService/netplayjs/MyInput';
 
 // Applies config to raw input data to produce gameplay-usable inputs.
-// TODO? maybe? apply this for the netplay-js layer (instead of Player layer) so simpler input is serialized.
+// TODO maybe? use this at the netplay-js layer (instead of Player layer) so simpler input is serialized
 
 export class InputServiceImplementation {
   constructor() {
