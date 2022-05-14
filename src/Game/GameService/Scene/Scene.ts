@@ -1,16 +1,17 @@
 import { b2World } from "@/lib/Box2D/Box2D";
 import { ContactListener } from "../CollisionListener/CollisionListener";
 import GameObject from "../GameObject/GameObject";
+import { World } from '@dimforge/rapier2d'
 
 export interface SceneProps {
-  world: b2World;
+  world: World;
   unitWidth: number;
   unitHeight: number;
   gameObjects: GameObject[];
 }
 
 export class Scene {
-  world: b2World;
+  world: World;
   unitWidth: number;
   unitHeight: number;
   gameObjects: GameObject[];
@@ -25,7 +26,7 @@ export class Scene {
   }
 
   setup() {
-    this.world.SetContactListener(ContactListener);
+    //nothin yet
   }
 
   render(canvas: HTMLCanvasElement) {

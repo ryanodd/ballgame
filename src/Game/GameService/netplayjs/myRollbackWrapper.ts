@@ -15,6 +15,8 @@ import { VueService } from '@/Game/VueService/VueService'
 const PING_INTERVAL = 100;
 
 export class MyRollbackWrapper {
+
+  // The class (not the instance) of the input serializable game (myGame)
   gameClass: GameClass;
 
   /** The canvas that the game will be rendered onto. */
@@ -28,6 +30,7 @@ export class MyRollbackWrapper {
 
   pingMeasure: EWMASD = new EWMASD(0.2);
 
+  // The actual instance of the input serializable game class 
   game?: Game;
 
   rollbackNetcode?: RollbackNetcode<Game, DefaultInput>;
@@ -55,7 +58,7 @@ export class MyRollbackWrapper {
 
     this.stateSyncPeriod = this.gameClass.stateSyncPeriod || 1;
 
-    // Create canvas for game.
+    // Find canvas for game.
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement
 
     if (
@@ -274,7 +277,6 @@ export class MyRollbackWrapper {
       // Request another frame.
       requestAnimationFrame(animate);
     };
-
     requestAnimationFrame(animate);
   }
 }
