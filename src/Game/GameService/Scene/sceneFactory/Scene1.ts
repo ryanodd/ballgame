@@ -26,7 +26,7 @@ export interface Scene1Props {
 
 
 export function createScene1(props: Scene1Props): Scene {
-  const gravity = { x: 0.0, y: -9.81 };
+  const gravity = { x: 0.0, y: 0.0 };
   const world = new World(gravity)
   
   const returnScene: Scene = new Scene({
@@ -36,26 +36,57 @@ export function createScene1(props: Scene1Props): Scene {
     gameObjects: []
   });
 
-  // const player1: Player | undefined = props.players[0];
-  // if (player1){
-  //   player1.createObjects(returnScene, 4, 4);
-  // }
+  const player1: Player | undefined = props.players[0];
+  if (player1){
+    player1.createObjects(returnScene, 4, 4);
+  }
+  const player2: Player | undefined = props.players[1];
+  if (player2){
+    player2.createObjects(returnScene, 8, 4);
+  }
+  console.log(player2)
 
   returnScene.addGameObject(new Ball({
     scene: returnScene,
     x: 8,
     y: 7,
-    r: 0.120
+    r: 0.50
+  }));
+
+  // Top Wall
+  returnScene.addGameObject(new Wall({
+    scene: returnScene,
+    x: ARENA_HORIZONTAL_PADDING,
+    y: ARENA_VERTICAL_PADDING + ARENA_HEIGHT,
+    w: ARENA_WIDTH,
+    h: WALL_THICKNESS,
+  }));
+
+  // Right Wall
+  returnScene.addGameObject(new Wall({
+    scene: returnScene,
+    x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH,
+    y: ARENA_VERTICAL_PADDING,
+    w: WALL_THICKNESS,
+    h: ARENA_HEIGHT,
   }));
 
   // Bottom Wall
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING,
-    y: 3,
+    y: ARENA_VERTICAL_PADDING,
     w: ARENA_WIDTH,
     h: WALL_THICKNESS,
-    rotation: -5,
+  }));
+
+  // Left Wall
+  returnScene.addGameObject(new Wall({
+    scene: returnScene,
+    x: ARENA_HORIZONTAL_PADDING,
+    y: ARENA_VERTICAL_PADDING,
+    w: WALL_THICKNESS,
+    h: ARENA_HEIGHT,
   }));
 
   return returnScene;

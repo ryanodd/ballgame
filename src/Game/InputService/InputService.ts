@@ -41,10 +41,22 @@ export class InputServiceImplementation {
     return detectedInput;
   }
 
-  // TODO
-  getKeyboardMouseInput(input: MyInput, gamepadIndex: number,): KeyboardMouseInputResult {
-    //const mapping = config.keyboardMouseInputMapping;
-    return keyboardMouseNoInputResult;
+  getKeyboardMouseInput(input: MyInput, config: InputConfig): KeyboardMouseInputResult {
+    const mapping = config.keyboardMouseInputMapping;
+
+    const detectedInput: KeyboardMouseInputResult = {
+      button1: !!input.pressed[mapping.button1Key],
+      button2: !!input.pressed[mapping.button2Key],
+      button3: !!input.pressed[mapping.button3Key],
+      button4: !!input.pressed[mapping.button4Key],
+    
+      buttonUp: !!input.pressed[mapping.buttonUpKey],
+      buttonRight: !!input.pressed[mapping.buttonRightKey],
+      buttonDown: !!input.pressed[mapping.buttonDownKey],
+      buttonLeft: !!input.pressed[mapping.buttonLeftKey]
+    }
+
+    return detectedInput
   }
 }
 

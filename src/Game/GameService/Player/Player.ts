@@ -1,5 +1,6 @@
 import { defaultInputConfig } from "@/Game/InputService/contants/InputConfigDefaults";
 import { InputService } from "@/Game/InputService/InputService";
+import { InputConfig } from "@/Game/InputService/model/InputConfig";
 import { GamepadInputResult, KeyboardMouseInputResult } from "@/Game/InputService/model/InputResult";
 import { VueService } from "@/Game/VueService/VueService";
 import { NetplayPlayer } from "@/lib/netplayjs";
@@ -10,6 +11,7 @@ export interface PlayerProps {
   playerIndex: number;
   netplayPlayerIndex: number;
   gamepadIndex: number;
+  inputConfig?: InputConfig;
 }
 
 // A Player is everything that needs to be stored/done per-player.
@@ -17,6 +19,7 @@ export abstract class Player {
   playerIndex: number; // in-game player e.g. "Player 1"
   netplayPlayerIndex: number; // client index
   gamepadIndex?: number; // index in the browser's 'GamePad' interface
+  inputConfig?: InputConfig;
   resourceMeter: number;
   
   // 101 for rounding issues. I want fractional costs like 1/3 which is 33.33
@@ -30,6 +33,7 @@ export abstract class Player {
     this.playerIndex = props.playerIndex;
     this.netplayPlayerIndex = props.netplayPlayerIndex;
     this.gamepadIndex = props.gamepadIndex;
+    this.inputConfig = props.inputConfig;
     this.resourceMeter = this.RESOURCE_METER_BEGIN;
   }
 
@@ -37,9 +41,11 @@ export abstract class Player {
   // Detect input, do stuff
   abstract tick(input: MyInput);
 
-  getInput(input): GamepadInputResult | KeyboardMouseInputResult{
-    // TODO if (this.gamepadIndex === -1) get keyboard & mouse 
-    return InputService.getGamepadInput(input, this.gamepadIndex, defaultInputConfig); // TODO store input config in.... ConfigService? or Player.. 
+  getInput(input: MyInput): GamepadInputResult | KeyboardMouseInputResult{
+    if (this.gamepadIndex === -1) {
+      return InputService.getKeyboardMouseInput(input, this.inputConfig ?? defaultInputConfig)
+    } 
+    return InputService.getGamepadInput(input, this.gamepadIndex, this.inputConfig ?? defaultInputConfig); 
   }
 
   setResourceMeter(value: number){

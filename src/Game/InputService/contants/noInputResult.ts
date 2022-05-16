@@ -16,11 +16,13 @@ export const gamepadNoInputResult: GamepadInputResult = {
 }
 
 export const keyboardMouseNoInputResult: KeyboardMouseInputResult = {
-  key1: false,
-  key2: false,
-  key3: false,
-  key4: false,
-
-  mouseXAxis: 0,
-  mouseYAxis: 0,
+  button1: false,
+  button2: false,
+  button3: false,
+  button4: false,
+  
+  buttonUp: false,
+  buttonRight: false,
+  buttonDown: false,
+  buttonLeft: false,
 }

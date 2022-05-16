@@ -19,7 +19,7 @@ export default class Ball extends GameObject {
   }
 
   createCollider(props: BallProps){
-    const rigidBodyDesc = RigidBodyDesc.newDynamic();
+    const rigidBodyDesc = RigidBodyDesc.dynamic();
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 
     // Create a cuboid collider attached to the dynamic rigidBody.
@@ -38,8 +38,6 @@ export default class Ball extends GameObject {
     const collider = this.scene.world.getCollider(this.colliderHandle)
     const { x: xPosition, y: yPosition} = collider.translation(); 
     const radius = collider.radius()
-
-    console.log(yPosition)
     
     c.beginPath();
     c.arc(xPosition, yPosition, radius, 0, Math.PI * 2, true); // Outer circle

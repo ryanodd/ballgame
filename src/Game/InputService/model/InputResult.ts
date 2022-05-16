@@ -1,3 +1,8 @@
+
+export const isGamePadInputResult = (input: GamepadInputResult | KeyboardMouseInputResult): input is GamepadInputResult => {
+  return ('leftStickXAxis' in input)
+}
+
 export interface GamepadInputResult {
   button1: boolean;
   button2: boolean;
@@ -15,13 +20,18 @@ export interface GamepadInputResult {
 }
 
 export interface KeyboardMouseInputResult {
-  key1: boolean;
-  key2: boolean;
-  key3: boolean;
-  key4: boolean;
+  button1: boolean;
+  button2: boolean;
+  button3: boolean;
+  button4: boolean;
   
-  mouseXAxis: number;
-  mouseYAxis: number; 
+  buttonUp: boolean;
+  buttonRight: boolean;
+  buttonDown: boolean;
+  buttonLeft: boolean;
+
+  //mouseXAxis: number;
+  //mouseYAxis: number; 
 
   // TODO mouse clicks? No need yet?
 }

@@ -15,10 +15,15 @@ export interface GamepadInputMapping {
 }
 
 export interface KeyboardMouseInputMapping {
-  button1Key: number;
-  button2Key: number;
-  button3Key: number;
-  button4Key: number;
+  button1Key: string;
+  button2Key: string;
+  button3Key: string;
+  button4Key: string;
+
+  buttonUpKey: string;
+  buttonRightKey: string;
+  buttonDownKey: string;
+  buttonLeftKey: string;
 }
 
 export interface InputConfig {

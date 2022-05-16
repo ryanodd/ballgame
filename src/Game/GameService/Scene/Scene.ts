@@ -52,7 +52,8 @@ export class Scene {
   }
   
   private renderGameObjects(canvas: HTMLCanvasElement) {
-    this.gameObjects.forEach(gameObject => {
+    console.log(this.gameObjects)
+    this.gameObjects.forEach(gameObject => {      
       gameObject.render(canvas)
     })
   }
