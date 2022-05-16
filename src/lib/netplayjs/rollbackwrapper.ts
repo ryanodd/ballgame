@@ -3,7 +3,6 @@ import { DefaultInput } from "./defaultinput";
 import EWMASD from "./ewmasd";
 import { NetplayPlayer } from "./types";
 
-import * as log from "loglevel";
 import { GameWrapper } from "./gamewrapper";
 import { Game, GameClass } from "./game";
 import { RollbackNetcode } from "./netcode/rollback";
@@ -32,7 +31,7 @@ export class RollbackWrapper extends GameWrapper {
   }
 
   startHost(players: Array<NetplayPlayer>, conn: Peer.DataConnection) {
-    log.info("Starting a lcokstep host.");
+    console.info("Starting a lcokstep host.");
 
     this.game = new this.gameClass(this.canvas, players);
 
@@ -78,7 +77,7 @@ export class RollbackWrapper extends GameWrapper {
   }
 
   startClient(players: Array<NetplayPlayer>, conn: Peer.DataConnection) {
-    log.info("Starting a lockstep client.");
+    console.info("Starting a lockstep client.");
 
     this.game = new this.gameClass(this.canvas, players);
     this.rollbackNetcode = new RollbackNetcode(

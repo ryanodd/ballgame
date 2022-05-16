@@ -1,5 +1,3 @@
-import { b2World } from "@/lib/Box2D/Box2D";
-import { ContactListener } from "../CollisionListener/CollisionListener";
 import GameObject from "../GameObject/GameObject";
 import { World } from '@dimforge/rapier2d'
 
@@ -30,6 +28,16 @@ export class Scene {
   }
 
   render(canvas: HTMLCanvasElement) {
+    // Set rendering size to actual pixel size (to render at the best possible resolution)
+    const canvasElementWidth = canvas.getBoundingClientRect().width
+    const canvasElementHeight = canvas.getBoundingClientRect().height
+    canvas.width = canvasElementWidth;
+    canvas.height = canvasElementHeight;
+
+    // flip canvas y-axis: to make box2d & canvas coordinate systems match y-direction (bottom-up)
+    canvas.getContext('2d').transform(1, 0, 0, -1, 0, canvas.height)
+
+    // Scale so that we can use our own units when drawing with coordinates
     const xScaling = canvas.width / this.unitWidth;
     const yScaling = canvas.height / this.unitHeight;
     const squareScaling = Math.min(xScaling, yScaling);

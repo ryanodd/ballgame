@@ -3,7 +3,6 @@ import { DefaultInput } from '@/lib/netplayjs/defaultinput'
 import EWMASD from '@/lib/netplayjs/ewmasd'
 import { NetplayPlayer } from '@/lib/netplayjs/types'
 
-import * as log from "loglevel"
 import { Game, GameClass } from '@/lib/netplayjs/game'
 import { RollbackNetcode } from '@/lib/netplayjs/netcode/rollback'
 import { MyInputReader } from './MyInput'
@@ -28,7 +27,7 @@ export class MyRollbackWrapper {
 
   stateSyncPeriod: number;
 
-  pingMeasure: EWMASD = new EWMASD(0.2);
+  pingMeasure: EWMASD = new EWMASD(0.2); // Ryan: I don't know what this 0.2 does
 
   // The actual instance of the input serializable game class 
   game?: Game;
@@ -169,7 +168,7 @@ export class MyRollbackWrapper {
   }
 
   startHost(players: Array<NetplayPlayer>, conn: Peer.DataConnection) {
-    log.info("Starting a lcokstep host.");
+    console.info("Starting a rollback host.");
 
     this.game = new this.gameClass(this.canvas, players);
 
@@ -215,7 +214,7 @@ export class MyRollbackWrapper {
   }
 
   startClient(players: Array<NetplayPlayer>, conn: Peer.DataConnection) {
-    log.info("Starting a lockstep client.");
+    console.info("Starting a lockstep client.");
 
     this.game = new this.gameClass(this.canvas, players);
     this.rollbackNetcode = new RollbackNetcode(
@@ -238,6 +237,7 @@ export class MyRollbackWrapper {
         input.deserialize(data.input);
         this.rollbackNetcode!.onRemoteInput(data.frame, players![0], input);
       } else if (data.type === "state") {
+        //console.log(data.state)
         this.rollbackNetcode!.onStateSync(data.frame, data.state);
       } else if (data.type == "ping-req") {
         conn.send({ type: "ping-resp", sent_time: data.sent_time });

@@ -2,7 +2,6 @@ import { LogService } from "@/Game/LogService/LogService";
 import { b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import { World } from "@dimforge/rapier2d";
 import Ball from "../../GameObject/GameObjectFactory/Ball";
-import GoalArea from "../../GameObject/GameObjectFactory/GoalArea";
 import Wall from "../../GameObject/GameObjectFactory/Wall";
 import { Player } from "../../Player/Player";
 import { Scene } from "../Scene";
@@ -36,6 +35,7 @@ export function createScene1(props: Scene1Props): Scene {
     unitHeight: SCENE_HEIGHT,
     gameObjects: []
   });
+
   // const player1: Player | undefined = props.players[0];
   // if (player1){
   //   player1.createObjects(returnScene, 4, 4);
@@ -52,9 +52,10 @@ export function createScene1(props: Scene1Props): Scene {
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING,
-    y: ARENA_VERTICAL_PADDING,
+    y: 3,
     w: ARENA_WIDTH,
-    h: WALL_THICKNESS
+    h: WALL_THICKNESS,
+    rotation: -5,
   }));
 
   return returnScene;

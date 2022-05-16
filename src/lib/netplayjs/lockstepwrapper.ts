@@ -4,7 +4,6 @@ import EWMASD from "./ewmasd";
 import { LockstepNetcode } from "./netcode/lockstep";
 import { NetplayPlayer } from "./types";
 
-import * as log from "loglevel";
 import { GameWrapper } from "./gamewrapper";
 import { Game, GameClass } from "./game";
 
@@ -20,7 +19,7 @@ export class LockstepWrapper extends GameWrapper {
   }
 
   startHost(players: Array<NetplayPlayer>, conn: Peer.DataConnection) {
-    log.info("Starting a lockstep host.");
+    console.info("Starting a lockstep host.");
 
     this.game = new this.gameClass(this.canvas, players);
 
@@ -65,7 +64,7 @@ export class LockstepWrapper extends GameWrapper {
   }
 
   startClient(players: Array<NetplayPlayer>, conn: Peer.DataConnection) {
-    log.info("Starting a lockstep client.");
+    console.info("Starting a lockstep client.");
 
     this.game = new this.gameClass(this.canvas, players);
     this.lockstepNetcode = new LockstepNetcode(

@@ -1,8 +1,6 @@
 import { NetplayInput, NetplayPlayer, NetplayState } from "../types";
 import { get, shift, clone } from "../utils";
 
-import * as log from "loglevel";
-
 import { DEV } from "../debugging";
 import { assert } from "chai";
 import { JSONValue } from "../json";
@@ -93,7 +91,7 @@ export class RollbackNetcode<
         cleanedUpStates++;
       } else break;
     }
-    DEV && log.debug(`Cleaned up ${cleanedUpStates} states.`);
+    DEV && console.debug(`Cleaned up ${cleanedUpStates} states.`);
 
     // Update the first state with the definitive server state.
     DEV && assert.equal(this.history[0].frame, frame);
@@ -110,7 +108,7 @@ export class RollbackNetcode<
       currentState.state = clone(this.state.serialize());
     }
     DEV &&
-      log.debug(
+    console.debug(
         `Resimulated ${this.history.length - 1} states after state sync.`
       );
   }
@@ -182,7 +180,7 @@ export class RollbackNetcode<
     }
 
     DEV &&
-      log.debug(
+    console.debug(
         `Resimulated ${
           this.history.length - firstPrediction!
         } states after rollback.`
@@ -205,7 +203,7 @@ export class RollbackNetcode<
           this.broadcastState!(syncedState.frame, syncedState.state);
         } else break;
       }
-      DEV && log.debug(`Cleaned up ${cleanedUpStates} states.`);
+      DEV && console.debug(`Cleaned up ${cleanedUpStates} states.`);
     }
   }
 

@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { VueService } from "@/Game/VueService/VueService";
+import { VueService, VueServiceImplementation } from "@/Game/VueService/VueService";
 import Vue from "vue";
 import AspectRatioLetterbox from "./AspectRatioLetterbox.vue";
 import GameCanvas from "./GameCanvas.vue";
@@ -22,7 +22,7 @@ export default Vue.extend({
   name: "MainLayout",
   data: function() {
     return {
-      vueService: VueService
+      vueService: VueService as VueServiceImplementation
     }
   },
   computed: {
@@ -31,7 +31,7 @@ export default Vue.extend({
       const parsedHash = query.parse(window.location.hash);
       const isHost = !parsedHash.room;
 
-      return isHost && !this.vueService.state.netplay.connectedToPeer
+      return this.vueService.state.netplay.joinUrl !== null && (isHost && !this.vueService.state.netplay.connectedToPeer)
     },
     shouldShowNetplayStats() {
       // I'm guessing these are the only times we'd want to see it

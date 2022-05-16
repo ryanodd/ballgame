@@ -1,6 +1,6 @@
 <template>
   <div class="netplay-stats-wrapper">
-    <card>
+    <card-box>
       <table class="netplay-stats-table">
         <span v-if="!!this.vueService.state.netplay.errorMessage">
           {{this.vueService.state.netplay.errorMessage}}
@@ -30,17 +30,17 @@
           <td>{{this.vueService.state.netplay.stalling}}</td>
         </tr>
       </table>
-    </card>
+    </card-box>
   </div>
 </template>
 
 <script lang="ts">
 import { VueService } from "@/Game/VueService/VueService";
 import Vue from "vue";
-import Card from "./Card.vue";
+import CardBox from "./CardBox.vue";
 
 export default Vue.extend({
-  components: { Card },
+  components: { CardBox },
   name: "NetplayStats",
   data: function() {
     return {

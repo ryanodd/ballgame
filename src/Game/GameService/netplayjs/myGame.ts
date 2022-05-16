@@ -1,13 +1,10 @@
 import { VueService, VueServicePlayer } from '@/Game/VueService/VueService';
 import { NetplayPlayer, DefaultInput, Game, JSONValue } from '@/lib/netplayjs'
 import { Player } from '../Player/Player';
-import { ShipPlayer } from '../Player/PlayerTypes/ShipPlayer';
 import { Scene } from '../Scene/Scene';
 import { createScene1 } from '../Scene/SceneFactory/Scene1';
 import { MyInput } from './MyInput';
 import { MyRollbackWrapper } from './myRollbackWrapper';
-import { decycle, retrocycle } from 'cycle'
-import { PulsePlayer } from '../Player/PlayerTypes/PulsePlayer';
 import { World } from '@dimforge/rapier2d';
 
 export class MyGame extends Game {
@@ -23,23 +20,32 @@ export class MyGame extends Game {
   someTestCopyOfThis = null
 
   serialize(): JSONValue {
-    return { snapshot: this.scene.world.takeSnapshot().toString() }
+    return {
+      snapshot: this.scene.world.takeSnapshot().toString()
+    } as JSONValue;
   }
 
-  deserialize(value: string): void {
-    const { snapshot } = JSON.parse(value);
-    this.scene.world = World.restoreSnapshot(snapshot);
+  deserialize(value: JSONValue): void {
+    const snapshot = value['snapshot']
+    const splitSnapshot = snapshot.split(',')
+    const array = new Uint8Array(splitSnapshot)
+    this.scene.world = World.restoreSnapshot(array);
   }
 
   tick(playerInputs: Map<NetplayPlayer, MyInput>) {
     const MS_PER_GAME_TICK = MyGame.timestep;
     this.tickWorld(MS_PER_GAME_TICK);
+
+    // log
+    this.scene.world.colliders.forEachCollider((collider) => {
+      if (collider.translation().x !== 8)
+      console.log(collider.translation().y)
+    })
   }
 
   draw(canvas: HTMLCanvasElement) {
     this.scene.render(canvas)
   }
-
 
   // Physics tick
   tickWorld(msPassed: number) {

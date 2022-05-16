@@ -1,12 +1,10 @@
 import { b2Body } from "@/lib/Box2D/Box2D";
-import { CollisionType } from "../CollisionListener/Collision";
 import { Scene } from "../Scene/Scene";
 
 // This is used in place of 'any' for arbitrary data we want to attach to a b2 body.
 // The arbitrary data is needed because collisions trigger callbacks only with access to this arbitrary data.
 export interface BodyUserData {
   gameObject: GameObject;
-  collisionType: CollisionType;
 }
 
 export interface GameObjectProps {
