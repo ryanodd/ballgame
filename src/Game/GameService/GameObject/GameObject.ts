@@ -1,4 +1,4 @@
-import { b2Body } from "@/lib/Box2D/Box2D";
+import { ColliderHandle } from "@dimforge/rapier2d";
 import { Scene } from "../Scene/Scene";
 
 // This is used in place of 'any' for arbitrary data we want to attach to a b2 body.
@@ -16,11 +16,14 @@ export interface GameObjectProps {
 
 export default abstract class GameObject {
   abstract scene: Scene;
-  abstract body: b2Body; // Should all objects have bodies? Can use sensor-bodies if no collisions wanted. But still unnecessary a lot of the time.
+  colliderHandle: ColliderHandle | null = null;
   markedForDeletion = false;
 
   abstract render(canvas: HTMLCanvasElement): void;
   tick(){
     0; // so the compiler doesn't complain.
+  }
+  handleCollision(oppositeColliderHandle: ColliderHandle, started: boolean): void {
+    0;// so the compiler doesn't complain.
   }
 }

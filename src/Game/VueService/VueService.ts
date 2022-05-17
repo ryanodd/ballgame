@@ -24,6 +24,10 @@ export interface VueServiceState {
     stalling: boolean;
   };
   playerDict: Record<number, VueServicePlayer>;
+  game: {
+    team1Score: number;
+    team2Score: number;
+  }
 } 
 
 // Information interface between the game (TS) and the UI elements (Vue) 
@@ -44,7 +48,11 @@ export class VueServiceImplementation {
         predictedFrames: null,
         stalling: false
       },
-      playerDict: {}
+      playerDict: {},
+      game: {
+        team1Score: 0,
+        team2Score: 0,
+      },
     };
   }
 
@@ -90,6 +98,13 @@ export class VueServiceImplementation {
   }
   setNetplayStalling(value: boolean) {
     Vue.set(this.state.netplay, 'stalling', value);
+  }
+
+  setTeam1Score(value: number) {
+    Vue.set(this.state.game, 'team1Score', value)
+  }
+  setTeam2Score(value: number) {
+    Vue.set(this.state.game, 'team2Score', value)
   }
 }
 

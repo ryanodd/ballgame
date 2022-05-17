@@ -1,73 +1,68 @@
-// import { LogService } from "@/Game/LogService/LogService";
-// import { b2Body, b2BodyDef, b2BodyType, b2FixtureDef, b2PolygonShape, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
-// import { CollisionType } from "../../CollisionListener/Collision";
-// import { Scene } from "../../Scene/Scene";
-// import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
+import { LogService } from "@/Game/LogService/LogService";
+import { b2Body, b2BodyDef, b2BodyType, b2FixtureDef, b2PolygonShape, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
+import { ActiveEvents, Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
+import { Scene } from "../../Scene/Scene";
+import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
 
-// export interface GoalAreaProps extends GameObjectProps {
-//   w: number;
-//   h: number;
-// }
+export interface GoalAreaProps extends GameObjectProps {
+  w: number;
+  h: number;
+  onGoal: () => void;
+  ballColliders: ColliderHandle[];
+  rotation?: number;
+}
 
-// export default class GoalArea extends GameObject { // extend something general?
-//   scene: Scene;
-//   body: b2Body;
+// At this moment this component is translating from corner origins to center origin for rapier
+// I think I want to use corner positioning to make wall layout math easier
+export default class GoalArea extends GameObject { // extend something general?
+  scene: Scene;
+  onGoal: () => void;
+  ballColliders: ColliderHandle[];
   
-//   constructor(props: GoalAreaProps){
-//     super();
-//     this.scene = props.scene;
-//     this.body = this.createBody(props);
-//   }
+  constructor(props: GoalAreaProps) {
+    super();
+    this.scene = props.scene;
+    this.colliderHandle = this.createCollider(props);
+    this.ballColliders = props.ballColliders;
+    this.onGoal = props.onGoal
+  }
 
-//   createBody(props: GoalAreaProps){
-//     const bodyDef = new b2BodyDef();
-//     const fixDef = new b2FixtureDef();
+  createCollider(props: GoalAreaProps){
+    const groundColliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
+      .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
+      .setRotation((props.rotation ?? 0)*Math.PI/180)
+      .setActiveEvents(ActiveEvents.COLLISION_EVENTS);
 
-//     // Sensor: no collisions triggered, only collision detection
-//     fixDef.isSensor = true;
-    
-//     fixDef.shape = new b2PolygonShape().SetAsBox(props.w / 2 , props.h / 2);
-    
-//     bodyDef.position.Set(props.x + (props.w / 2) , props.y + (props.h / 2));
-    
-//     // Were found in Ball sample code
-//     // bodyDef.linearDamping = 0.0;
-//     // bodyDef.angularDamping = 0.0;
-    
-//     bodyDef.type = b2BodyType.b2_staticBody;
-//     const userData: BodyUserData = {
-//       gameObject: this,
-//       collisionType: CollisionType.GOAL,
-//     }
-//     bodyDef.userData = userData;
-    
-//     const returnBody = this.scene.world.CreateBody( bodyDef );
-//     returnBody.CreateFixture(fixDef);
-//     return returnBody;
-//   }
+    // // Sensor: no collisions triggered, only collision detection
+    // fixDef.isSensor = true;
 
-//   // No tick
+    // bodyDef.type = b2BodyType.b2_staticBody;
+    // const userData: BodyUserData = {
+    //   gameObject: this,
+    //   collisionType: CollisionType.GOAL,
+    // }
+    // bodyDef.userData = userData;
 
-//   render(canvas: HTMLCanvasElement){
-//     const c = canvas.getContext('2d');
-//     c.fillStyle = 'rgb(16, 121, 89)';
+    const returnColliderHandle = this.scene.world.createCollider(groundColliderDesc).handle;
+    return returnColliderHandle;
+  }
 
-//     const shape: b2PolygonShape = this.body.GetFixtureList().GetShape() as b2PolygonShape;
-//     const body: b2Body = this.body;
-//     const position: b2Vec2 = body.GetPosition();
+  // No tick
 
-//     const vertices = shape.m_vertices;
-//     c.beginPath();
-//     for (let i = 0; i < shape.m_count; i++){
-//       const outputVec = new b2Vec2(0, 0);
-//       body.GetWorldPoint(vertices[i], outputVec);
-//       if (i === 0){
-//         c.moveTo(outputVec.x, outputVec.y);
-//       }
-//       else{
-//         c.lineTo(outputVec.x, outputVec.y);
-//       }
-//     }
-//     c.fill();
-//   }
-// }
+  render(canvas: HTMLCanvasElement){
+    const collider = this.scene.world.getCollider(this.colliderHandle)
+    const { x: halfX, y: halfY } = collider.halfExtents()
+    const { x: xPosition, y: yPosition} = collider.translation();
+    const rotation = collider.rotation()
+
+    const c = canvas.getContext('2d');
+    c.fillStyle = 'rgb(16, 121, 89)';
+    c.fillRect( xPosition - halfX, yPosition - halfY, halfX*2, halfY*2);
+  }
+
+  handleCollision(oppositeColliderHandle, started){
+    if (started && this.ballColliders.includes(oppositeColliderHandle)) {
+      this.onGoal()
+    }
+  }
+}

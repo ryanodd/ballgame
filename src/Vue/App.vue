@@ -12,8 +12,8 @@ export default Vue.extend({
   name: "App",
   components: { MainLayout },
   mounted() {
-    //require('@/Game/GameService/SingleClientGame')
-    require('@/Game/GameService/netplayjs/myGame')
+    require('@/Game/GameService/SingleClientGame')
+    //require('@/Game/GameService/netplayjs/myGame')
 
     // the pre-netplayjs way of kicking things off
     //game = new GameService();

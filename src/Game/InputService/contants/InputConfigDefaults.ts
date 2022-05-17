@@ -17,10 +17,10 @@ const defaultXboxOneInputMapping: GamepadInputMapping = {
 }
 
 const defaultKeyboardMouseInputMapping: KeyboardMouseInputMapping = {
-  button1Key: "Z",
-  button2Key: "X",
-  button3Key: "C",
-  button4Key: "V",
+  button1Key: "z",
+  button2Key: "x",
+  button3Key: "c",
+  button4Key: "v",
   
   buttonUpKey: "ArrowUp",
   buttonRightKey: "ArrowRight",

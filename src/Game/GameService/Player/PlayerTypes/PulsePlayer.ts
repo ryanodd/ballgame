@@ -5,16 +5,16 @@ import { Scene } from "../../Scene/Scene";
 import { Player, PlayerProps } from "../Player";
 
 export interface PulsePlayerProps extends PlayerProps {
-  // DENSITY: number;
-  // FRICTION: number;
-  // RESTITUTION: number;
+  DENSITY: number;
+  FRICTION: number;
+  RESTITUTION: number;
   RADIUS: number;
 }
 
 export class PulsePlayer extends Player {
-  // DENSITY: number;
-  // FRICTION: number;
-  // RESTITUTION: number;
+  DENSITY: number;
+  FRICTION: number;
+  RESTITUTION: number;
   RADIUS: number;
 
   pulseObject: PulsePlayerObject | undefined;
@@ -23,11 +23,12 @@ export class PulsePlayer extends Player {
     super({
       playerIndex: props.playerIndex,
       netplayPlayerIndex: props.netplayPlayerIndex,
-      gamepadIndex: props.gamepadIndex
+      gamepadIndex: props.gamepadIndex,
+      inputConfig: props.inputConfig,
     });
-    // this.DENSITY = props.DENSITY;
-    // this.FRICTION = props.FRICTION;
-    // this.RESTITUTION = props.RESTITUTION;
+    this.DENSITY = props.DENSITY;
+    this.FRICTION = props.FRICTION;
+    this.RESTITUTION = props.RESTITUTION;
     this.RADIUS = props.RADIUS;
 
     this.pulseObject = undefined;
@@ -40,9 +41,9 @@ export class PulsePlayer extends Player {
       x: x,
       y: y,
       r: this.RADIUS,
-      // density: this.DENSITY,
-      // friction: this.FRICTION,
-      // restitution: this.RESTITUTION
+      density: this.DENSITY,
+      friction: this.FRICTION,
+      restitution: this.RESTITUTION
     });
     scene.addGameObject(this.pulseObject);
   }
@@ -61,7 +62,6 @@ export class PulsePlayer extends Player {
       yAxisInput = input.leftStickYAxis;
     }
     else {
-      console.log(input.buttonUp)
       if (input.buttonLeft) xAxisInput -= 1
       if (input.buttonRight) xAxisInput += 1
       if (input.buttonUp) yAxisInput += 1

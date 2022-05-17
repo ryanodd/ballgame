@@ -1,5 +1,5 @@
 import GameObject from "../GameObject/GameObject";
-import { World } from '@dimforge/rapier2d'
+import { World } from '@dimforge/rapier2d';
 
 export interface SceneProps {
   world: World;
@@ -50,9 +50,19 @@ export class Scene {
   addGameObject(newObject: GameObject){
     this.gameObjects.push(newObject);
   }
+
+  handleCollision(colliderHandle1, colliderHandle2, started) {
+    for (const gameObj of this.gameObjects) {
+      if (gameObj.colliderHandle === colliderHandle1) {
+        gameObj.handleCollision(colliderHandle2, started)
+      }
+      else if (gameObj.colliderHandle === colliderHandle2) {
+        gameObj.handleCollision(colliderHandle1, started)
+      }
+    }
+  }
   
   private renderGameObjects(canvas: HTMLCanvasElement) {
-    console.log(this.gameObjects)
     this.gameObjects.forEach(gameObject => {      
       gameObject.render(canvas)
     })

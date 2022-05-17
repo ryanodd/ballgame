@@ -11,11 +11,9 @@ export interface WallProps extends GameObjectProps {
 }
 
 // At this moment this component is translating from corner origins to center origin for rapier
-// still unsure what rapier is using so i;ll just try this out 
+// I think I want to use corner positioning to make wall layout math easier
 export default class Wall extends GameObject { // extend something general?
   scene: Scene;
-  colliderHandle: ColliderHandle;
-  body: b2Body;
   
   constructor(props: WallProps) {
     super();
@@ -34,18 +32,13 @@ export default class Wall extends GameObject { // extend something general?
   // No tick
 
   render(canvas: HTMLCanvasElement){
-    const c = canvas.getContext('2d');
-    c.fillStyle = 'rgb(209, 225, 235)';
-
-    console.log(this.colliderHandle)
     const collider = this.scene.world.getCollider(this.colliderHandle)
     const { x: halfX, y: halfY } = collider.halfExtents()
     const { x: xPosition, y: yPosition} = collider.translation();
     const rotation = collider.rotation()
 
-    console.log(`colliderHandle: ${collider.handle}, halfX: ${halfX}, halfY: ${halfY}, xPosition: ${xPosition}, yPosition: ${yPosition}`)
-
-    c.rect( xPosition - halfX, yPosition - halfY, halfX*2, halfY*2);
-    c.fill();
+    const c = canvas.getContext('2d');
+    c.fillStyle = 'rgb(209, 225, 235)';
+    c.fillRect( xPosition - halfX, yPosition - halfY, halfX*2, halfY*2);
   }
 }

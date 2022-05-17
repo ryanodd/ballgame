@@ -3,6 +3,7 @@
     <aspect-ratio-letterbox>
       <game-canvas />
     </aspect-ratio-letterbox>
+    <score-box />
     <netplay-menu v-if="this.shouldShowNetplayMenu" />
     <netplay-stats v-if="this.shouldShowNetplayStats" />
   </div>
@@ -16,9 +17,10 @@ import GameCanvas from "./GameCanvas.vue";
 import NetplayMenu from "./NetplayMenu.vue";
 import NetplayStats from "./NetplayStats.vue";
 import * as query from "query-string";
+import ScoreBox from "./ScoreBox.vue";
 
 export default Vue.extend({
-  components: { AspectRatioLetterbox, NetplayMenu, NetplayStats, GameCanvas },
+  components: { AspectRatioLetterbox, NetplayMenu, NetplayStats, GameCanvas, ScoreBox },
   name: "MainLayout",
   data: function() {
     return {

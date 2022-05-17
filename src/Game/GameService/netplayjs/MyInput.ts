@@ -26,7 +26,6 @@ export class MyInputReader extends DefaultInputReader {
     // Theory: are the gamepad inputs being serialized as part of the gamestate?
     // ^ would their serialization cause any problems?
     input.gamepads = navigator.getGamepads()
-    console.log(input.pressed)
     return input;
   }
 }

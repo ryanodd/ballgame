@@ -7,15 +7,13 @@ import { ColliderDesc, ColliderHandle, RigidBodyDesc, Vector } from "@dimforge/r
 
 export interface PulsePlayerProps extends GameObjectProps {
   r: number;
-  // density: number;
-  // friction: number;
-  // restitution: number;
+  density: number;
+  friction: number;
+  restitution: number;
 }
 
 export default class PulsePlayerObject extends GameObject { // extend something general?
   scene: Scene;
-  colliderHandle: ColliderHandle;
-  body: b2Body;
   
   constructor(props: PulsePlayerProps){
     super();
@@ -28,7 +26,11 @@ export default class PulsePlayerObject extends GameObject { // extend something 
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 
     // Create a cuboid collider attached to the dynamic rigidBody.
-    const colliderDesc = ColliderDesc.ball(props.r).setTranslation(props.x + props.r, props.y + props.r);
+    const colliderDesc = ColliderDesc.ball(props.r)
+      .setTranslation(props.x + props.r, props.y + props.r)
+      .setDensity(props.density)
+      .setFriction(props.friction)
+      .setRestitution(props.restitution)
     const returnCollider = this.scene.world.createCollider(colliderDesc, rigidBody.handle).handle;
     
     return returnCollider;
@@ -53,7 +55,7 @@ export default class PulsePlayerObject extends GameObject { // extend something 
     xInputForce -= velocity.x
     yInputForce -= velocity.y
 
-        // Don't know how to scalar multiply yet
+    // TODO Stop diagonal cheat. Need to enforce max radius or whatever you call it
     const impulseX = rigidBody.mass() * xInputForce; //disregard time factor. < ??what does this mean?
     const impulseY = rigidBody.mass() * yInputForce;
     const impulse = { x: impulseX, y: impulseY };

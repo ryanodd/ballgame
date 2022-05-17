@@ -5,15 +5,17 @@ import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
 
 export interface BallProps extends GameObjectProps {
   r: number;
+  density: number;
+  friction: number;
+  restitution: number;
 }
 
 export default class Ball extends GameObject {
   scene: Scene;
-  colliderHandle: ColliderHandle;
-  body: b2Body;
   
   constructor(props: BallProps){
     super();
+    console.log(props)
     this.scene = props.scene;
     this.colliderHandle = this.createCollider(props);
   }
@@ -23,7 +25,11 @@ export default class Ball extends GameObject {
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 
     // Create a cuboid collider attached to the dynamic rigidBody.
-    const colliderDesc = ColliderDesc.ball(props.r).setTranslation(props.x + props.r, props.y + props.r);
+    const colliderDesc = ColliderDesc.ball(props.r)
+      .setTranslation(props.x + props.r, props.y + props.r)
+      .setDensity(props.density)
+      .setFriction(props.friction)
+      .setRestitution(props.restitution)
     const returnCollider = this.scene.world.createCollider(colliderDesc, rigidBody.handle).handle;
     
     return returnCollider;
