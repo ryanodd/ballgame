@@ -1,6 +1,6 @@
 - multiplayer hash as myGame param
 	- requires some refactoring.
-	- would allow joining game differently (via pause menu) 
+	- would allow joining game differently (via pause menu)
 
 - pause menu
 	- start game in local, online button in menu?
