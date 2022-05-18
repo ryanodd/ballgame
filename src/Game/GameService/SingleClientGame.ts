@@ -1,10 +1,12 @@
 import { VueService, VueServicePlayer } from '@/Game/VueService/VueService';
 import { NetplayPlayer, DefaultInput, Game, JSONValue } from '@/lib/netplayjs'
 import { EventQueue, World } from '@dimforge/rapier2d';
+import { defaultInputConfig } from '../InputService/contants/InputConfigDefaults';
 import { MyInput, MyInputReader } from './netplayjs/MyInput';
-import { PulsePlayer } from './Player/PlayerTypes/PulsePlayer';
+import { Player } from './Player/Player';
 import { Scene } from './Scene/Scene';
 import { createScene1 } from './Scene/SceneFactory/Scene1';
+import { Session } from './Session/Session';
 import { Team } from './Team/Team';
 
 export class SingleClientGame {
@@ -17,112 +19,47 @@ export class SingleClientGame {
     {}
   );
 
-  teams = [
-    new Team({
-      teamIndex: 0,
-      players: [
-        new PulsePlayer({
-          playerIndex: 0,
-          netplayPlayerIndex: 0, // host
-          gamepadIndex: -1, // -1 is Keyboard/Mouse
-    
-          RADIUS: 0.240,
-          DENSITY: 0.5,
-          FRICTION: 0.5,
-          RESTITUTION: 0.0
-        })
-      ],
+  players: Player[] = [
+    new Player({
+      playerIndex: 0,
+      gamepadIndex: -1, // -1 is Keyboard/Mouse
+      inputConfig: {
+        ...defaultInputConfig,
+        keyboardMouseInputMapping: {
+          ...defaultInputConfig.keyboardMouseInputMapping,
+          buttonUpKey: 'w',
+          buttonRightKey: 'd',
+          buttonDownKey: 's',
+          buttonLeftKey: 'a',
+        },
+      }
     }),
-    new Team({
-      teamIndex: 1,
-      players: [
-        new PulsePlayer({
-          playerIndex: 1,
-          netplayPlayerIndex: 1, // client
-          gamepadIndex: -1, // -1 is Keyboard/Mouse
-
-          RADIUS: 0.240,
-          DENSITY: 0.5,
-          FRICTION: 0.5,
-          RESTITUTION: 0.0
-        }),
-      ]
-    }),
+    new Player({
+      playerIndex: 1,
+      gamepadIndex: -1, // -1 is Keyboard/Mouse
+    })
   ]
-
-  scene: Scene = createScene1({ teams: this.teams, game: this });
-  previousTimestamp = 0
-
-  someTestCopyOfThis = null
+  session: Session = new Session({ players: this.players })
 
   serialize(): JSONValue {
-    return {
-      snapshot: this.scene.world.takeSnapshot().toString()
-    } as JSONValue;
+    return this.session.serialize()
   }
 
   deserialize(value: JSONValue): void {
-    const snapshot = value['snapshot']
-    const splitSnapshot = snapshot.split(',')
-    const array = new Uint8Array(splitSnapshot)
-    this.scene.world = World.restoreSnapshot(array);
-  }
-
-  tick(playerInputs: Map<number, MyInput>) {
-    this.tickWorld();
-    this.tickPlayers(playerInputs)
-
-    // this.scene.world.colliders.forEachCollider((collider) => {
-    //   console.log(`x: ${collider.translation().x}, y: ${collider.translation().y}, hw: ${collider.halfExtents().x}, hh: ${collider.halfExtents().y}`)
-    // })
+    this.session.deserialize(value)
   }
 
   draw(canvas: HTMLCanvasElement) {
-    this.scene.render(canvas)
+    this.session.scene.render(canvas)
   }
-
-  // Tick Players: Input handling, mostly
-  tickPlayers(playerInputs: Map<number, MyInput>){
-    this.teams.forEach(team => {
-      team.players.forEach(player => {
-        for (const [playerId, input] of playerInputs.entries()) {
-          if (playerId === player.netplayPlayerIndex) {
-            player.tick(input); // passes the inputs for a single CLIENT (multiple gamepads still possible) 
-          }
-        }
-      })
-    })
-  }
-
-  // Physics tick
-  tickWorld() {
-    const eventQueue = new EventQueue(true);
-    this.scene.world.step(eventQueue);
-    eventQueue.drainCollisionEvents((handle1, handle2, started) => {
-      this.scene.handleCollision(handle1, handle2, started)
-    })
-  }
-
-  resetScene() {
-    this.scene = createScene1({ teams: this.teams, game: this })
-  }
-
-
 
   start() {
     const animate = (timestamp) => {
-      
-      const inputs: Map<number, MyInput> = new Map();
-      
-      this.teams.forEach(team => {
-        team.players.forEach(player => {
-          inputs.set(player.playerIndex, this.inputReader.getInput());
-        })
-      })
-      
-      // TODO populate this map ^
 
-      this.tick(inputs)
+      this.players.forEach(player => {
+        player.tick(this.inputReader.getInput())
+      })
+      this.session.tick()
 
       // Draw state to canvas.
       this.draw(this.canvas);

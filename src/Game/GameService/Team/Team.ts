@@ -1,23 +1,40 @@
 
 import { VueService } from "@/Game/VueService/VueService";
+import { JSONValue } from "@/lib/netplayjs";
 import { ConsoleLogger } from "@aws-amplify/core";
 import Vue from "vue";
+import { Character } from "../Player/Character";
 import { Player } from "../Player/Player";
 
 export interface TeamProps {
   teamIndex: number;
-  players: Player[];
+  characters: Character[];
 }
 
 export class Team {
   teamIndex: number;
-  players: Player[];
+  characters: Character[];
   score: number;
 
-  constructor({teamIndex, players}: TeamProps) {
+  constructor({teamIndex, characters}: TeamProps) {
     this.teamIndex = teamIndex
-    this.players = players
+    this.characters = characters
     this.score = 0;
+  }
+
+  serialize(): JSONValue {
+    return {
+      score: this.score,
+      characters: this.characters.map(character => character.serialize())
+    }
+  }
+
+  deserialize(value: JSONValue) {
+    this.score = value['score']
+    this.characters.forEach((character, i) => {
+      character.deserialize(value['characters'][i])
+    })
+    this.updateScore()
   }
 
   onGoal() {
@@ -29,7 +46,6 @@ export class Team {
     this.updateScore()
   }
   updateScore() {
-    console.log(this.teamIndex)
     if (this.teamIndex === 0) {
       VueService.setTeam1Score(this.score)
     }

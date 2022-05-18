@@ -5,23 +5,23 @@ import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
 import Bezier from "bezierjs"
 import { ColliderDesc, ColliderHandle, RigidBodyDesc, Vector } from "@dimforge/rapier2d";
 
-export interface PulsePlayerProps extends GameObjectProps {
+export interface PulseCharacterObjectProps extends GameObjectProps {
   r: number;
   density: number;
   friction: number;
   restitution: number;
 }
 
-export default class PulsePlayerObject extends GameObject { // extend something general?
+export default class PulseCharacterObject extends GameObject { // extend something general?
   scene: Scene;
   
-  constructor(props: PulsePlayerProps){
+  constructor(props: PulseCharacterObjectProps){
     super();
     this.scene = props.scene;
     this.colliderHandle = this.createCollider(props);
   }
 
-  createCollider(props: PulsePlayerProps){
+  createCollider(props: PulseCharacterObjectProps){
     const rigidBodyDesc = RigidBodyDesc.dynamic();
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 

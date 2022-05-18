@@ -1,31 +1,28 @@
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "@/Game/InputService/model/InputResult";
-import PulsePlayerObject from "../../GameObject/GameObjectFactory/PulsePlayerObject";
+import PulseCharacterObject from "../../GameObject/GameObjectFactory/PulseCharacterObject";
 import { MyInput } from "../../netplayjs/MyInput";
 import { Scene } from "../../Scene/Scene";
+import { Character, CharacterProps } from "../Character";
 import { Player, PlayerProps } from "../Player";
 
-export interface PulsePlayerProps extends PlayerProps {
+export interface PulseCharacterProps extends CharacterProps {
   DENSITY: number;
   FRICTION: number;
   RESTITUTION: number;
   RADIUS: number;
 }
 
-export class PulsePlayer extends Player {
+export class PulseCharacter extends Character {
   DENSITY: number;
   FRICTION: number;
   RESTITUTION: number;
   RADIUS: number;
 
-  pulseObject: PulsePlayerObject | undefined;
+  pulseObject: PulseCharacterObject | undefined;
 
-  constructor(props: PulsePlayerProps){
-    super({
-      playerIndex: props.playerIndex,
-      netplayPlayerIndex: props.netplayPlayerIndex,
-      gamepadIndex: props.gamepadIndex,
-      inputConfig: props.inputConfig,
-    });
+  constructor(props: PulseCharacterProps){
+    super({player: props.player})
+
     this.DENSITY = props.DENSITY;
     this.FRICTION = props.FRICTION;
     this.RESTITUTION = props.RESTITUTION;
@@ -36,7 +33,7 @@ export class PulsePlayer extends Player {
 
   // Puts new player Game Objects (usually a single object) into the given Scene world.
   createObjects(scene: Scene, x: number, y: number){
-    this.pulseObject = new PulsePlayerObject({
+    this.pulseObject = new PulseCharacterObject({
       scene: scene,
       x: x,
       y: y,
@@ -49,8 +46,8 @@ export class PulsePlayer extends Player {
   }
 
   // Detect input, do stuff
-  tick(input: MyInput){
-    this.handleMovement(this.getInput(input));
+  tick(input: GamepadInputResult | KeyboardMouseInputResult){
+    this.handleMovement(input);
   }
 
   handleMovement(input: GamepadInputResult | KeyboardMouseInputResult){

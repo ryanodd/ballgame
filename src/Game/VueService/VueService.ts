@@ -58,13 +58,13 @@ export class VueServiceImplementation {
 
   // SET BY GAME
   ////////////////
-  addPlayer(playerState: VueServicePlayer){
-    Vue.set(this.state.playerDict, playerState.index, playerState);
-  }
+  // addPlayer(playerState: VueServicePlayer){
+  //   Vue.set(this.state.playerDict, playerState.index, playerState);
+  // }
 
-  setPlayerResourceMeter(playerIndex: number, value: number){
-    Vue.set(this.state.playerDict[playerIndex], 'resourceMeter', value);
-  }
+  // setPlayerResourceMeter(playerIndex: number, value: number){
+  //   Vue.set(this.state.playerDict[playerIndex], 'resourceMeter', value);
+  // }
 
   setNetplayConnectingToServer(value: boolean){
     Vue.set(this.state.netplay, 'connectingToServer', value);

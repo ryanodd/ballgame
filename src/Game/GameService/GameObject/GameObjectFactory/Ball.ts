@@ -15,7 +15,6 @@ export default class Ball extends GameObject {
   
   constructor(props: BallProps){
     super();
-    console.log(props)
     this.scene = props.scene;
     this.colliderHandle = this.createCollider(props);
   }

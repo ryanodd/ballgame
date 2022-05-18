@@ -4,7 +4,9 @@ import GoalArea from "../../GameObject/GameObjectFactory/GoalArea";
 import Wall from "../../GameObject/GameObjectFactory/Wall";
 import { MyGame } from "../../netplayjs/myGame";
 import { MyRollbackWrapper } from "../../netplayjs/myRollbackWrapper";
+import { Character } from "../../Player/Character";
 import { Player } from "../../Player/Player";
+import { Session } from "../../Session/Session";
 import { SingleClientGame } from "../../SingleClientGame";
 import { Team } from "../../Team/Team";
 import { Scene } from "../Scene";
@@ -19,7 +21,7 @@ const ARENA_WIDTH = 15; // Includes walls, but not net depth
 const ARENA_HEIGHT = 7.8;
 
 const NET_HEIGHT = 4;
-const NET_DEPTH = 0.4; // Doesn't include back wall of net, only GoalArea
+const NET_DEPTH = 0.4; // Doesn't include back wall of net, only hollow area
 
 const ARENA_HORIZONTAL_PADDING = (SCENE_WIDTH - ARENA_WIDTH) / 2; // Doesn't include net depth
 const ARENA_VERTICAL_PADDING = (NON_UI_HEIGHT - ARENA_HEIGHT) / 2;
@@ -30,7 +32,7 @@ const WALL_THICKNESS = 0.1;
 
 export interface Scene1Props {
   teams: Team[];
-  game: MyGame | SingleClientGame; // TODO this is bad... separate GAME out to be something like a MATCH w/ Score/players only.
+  session: Session;
 }
 
 export function createScene1(props: Scene1Props): Scene {
@@ -44,13 +46,13 @@ export function createScene1(props: Scene1Props): Scene {
     gameObjects: []
   });
 
-  const player1: Player | undefined = props.teams[0].players[0];
-  if (player1){
-    player1.createObjects(returnScene, 4, 4);
+  const character1: Character | undefined = props.teams[0].characters[0];
+  if (character1){
+    character1.createObjects(returnScene, 4, 4);
   }
-  const player2: Player | undefined = props.teams[1].players[0];
-  if (player2){
-    player2.createObjects(returnScene, 8, 4);
+  const character2: Character | undefined = props.teams[1].characters[0];
+  if (character2){
+    character2.createObjects(returnScene, 8, 4);
   }
 
   // Need to declare separately to give handle for collision tracking purposes.
@@ -130,7 +132,7 @@ export function createScene1(props: Scene1Props): Scene {
     ],
     onGoal: () => {
       props.teams[1].onGoal();
-      props.game.resetScene();
+      props.session.resetScene();
     }
   }));
 
@@ -182,7 +184,7 @@ export function createScene1(props: Scene1Props): Scene {
     ],
     onGoal: () => {
       props.teams[0].onGoal();
-      props.game.resetScene();
+      props.session.resetScene();
     }
   }));
 
