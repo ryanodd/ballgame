@@ -1,17 +1,13 @@
+- multiplayer hash as myGame param
+	- requires some refactoring.
+	- would allow joining game differently (via pause menu) 
 
+- pause menu
+	- start game in local, online button in menu?
 
-- separate pulseCHARACTER from pulsePlayer? Player should CONTAIN the character being used I think.
 - game end conditions: time, but allow unlimited. leave design room for first-to-X
-
-LOW PRIORITY
-- convert to simpler configged inputs BEFORE input serialization
-	- no reason to at the moment? How costly is it.
-	- is there actually any advantage?
-		- yeah cuz rn we need both clients to know each others' input config & apply it after deserialization
-			- that's whack.
-- small input delay
-	- https://github.com/rameshvarun/netplayjs/issues/27
 - matchmaking server w/ rooms
+
 - research: game physics. How to make better-feeling physics objects.
 	- ball max speed vs character max speed is quite relevant. Maybe RL boost has it right
 	- ball spin, render it in a way where spin is visible
@@ -23,10 +19,37 @@ LOW PRIORITY
 		- diagonal speed cheats
 		- anything else?
 	- attraction ability
-- arenas with curved walls
+
+- curved walls
 	- just jack up the border-radius on a hollow rectangle? is that possible?
 	- polylines or https://rapier.rs/docs/user_guides/javascript/colliders/#heightfields
 	- research: HTML canvas drawing methods for this
+
+- cpu players
+
+- think about: character,stage,cpu select
+	- COULD I INCORPORATE PHYSICS TWEAKING IN HERE SOMEHOW
+
+- animations:
+	- cpu canvas animation. Google it biyatch
+	- contacts should probably glow (lighting on walls & objects) & spark (particle effects)
+	- screen shake?
+
+- research: deal with stalling better
+	- game should not stall... at all. ie the clock should just keep ticking while stalled
+	- ^ maybe only possible with authoratative server..
+		-BUT what would it even look like to NOT stall on a server?
+			- I promised myself it would be an easy p2p->sever port
+				- therefore it must be easy to do p2p stall handling assuming host's machine doesn't stall..
+
+LOW PRIORITY
+- convert to simpler configged inputs BEFORE input serialization
+	- no reason to at the moment? How costly is it.
+	- is there actually any advantage?
+		- yeah cuz rn we need both clients to know each others' input config & apply it after deserialization
+			- that's whack.
+- small input delay
+	- https://github.com/rameshvarun/netplayjs/issues/27
 - research: how bad is p2p.
 	- is it exploitable in any way? Does the host have an advantage?
 		- theoretically. But it would be hard to do in a subtle way
@@ -34,8 +57,5 @@ LOW PRIORITY
 	- are there any actual advantages to the server-of-truth approach?
 	- how difficult would it be to port to server-of-truth?
 	- what is the tech debt of sticking with p2p? methinks not very high?
-- research: deal with stalling better
-	- game should not stall... at all. ie the clock should just keep ticking while stalled
-	- ^ maybe only possible with authoratative server 
 - control config menu
 	- localStorage??
