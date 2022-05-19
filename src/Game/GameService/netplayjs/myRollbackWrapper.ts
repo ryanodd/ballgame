@@ -1,15 +1,11 @@
-import Peer from 'peerjs'
-import { DefaultInput } from '@/lib/netplayjs/defaultinput'
-import EWMASD from '@/lib/netplayjs/ewmasd'
-import { NetplayPlayer } from '@/lib/netplayjs/types'
-
-import { Game, GameClass } from '@/lib/netplayjs/game'
-import { RollbackNetcode } from '@/lib/netplayjs/netcode/rollback'
 import { MyInputReader } from './MyInput'
 
 import * as query from "query-string";
 import { assert } from "chai";
-import { VueService } from '@/Game/VueService/VueService'
+import EWMASD from '../../../lib/netplayjs/ewmasd';
+import { DefaultInput, Game, GameClass, NetplayPlayer } from '../../../lib/netplayjs';
+import { RollbackNetcode } from '../../../lib/netplayjs/netcode/rollback';
+import Peer, { DataConnection } from 'peerjs';
 
 const PING_INTERVAL = 100;
 
@@ -20,8 +16,6 @@ export class MyRollbackWrapper {
 
   /** The canvas that the game will be rendered onto. */
   canvas: HTMLCanvasElement;
-
-  vueService: typeof VueService = VueService;
 
   inputReader: MyInputReader;
 
@@ -82,16 +76,16 @@ export class MyRollbackWrapper {
 
   start() {
     console.info("Creating a PeerJS instance.");
-    this.vueService.setNetplayConnectingToServer(true)
+    // this.vueService.setNetplayConnectingToServer(true)
 
     this.peer = new Peer();
     this.peer.on("error", (err) => {
-      this.vueService.setNetplayErrorMessage(JSON.stringify(err))
+      // this.vueService.setNetplayErrorMessage(JSON.stringify(err))
       console.error(err);
     });
 
     this.peer!.on("open", (id) => {
-      this.vueService.setNetplayConnectingToServer(false)
+      // this.vueService.setNetplayConnectingToServer(false)
 
       // Try to parse the room from the hash. If we find one,
       // we are a client.
@@ -100,7 +94,7 @@ export class MyRollbackWrapper {
 
       if (isClient) {
         // We are a client, so connect to the room from the hash.
-        this.vueService.setNetplayConnectedToPeer(true)
+        // this.vueService.setNetplayConnectedToPeer(true)
 
         console.info(`Connecting to room ${parsedHash.room}.`);
 
@@ -115,7 +109,7 @@ export class MyRollbackWrapper {
         });
 
         conn.on("error", (err) => {
-          this.vueService.setNetplayErrorMessage(JSON.stringify(err))
+          // this.vueService.setNetplayErrorMessage(JSON.stringify(err))
           console.error(err)
         });
 
@@ -133,7 +127,7 @@ export class MyRollbackWrapper {
 
         // Show the join link.
         const joinURL = `${window.location.href}#room=${id}`;
-        this.vueService.setNetplayJoinUrl(joinURL)
+        // this.vueService.setNetplayJoinUrl(joinURL)
 
         // Construct the players array.
         const players = [
@@ -144,10 +138,10 @@ export class MyRollbackWrapper {
         // Wait for a connection from a client.
         this.peer!.on("connection", (conn) => {
           // Make the menu disappear.
-          this.vueService.setNetplayConnectedToPeer(true)
+          // this.vueService.setNetplayConnectedToPeer(true)
           
           conn.on("error", (err) => {
-            this.vueService.setNetplayErrorMessage(JSON.stringify(err))
+            // this.vueService.setNetplayErrorMessage(JSON.stringify(err))
             console.error(err)
           });
 
@@ -167,7 +161,7 @@ export class MyRollbackWrapper {
     return initialInputs;
   }
 
-  startHost(players: Array<NetplayPlayer>, conn: Peer.DataConnection) {
+  startHost(players: Array<NetplayPlayer>, conn: DataConnection) {
     console.info("Starting a rollback host.");
 
     this.game = new this.gameClass(this.canvas, players);
@@ -213,7 +207,7 @@ export class MyRollbackWrapper {
     });
   }
 
-  startClient(players: Array<NetplayPlayer>, conn: Peer.DataConnection) {
+  startClient(players: Array<NetplayPlayer>, conn: DataConnection) {
     console.info("Starting a lockstep client.");
 
     this.game = new this.gameClass(this.canvas, players);
@@ -266,13 +260,13 @@ export class MyRollbackWrapper {
       this.game!.draw(this.canvas);
 
       // Update stats
-      this.vueService.setNetplayPing(this.pingMeasure.average().toFixed(2))
-      this.vueService.setNetplayPingStdDev(this.pingMeasure.stddev().toFixed(2))
-      this.vueService.setNetplayHistoryLength(this.rollbackNetcode!.history.length)
-      this.vueService.setNetplayFrame(this.rollbackNetcode!.currentFrame())
-      this.vueService.setNetplayLargestFutureSize(this.rollbackNetcode!.largestFutureSize())
-      this.vueService.setNetplayPredictedFrames(this.rollbackNetcode!.predictedFrames())
-      this.vueService.setNetplayStalling(this.rollbackNetcode!.shouldStall())
+      // this.vueService.setNetplayPing(this.pingMeasure.average().toFixed(2))
+      // this.vueService.setNetplayPingStdDev(this.pingMeasure.stddev().toFixed(2))
+      // this.vueService.setNetplayHistoryLength(this.rollbackNetcode!.history.length)
+      // this.vueService.setNetplayFrame(this.rollbackNetcode!.currentFrame())
+      // this.vueService.setNetplayLargestFutureSize(this.rollbackNetcode!.largestFutureSize())
+      // this.vueService.setNetplayPredictedFrames(this.rollbackNetcode!.predictedFrames())
+      // this.vueService.setNetplayStalling(this.rollbackNetcode!.shouldStall())
 
       // Request another frame.
       requestAnimationFrame(animate);

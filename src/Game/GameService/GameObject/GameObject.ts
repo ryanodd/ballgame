@@ -16,14 +16,12 @@ export interface GameObjectProps {
 
 export default abstract class GameObject {
   abstract scene: Scene;
-  colliderHandle: ColliderHandle | null = null;
+  colliderHandle: ColliderHandle = -1;
   markedForDeletion = false;
 
-  abstract render(canvas: HTMLCanvasElement): void;
+  abstract render(c: CanvasRenderingContext2D): void;
   tick(){
-    0; // so the compiler doesn't complain.
   }
   handleCollision(oppositeColliderHandle: ColliderHandle, started: boolean): void {
-    0;// so the compiler doesn't complain.
   }
 }

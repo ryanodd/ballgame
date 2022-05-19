@@ -1,10 +1,5 @@
-
-import { VueService } from "@/Game/VueService/VueService";
-import { JSONValue } from "@/lib/netplayjs";
-import { ConsoleLogger } from "@aws-amplify/core";
-import Vue from "vue";
+import { JSONValue } from "../../../lib/netplayjs";
 import { Character } from "../Player/Character";
-import { Player } from "../Player/Player";
 
 export interface TeamProps {
   teamIndex: number;
@@ -47,10 +42,10 @@ export class Team {
   }
   updateScore() {
     if (this.teamIndex === 0) {
-      VueService.setTeam1Score(this.score)
+      // VueService.setTeam1Score(this.score)
     }
     else if (this.teamIndex === 1) {
-      VueService.setTeam2Score(this.score)
+      // VueService.setTeam2Score(this.score)
     }
   }
 }

@@ -1,4 +1,4 @@
-import Peer from "peerjs";
+import Peer, { DataConnection } from "peerjs";
 import { DefaultInput } from "./defaultinput";
 import EWMASD from "./ewmasd";
 import { NetplayPlayer } from "./types";
@@ -30,7 +30,7 @@ export class RollbackWrapper extends GameWrapper {
     return initialInputs;
   }
 
-  startHost(players: Array<NetplayPlayer>, conn: Peer.DataConnection) {
+  startHost(players: Array<NetplayPlayer>, conn: DataConnection) {
     console.info("Starting a lcokstep host.");
 
     this.game = new this.gameClass(this.canvas, players);
@@ -76,7 +76,7 @@ export class RollbackWrapper extends GameWrapper {
     });
   }
 
-  startClient(players: Array<NetplayPlayer>, conn: Peer.DataConnection) {
+  startClient(players: Array<NetplayPlayer>, conn: DataConnection) {
     console.info("Starting a lockstep client.");
 
     this.game = new this.gameClass(this.canvas, players);

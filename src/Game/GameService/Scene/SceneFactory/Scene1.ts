@@ -2,12 +2,8 @@ import { World } from "@dimforge/rapier2d";
 import Ball from "../../GameObject/GameObjectFactory/Ball";
 import GoalArea from "../../GameObject/GameObjectFactory/GoalArea";
 import Wall from "../../GameObject/GameObjectFactory/Wall";
-import { MyGame } from "../../netplayjs/myGame";
-import { MyRollbackWrapper } from "../../netplayjs/myRollbackWrapper";
 import { Character } from "../../Player/Character";
-import { Player } from "../../Player/Player";
 import { Session } from "../../Session/Session";
-import { SingleClientGame } from "../../SingleClientGame";
 import { Team } from "../../Team/Team";
 import { Scene } from "../Scene";
 

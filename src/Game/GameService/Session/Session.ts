@@ -8,9 +8,9 @@ import { Scene } from "../Scene/Scene";
 import { PulseCharacter } from "../Player/PlayerTypes/PulseCharacter";
 import { createScene1 } from "../Scene/SceneFactory/Scene1";
 import { EventQueue, World } from "@dimforge/rapier2d";
-import { JSONValue } from "@/lib/netplayjs";
 import { MyInput } from "../netplayjs/MyInput";
 import { Player } from "../Player/Player";
+import { JSONValue } from "../../../lib/netplayjs";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface SessionProps {

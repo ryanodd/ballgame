@@ -1,8 +1,5 @@
-import { LogService } from "@/Game/LogService/LogService";
-import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import { Scene } from "../../Scene/Scene";
 import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
-import Bezier from "bezierjs"
 import { ColliderDesc, ColliderHandle, RigidBodyDesc, Vector } from "@dimforge/rapier2d";
 
 export interface PulseCharacterObjectProps extends GameObjectProps {
@@ -43,7 +40,7 @@ export default class PulseCharacterObject extends GameObject { // extend somethi
     const ACCELERATION_CONSTANT_Y = 3;
 
     const collider = this.scene.world.getCollider(this.colliderHandle)
-    const rigidBody = this.scene.world.getRigidBody(collider.parent())
+    const rigidBody = this.scene.world.getRigidBody(collider.parent() as number)
     const velocity = rigidBody.linvel()
 
     let xInputForce = xAxisInput * ACCELERATION_CONSTANT_X;
@@ -69,11 +66,9 @@ export default class PulseCharacterObject extends GameObject { // extend somethi
   }
 
   pulse(){
-    const pulseRadiusBez = new Bezier(0,0, 0,0, 0,0, 0,0);
   }
 
-  render(canvas: HTMLCanvasElement){
-    const c = canvas.getContext('2d');
+  render(c: CanvasRenderingContext2D ){
     c.fillStyle = 'rgb(126, 226, 151)';
 
     const collider = this.scene.world.getCollider(this.colliderHandle)

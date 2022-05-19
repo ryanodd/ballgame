@@ -1,5 +1,3 @@
-import { LogService } from "@/Game/LogService/LogService";
-import { b2Body, b2BodyDef, b2BodyType, b2FixtureDef, b2PolygonShape, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import { Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
 import { Scene } from "../../Scene/Scene";
 import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
@@ -31,13 +29,12 @@ export default class Wall extends GameObject { // extend something general?
 
   // No tick
 
-  render(canvas: HTMLCanvasElement){
+  render(c: CanvasRenderingContext2D ){
     const collider = this.scene.world.getCollider(this.colliderHandle)
     const { x: halfX, y: halfY } = collider.halfExtents()
     const { x: xPosition, y: yPosition} = collider.translation();
     const rotation = collider.rotation()
 
-    const c = canvas.getContext('2d');
     c.fillStyle = 'rgb(209, 225, 235)';
     c.fillRect( xPosition - halfX, yPosition - halfY, halfX*2, halfY*2);
   }

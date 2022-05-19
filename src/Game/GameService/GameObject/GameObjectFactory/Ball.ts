@@ -1,4 +1,3 @@
-import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2FixtureDef, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 import { Collider, ColliderDesc, ColliderHandle, RigidBody, RigidBodyDesc } from "@dimforge/rapier2d";
 import { Scene } from "../../Scene/Scene";
 import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
@@ -36,8 +35,7 @@ export default class Ball extends GameObject {
 
   // No tick
 
-  render(canvas: HTMLCanvasElement){
-    const c = canvas.getContext('2d');
+  render(c: CanvasRenderingContext2D ){
     c.fillStyle = 'rgb(200, 0, 0)';
 
     const collider = this.scene.world.getCollider(this.colliderHandle)

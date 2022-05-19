@@ -2,7 +2,7 @@ import { DefaultInputReader } from "./defaultinput";
 import { NetplayPlayer } from "./types";
 
 import { GameClass } from "./game";
-import Peer from "peerjs";
+import Peer, { DataConnection } from "peerjs";
 
 import * as query from "query-string";
 import { assert } from "chai";
@@ -244,9 +244,9 @@ export abstract class GameWrapper {
     }, 1000);
   }
 
-  abstract startHost(players: Array<NetplayPlayer>, conn: Peer.DataConnection);
+  abstract startHost(players: Array<NetplayPlayer>, conn: DataConnection): void;
   abstract startClient(
     players: Array<NetplayPlayer>,
-    conn: Peer.DataConnection
-  );
+    conn: DataConnection
+  ): void;
 }

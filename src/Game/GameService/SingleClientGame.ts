@@ -1,6 +1,5 @@
-import { VueService, VueServicePlayer } from '@/Game/VueService/VueService';
-import { NetplayPlayer, DefaultInput, Game, JSONValue } from '@/lib/netplayjs'
 import { EventQueue, World } from '@dimforge/rapier2d';
+import { JSONValue } from '../../lib/netplayjs';
 import { defaultInputConfig } from '../InputService/contants/InputConfigDefaults';
 import { MyInput, MyInputReader } from './netplayjs/MyInput';
 import { Player } from './Player/Player';
@@ -50,7 +49,10 @@ export class SingleClientGame {
   }
 
   draw(canvas: HTMLCanvasElement) {
-    this.session.scene.render(canvas)
+    const c = canvas.getContext('2d')
+    if (c !== null) {
+      this.session.scene.render(c)
+    }
   }
 
   start() {

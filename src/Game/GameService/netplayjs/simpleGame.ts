@@ -1,4 +1,4 @@
-import { NetplayPlayer, DefaultInput, Game, RollbackWrapper } from '@/lib/netplayjs';
+import { DefaultInput, Game, NetplayPlayer, RollbackWrapper } from "../../../lib/netplayjs";
 
 export class SimpleGame extends Game {
   static timestep = 1000 / 60;

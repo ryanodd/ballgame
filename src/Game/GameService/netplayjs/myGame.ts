@@ -1,8 +1,8 @@
-import { NetplayPlayer, Game, JSONValue } from '@/lib/netplayjs'
 import { Player } from '../Player/Player';
 import { MyInput } from './MyInput';
 import { MyRollbackWrapper } from './myRollbackWrapper';
 import { Session } from '../Session/Session';
+import { Game, JSONValue, NetplayPlayer } from '../../../lib/netplayjs';
 
 export class MyGame extends Game {
   static timestep = 1000 / 60;
@@ -47,7 +47,10 @@ export class MyGame extends Game {
   }
 
   draw(canvas: HTMLCanvasElement) {
-    this.session.scene.render(canvas)
+    const c = canvas.getContext('2d');
+    if (c !== null) {
+      this.session.scene.render(c)
+    }
   }
 }
 

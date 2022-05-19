@@ -1,5 +1,4 @@
-import { DefaultInput, DefaultInputReader } from '@/lib/netplayjs'
-import * as utils from '@/lib/netplayjs/utils'
+import { DefaultInput, DefaultInputReader } from "../../../lib/netplayjs";
 
 export class MyInput extends DefaultInput {
   gamepads: Gamepad[] = []

@@ -91,7 +91,7 @@ export interface GameType<TState, TInput> {
   canvasWidth: number;
   canvasHeight: number;
 
-  draw(state: TState, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D);
+  draw(state: TState, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): void;
 
   getInputReader(
     document: HTMLDocument,

@@ -1,11 +1,8 @@
-import { defaultInputConfig } from "@/Game/InputService/contants/InputConfigDefaults";
-import { InputService } from "@/Game/InputService/InputService";
-import { InputConfig } from "@/Game/InputService/model/InputConfig";
-import { GamepadInputResult, KeyboardMouseInputResult } from "@/Game/InputService/model/InputResult";
-import { VueService } from "@/Game/VueService/VueService";
-import { JSONValue, NetplayPlayer } from "@/lib/netplayjs";
+import { defaultInputConfig } from "../../InputService/contants/InputConfigDefaults";
+import { InputService } from "../../InputService/InputService";
+import { InputConfig } from "../../InputService/model/InputConfig";
+import { GamepadInputResult, KeyboardMouseInputResult } from "../../InputService/model/InputResult";
 import { MyInput } from "../netplayjs/MyInput";
-import { Scene } from "../Scene/Scene";
 import { Character } from "./Character";
 
 export interface PlayerProps {

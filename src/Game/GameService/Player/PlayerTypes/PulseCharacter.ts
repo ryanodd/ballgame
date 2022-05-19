@@ -1,4 +1,4 @@
-import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "@/Game/InputService/model/InputResult";
+import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
 import PulseCharacterObject from "../../GameObject/GameObjectFactory/PulseCharacterObject";
 import { MyInput } from "../../netplayjs/MyInput";
 import { Scene } from "../../Scene/Scene";
@@ -65,6 +65,6 @@ export class PulseCharacter extends Character {
       if (input.buttonDown) yAxisInput -= 1
     }
     
-    this.pulseObject.handleMovement(xAxisInput, yAxisInput);
+    this.pulseObject?.handleMovement(xAxisInput, yAxisInput);
   }
 }

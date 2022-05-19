@@ -119,7 +119,7 @@
 //     return bulletObject;
 //   }
 
-//   render(canvas: HTMLCanvasElement){
+//   render(c: CanvasRenderingContext2D ){
 //     const c = canvas.getContext('2d');
 //     c.fillStyle = 'rgb(126, 226, 151)';
 

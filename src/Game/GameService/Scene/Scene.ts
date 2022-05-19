@@ -1,5 +1,5 @@
 import GameObject from "../GameObject/GameObject";
-import { World } from '@dimforge/rapier2d';
+import { ColliderHandle, World } from '@dimforge/rapier2d';
 
 export interface SceneProps {
   world: World;
@@ -27,31 +27,31 @@ export class Scene {
     //nothin yet
   }
 
-  render(canvas: HTMLCanvasElement) {
+  render(c: CanvasRenderingContext2D) {
     // Set rendering size to actual pixel size (to render at the best possible resolution)
-    const canvasElementWidth = canvas.getBoundingClientRect().width
-    const canvasElementHeight = canvas.getBoundingClientRect().height
-    canvas.width = canvasElementWidth;
-    canvas.height = canvasElementHeight;
+    const canvasElementWidth = c.canvas.getBoundingClientRect().width
+    const canvasElementHeight = c.canvas.getBoundingClientRect().height
+    c.canvas.width = canvasElementWidth;
+    c.canvas.height = canvasElementHeight;
 
     // flip canvas y-axis: to make box2d & canvas coordinate systems match y-direction (bottom-up)
-    canvas.getContext('2d').transform(1, 0, 0, -1, 0, canvas.height)
+    c.transform(1, 0, 0, -1, 0, c.canvas.height)
 
     // Scale so that we can use our own units when drawing with coordinates
-    const xScaling = canvas.width / this.unitWidth;
-    const yScaling = canvas.height / this.unitHeight;
+    const xScaling = c.canvas.width / this.unitWidth;
+    const yScaling = c.canvas.height / this.unitHeight;
     const squareScaling = Math.min(xScaling, yScaling);
-    canvas.getContext('2d').scale(squareScaling, squareScaling);
+    c.scale(squareScaling, squareScaling);
 
-    this.renderBackground(canvas)
-    this.renderGameObjects(canvas)
+    this.renderBackground(c)
+    this.renderGameObjects(c)
   }
 
   addGameObject(newObject: GameObject){
     this.gameObjects.push(newObject);
   }
 
-  handleCollision(colliderHandle1, colliderHandle2, started) {
+  handleCollision(colliderHandle1: ColliderHandle, colliderHandle2: ColliderHandle, started: boolean) {
     for (const gameObj of this.gameObjects) {
       if (gameObj.colliderHandle === colliderHandle1) {
         gameObj.handleCollision(colliderHandle2, started)
@@ -62,15 +62,14 @@ export class Scene {
     }
   }
   
-  private renderGameObjects(canvas: HTMLCanvasElement) {
+  private renderGameObjects(c: CanvasRenderingContext2D) {
     this.gameObjects.forEach(gameObject => {      
-      gameObject.render(canvas)
+      gameObject.render(c)
     })
   }
 
-  private renderBackground(canvas: HTMLCanvasElement) {
-    const c = canvas.getContext('2d');
+  private renderBackground(c: CanvasRenderingContext2D) {
     c.fillStyle = 'rgb(42, 43, 49)';
-    c.fillRect(0, 0, canvas.width, canvas.height);
+    c.fillRect(0, 0, c.canvas.width, c.canvas.height);
   }
 }

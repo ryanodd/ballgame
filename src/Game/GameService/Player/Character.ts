@@ -1,9 +1,5 @@
-import { defaultInputConfig } from "@/Game/InputService/contants/InputConfigDefaults";
-import { InputService } from "@/Game/InputService/InputService";
-import { InputConfig } from "@/Game/InputService/model/InputConfig";
-import { GamepadInputResult, KeyboardMouseInputResult } from "@/Game/InputService/model/InputResult";
-import { VueService } from "@/Game/VueService/VueService";
-import { JSONValue, NetplayPlayer } from "@/lib/netplayjs";
+import { JSONValue } from "../../../lib/netplayjs";
+import { GamepadInputResult, KeyboardMouseInputResult } from "../../InputService/model/InputResult";
 import { MyInput } from "../netplayjs/MyInput";
 import { Scene } from "../Scene/Scene";
 import { Player } from "./Player";
@@ -28,7 +24,7 @@ export abstract class Character {
     props.player.setCharacter(this)
   }
 
-  abstract createObjects(scene: Scene, x: number, y: number);
+  abstract createObjects(scene: Scene, x: number, y: number): void;
   
   // Detect input, do stuff
   abstract tick(input: GamepadInputResult | KeyboardMouseInputResult): void

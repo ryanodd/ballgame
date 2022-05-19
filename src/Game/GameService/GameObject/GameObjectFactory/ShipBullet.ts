@@ -63,7 +63,7 @@
 //     this.markedForDeletion = true;
 //   }
 
-//   render(canvas: HTMLCanvasElement){
+//   render(c: CanvasRenderingContext2D ){
 //     const c = canvas.getContext('2d');
 //     c.fillStyle = 'rgb(209, 225, 235)';
 

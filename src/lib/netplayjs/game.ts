@@ -33,5 +33,5 @@ export type GameClass = {
 };
 
 export abstract class Game extends NetplayState<DefaultInput> {
-  abstract draw(canvas: HTMLCanvasElement);
+  abstract draw(canvas: HTMLCanvasElement): void;
 }
