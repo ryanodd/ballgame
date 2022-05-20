@@ -3,16 +3,16 @@ import { MyInputReader } from './MyInput'
 import * as query from "query-string";
 import { assert } from "chai";
 import EWMASD from '../../../lib/netplayjs/ewmasd';
-import { DefaultInput, Game, GameClass, NetplayPlayer } from '../../../lib/netplayjs';
+import { DefaultInput, NetplayPlayer } from '../../../lib/netplayjs';
 import { RollbackNetcode } from '../../../lib/netplayjs/netcode/rollback';
 import Peer, { DataConnection } from 'peerjs';
+import { Store } from 'redux';
+import { MyGame } from './myGame';
+import { SET_NETPLAY_DATA } from '../../../redux/actions';
 
 const PING_INTERVAL = 100;
 
 export class MyRollbackWrapper {
-
-  // The class (not the instance) of the input serializable game (myGame)
-  gameClass: GameClass;
 
   /** The canvas that the game will be rendered onto. */
   canvas: HTMLCanvasElement;
@@ -24,9 +24,9 @@ export class MyRollbackWrapper {
   pingMeasure: EWMASD = new EWMASD(0.2); // Ryan: I don't know what this 0.2 does
 
   // The actual instance of the input serializable game class 
-  game?: Game;
+  game?: MyGame;
 
-  rollbackNetcode?: RollbackNetcode<Game, DefaultInput>;
+  rollbackNetcode?: RollbackNetcode<MyGame, DefaultInput>;
 
   isChannelOrdered(channel: RTCDataChannel) {
     return channel.ordered;
@@ -46,37 +46,29 @@ export class MyRollbackWrapper {
     assert.isTrue(this.isChannelReliable(channel), "Channel must be reliable.");
   }
 
-  constructor(gameClass: GameClass) {
-    this.gameClass = gameClass;
-
-    this.stateSyncPeriod = this.gameClass.stateSyncPeriod || 1;
+  constructor() {
+    /**
+     * How often should the state be synced. By default this happens
+     * every frame. Set to zero to indicate that the state is deterministic
+     * and doesn't need to be synced.
+     */
+    this.stateSyncPeriod = 1;
 
     // Find canvas for game.
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement
 
-    if (
-      this.gameClass.touchControls &&
-      window.navigator.userAgent.toLowerCase().includes("mobile")
-    ) {
-      for (const [name, control] of Object.entries(
-        this.gameClass.touchControls
-      )) {
-        control.show();
-      }
-    }
-
     this.inputReader = new MyInputReader(
       this.canvas,
-      this.gameClass.pointerLock || false,
-      this.gameClass.touchControls || {}
+      false,
+      {}
     );
   }
 
   peer?: Peer;
 
-  start() {
+  start(store: Store) {
     console.info("Creating a PeerJS instance.");
-    // this.vueService.setNetplayConnectingToServer(true)
+    store.dispatch({ type: SET_NETPLAY_DATA, payload: { connectingToServer: true } })
 
     this.peer = new Peer();
     this.peer.on("error", (err) => {
@@ -85,7 +77,7 @@ export class MyRollbackWrapper {
     });
 
     this.peer!.on("open", (id) => {
-      // this.vueService.setNetplayConnectingToServer(false)
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { connectingToServer: false } })
 
       // Try to parse the room from the hash. If we find one,
       // we are a client.
@@ -119,7 +111,7 @@ export class MyRollbackWrapper {
           new NetplayPlayer(1, true, false), // Player 1 is us, a client
         ];
 
-        this.startClient(players, conn);
+        this.startClient(players, conn, store);
       } else {
         // HOST
         // We are host, so we need to show a join link.
@@ -128,6 +120,7 @@ export class MyRollbackWrapper {
         // Show the join link.
         const joinURL = `${window.location.href}#room=${id}`;
         // this.vueService.setNetplayJoinUrl(joinURL)
+        store.dispatch({ type: SET_NETPLAY_DATA, payload: { joinUrl: joinURL } })
 
         // Construct the players array.
         const players = [
@@ -145,7 +138,7 @@ export class MyRollbackWrapper {
             console.error(err)
           });
 
-          this.startHost(players, conn);
+          this.startHost(players, conn, store);
         });
       }
     });
@@ -161,10 +154,10 @@ export class MyRollbackWrapper {
     return initialInputs;
   }
 
-  startHost(players: Array<NetplayPlayer>, conn: DataConnection) {
+  startHost(players: Array<NetplayPlayer>, conn: DataConnection, store: Store) {
     console.info("Starting a rollback host.");
 
-    this.game = new this.gameClass(this.canvas, players);
+    this.game = new MyGame(store);
 
     this.rollbackNetcode = new RollbackNetcode(
       true,
@@ -173,7 +166,7 @@ export class MyRollbackWrapper {
       this.getInitialInputs(players),
       10,
       this.pingMeasure,
-      this.gameClass.timestep,
+      MyGame.timestep,
       () => this.inputReader.getInput(),
       (frame, input) => {
         conn.send({ type: "input", frame: frame, input: input.serialize() });
@@ -207,10 +200,10 @@ export class MyRollbackWrapper {
     });
   }
 
-  startClient(players: Array<NetplayPlayer>, conn: DataConnection) {
+  startClient(players: Array<NetplayPlayer>, conn: DataConnection, store: Store) {
     console.info("Starting a lockstep client.");
 
-    this.game = new this.gameClass(this.canvas, players);
+    this.game = new MyGame(store);
     this.rollbackNetcode = new RollbackNetcode(
       false,
       this.game!,
@@ -218,7 +211,7 @@ export class MyRollbackWrapper {
       this.getInitialInputs(players),
       10,
       this.pingMeasure,
-      this.gameClass.timestep,
+      MyGame.timestep,
       () => this.inputReader.getInput(),
       (frame, input) => {
         conn.send({ type: "input", frame: frame, input: input.serialize() });

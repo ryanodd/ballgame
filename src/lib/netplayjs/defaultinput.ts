@@ -52,6 +52,17 @@ export class DefaultInputReader {
     this.canvas = canvas;
     this.touchControls = touchControls;
 
+    if (
+      touchControls &&
+      window.navigator.userAgent.toLowerCase().includes("mobile")
+    ) {
+      for (const [name, control] of Object.entries(
+        touchControls
+      )) {
+        control.show();
+      }
+    }
+
     document.addEventListener(
       "keydown",
       (event) => {

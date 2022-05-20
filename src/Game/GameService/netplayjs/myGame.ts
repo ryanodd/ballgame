@@ -1,31 +1,35 @@
 import { Player } from '../Player/Player';
 import { MyInput } from './MyInput';
-import { MyRollbackWrapper } from './myRollbackWrapper';
 import { Session } from '../Session/Session';
-import { Game, JSONValue, NetplayPlayer } from '../../../lib/netplayjs';
+import { DefaultInput, Game, JSONValue, NetplayPlayer, NetplayState, TouchControl } from '../../../lib/netplayjs';
+import { Store } from 'redux';
 
-export class MyGame extends Game {
+export class MyGame extends NetplayState<DefaultInput> {
+  
   static timestep = 1000 / 60;
 
-  // These are needed in the Game class but I want to override the behaviour that uses it.
-  // The canvas should be 100% and 100%, not px width/height
-  static canvasSize = { width: -1, height: -1 };
+  players: Player[]
+  session: Session
+  store: Store
 
-  players: Player[] = [
-    new Player({
-      playerIndex: 0,
-      netplayPlayerIndex: 0, // host
-      gamepadIndex: -1, // -1 is Keyboard/Mouse
-    }),
-    new Player({
-      playerIndex: 1,
-      netplayPlayerIndex: 1, // client
-      gamepadIndex: -1, // -1 is Keyboard/Mouse
-    })
-  ]
-  session: Session = new Session({ players: this.players })
 
-  someTestCopyOfThis = null
+  constructor(store: Store) {
+    super()
+    this.players = [
+      new Player({
+        playerIndex: 0,
+        netplayPlayerIndex: 0, // host
+        gamepadIndex: -1, // -1 is Keyboard/Mouse
+      }),
+      new Player({
+        playerIndex: 1,
+        netplayPlayerIndex: 1, // client
+        gamepadIndex: -1, // -1 is Keyboard/Mouse
+      })
+    ]
+    this.session = new Session({ players: this.players })
+    this.store = store
+  }
 
   serialize(): JSONValue {
     return this.session.serialize()
@@ -53,5 +57,3 @@ export class MyGame extends Game {
     }
   }
 }
-
-new MyRollbackWrapper(MyGame).start();

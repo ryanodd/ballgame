@@ -1,12 +1,15 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import { MainLayout } from '../src/React/MainLayout'
-import styles from '../styles/Home.module.css'
+import dynamic from 'next/dynamic'
+import { useEffect } from 'react'
+
+//@ts-ignore no idea what this error means.
+const GamePageWithNoSSR = dynamic(() => import('../src/React/GamePage'), {
+  ssr: false
+})
 
 const Home: NextPage = () => {
   return (
-    <MainLayout />
+    <GamePageWithNoSSR />
   )
 }
 
