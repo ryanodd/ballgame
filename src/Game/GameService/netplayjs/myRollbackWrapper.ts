@@ -199,7 +199,7 @@ export class MyRollbackWrapper {
   }
 
   startClient(players: Array<NetplayPlayer>, conn: DataConnection, store: Store) {
-    console.info("Starting a lockstep client.");
+    console.info("Starting a rollback client.");
 
     this.game = new MyGame(store);
     this.rollbackNetcode = new RollbackNetcode(

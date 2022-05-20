@@ -10,6 +10,7 @@ import { Team } from './Team/Team';
 
 export class SingleClientGame {
   static timestep = 1000 / 60;
+  previousTimestamp;
 
   canvas = document.getElementById('game-canvas') as HTMLCanvasElement
   inputReader = new MyInputReader(
@@ -56,18 +57,23 @@ export class SingleClientGame {
   }
 
   start() {
-    const animate = (timestamp) => {
+    const animate = (timestamp: number) => {
 
-      this.players.forEach(player => {
-        player.tick(this.inputReader.getInput())
-      })
-      this.session.tick()
+      const TARGET_FPS = 60;
+      const MS_PER_GAME_TICK = 1000 / TARGET_FPS;
+      //const actualFps = Math.round(1000 / msPassed); // TODO pass this somewhere. Is it accurate?
 
-      // Draw state to canvas.
-      this.draw(this.canvas);
+      if ( !this.previousTimestamp || (timestamp - this.previousTimestamp) > MS_PER_GAME_TICK) {
+        this.previousTimestamp = timestamp
 
-      // Request another frame.
-      requestAnimationFrame(animate);
+        this.players.forEach(player => {
+          player.tick(this.inputReader.getInput())
+        })
+        this.session.tick()
+        this.draw(this.canvas);
+      }
+
+      requestAnimationFrame(animate)
     };
     requestAnimationFrame(animate);
   }
