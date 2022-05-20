@@ -72,5 +72,3 @@ export class SingleClientGame {
     requestAnimationFrame(animate);
   }
 }
-
-new SingleClientGame().start();

@@ -39,7 +39,7 @@ export const NetplayMenu = () => {
     <NetplayMenuWrapper>
       <Card>
         <NetplayMenuColumn>
-        <Button onClick={copyToClipboard}>
+        <Button type="primary" onClick={copyToClipboard}>
           Copy Player 2 Link to Clipboard
         </Button>
         </NetplayMenuColumn>

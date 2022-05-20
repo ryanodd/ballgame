@@ -10,7 +10,7 @@ const AspectRatioWrapper = styled.div<{ horizontal: boolean }>` //todo rename th
   justify-content: center;
   align-items: center;
 
-  background-color: rgb(50, 119, 90);
+  /* background-color: rgb(50, 119, 90); */
 
   ${props => props.horizontal && css`
     writing-mode: vertical-lr;

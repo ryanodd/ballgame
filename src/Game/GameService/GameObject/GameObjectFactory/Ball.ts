@@ -36,14 +36,27 @@ export default class Ball extends GameObject {
   // No tick
 
   render(c: CanvasRenderingContext2D ){
-    c.fillStyle = 'rgb(200, 0, 0)';
 
     const collider = this.scene.world.getCollider(this.colliderHandle)
     const { x: xPosition, y: yPosition} = collider.translation(); 
     const radius = collider.radius()
+    const rotation = collider.rotation()
     
     c.beginPath();
-    c.arc(xPosition, yPosition, radius, 0, Math.PI * 2, true); // Outer circle
+    c.arc(xPosition, yPosition, radius, 0, Math.PI * 2, true);
+
+    const gradient = c.createRadialGradient(
+      xPosition+(Math.cos(rotation)*(radius/3)),
+      yPosition+(Math.sin(rotation)*(radius/3)),
+      radius/7,
+
+      xPosition,
+      yPosition,
+      radius
+    );
+    gradient.addColorStop(0, 'rgb(255, 110, 124)');
+    gradient.addColorStop(1, 'rgb(255, 51, 68)');
+    c.fillStyle = gradient;
     c.fill();
   }
 }

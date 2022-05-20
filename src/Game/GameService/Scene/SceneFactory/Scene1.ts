@@ -13,11 +13,11 @@ const SCENE_HEIGHT = 9;
 const UI_HEIGHT = 1; // UI section on top 1/9th of game screen
 const NON_UI_HEIGHT = SCENE_HEIGHT - UI_HEIGHT;
 
-const ARENA_WIDTH = 15; // Includes walls, but not net depth
+const ARENA_WIDTH = 14.4; // Includes walls, but not net depth
 const ARENA_HEIGHT = 7.8;
 
 const NET_HEIGHT = 4;
-const NET_DEPTH = 0.4; // Doesn't include back wall of net, only hollow area
+const NET_DEPTH = 0.6; // Doesn't include back wall of net, only hollow area
 
 const ARENA_HORIZONTAL_PADDING = (SCENE_WIDTH - ARENA_WIDTH) / 2; // Doesn't include net depth
 const ARENA_VERTICAL_PADDING = (NON_UI_HEIGHT - ARENA_HEIGHT) / 2;
@@ -120,9 +120,9 @@ export function createScene1(props: Scene1Props): Scene {
   returnScene.addGameObject(new GoalArea({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
-    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
+    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,
     w: WALL_THICKNESS,
-    h: NET_HEIGHT + (WALL_THICKNESS * 2),
+    h: NET_HEIGHT,
     ballColliders: [
       ball.colliderHandle
     ],
@@ -172,9 +172,9 @@ export function createScene1(props: Scene1Props): Scene {
   returnScene.addGameObject(new GoalArea({
     scene: returnScene,
     x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH + NET_DEPTH - WALL_THICKNESS,
-    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
+    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,
     w: WALL_THICKNESS,
-    h: NET_HEIGHT + (WALL_THICKNESS * 2),
+    h: NET_HEIGHT,
     ballColliders: [
       ball.colliderHandle
     ],

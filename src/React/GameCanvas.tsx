@@ -4,7 +4,7 @@ const CanvasContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: rgb(42, 43, 49);
+  // background-color: rgb(42, 43, 49);
 `
 
 const CanvasElement = styled.canvas`

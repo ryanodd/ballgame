@@ -69,7 +69,7 @@ export class Scene {
   }
 
   private renderBackground(c: CanvasRenderingContext2D) {
-    c.fillStyle = 'rgb(42, 43, 49)';
+    c.fillStyle = 'rgb(255, 255, 255)';
     c.fillRect(0, 0, c.canvas.width, c.canvas.height);
   }
 }

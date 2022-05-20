@@ -53,7 +53,8 @@ export default class GoalArea extends GameObject { // extend something general?
     const { x: xPosition, y: yPosition} = collider.translation();
     const rotation = collider.rotation()
 
-    c.fillStyle = 'rgb(16, 121, 89)';
+    c.beginPath()
+    c.fillStyle = 'rgb(24, 144, 255)';
     c.fillRect( xPosition - halfX, yPosition - halfY, halfX*2, halfY*2);
   }
 

@@ -1,6 +1,3 @@
-pass redux store to both myGame and SingleClientGame
-start the process on the game pages
-
 
 - multiplayer hash as myGame param
 	- requires some refactoring.

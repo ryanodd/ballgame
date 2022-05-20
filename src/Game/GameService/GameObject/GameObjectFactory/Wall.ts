@@ -35,7 +35,8 @@ export default class Wall extends GameObject { // extend something general?
     const { x: xPosition, y: yPosition} = collider.translation();
     const rotation = collider.rotation()
 
-    c.fillStyle = 'rgb(209, 225, 235)';
+    c.beginPath()
+    c.fillStyle = 'rgb(60, 60, 60)';
     c.fillRect( xPosition - halfX, yPosition - halfY, halfX*2, halfY*2);
   }
 }

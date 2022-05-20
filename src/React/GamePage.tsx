@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { MainLayout } from './MainLayout';
 import { useStore } from 'react-redux';
 import { MyRollbackWrapper } from '../Game/GameService/netplayjs/myRollbackWrapper';
+import { SingleClientGame } from '../Game/GameService/SingleClientGame';
 
 const GamePageContainer = styled.div`
   font-family: 'Roboto', Helvetica, Avenir, Arial, sans-serif;
@@ -12,7 +13,7 @@ const GamePageContainer = styled.div`
   width: 100vw;
   height: 100vh;
 
-  background: linear-gradient(to top right,rgb(20, 20, 20), rgb(29, 29, 29));
+  //background: linear-gradient(to top right,rgb(20, 20, 20), rgb(29, 29, 29)); 
 `
 
 const GamePage = () => {
@@ -20,7 +21,8 @@ const GamePage = () => {
   const store = useStore()
 
   useEffect(() => {
-    new MyRollbackWrapper().start(store);
+    new SingleClientGame().start()
+    //new MyRollbackWrapper().start(store);
   }, [])
 
   return (
