@@ -4,6 +4,10 @@ import * as query from "query-string";
 import { AspectRatioLetterbox } from './AspectRatioLetterbox';
 import { GameCanvas } from './GameCanvas';
 import { NetplayMenu } from './NetplayMenu';
+import { Drawer, Modal, Space } from 'antd';
+import { useDispatch } from 'react-redux';
+import { SET_UI_DATA } from '../redux/actions';
+import { LocalPlayMenu } from './LocalPlayMenu';
 
 const MainLayoutContainer = styled.div`
   width: 100%;
@@ -15,30 +19,35 @@ const MainLayoutContainer = styled.div`
 `
 
 export const MainLayout = () => {
-  const { connectedToPeer, errorMessage, joinUrl } = useTypedSelector(({netplay}) => {
+  const { connectedToPeer, errorMessage, joinUrl, isMainDrawerOpen } = useTypedSelector(({netplay, ui}) => {
     return {
       connectedToPeer: netplay.connectedToPeer,
       errorMessage: netplay.errorMessage,
-      joinUrl: netplay.joinUrl
+      joinUrl: netplay.joinUrl,
+      isMainDrawerOpen: ui.isMainDrawerOpen,
     }
   })
-
-  // Quick & dirty hack to see whether we're the host tab
-  const parsedHash = query.parse(window.location.hash);
-  const isHost = !parsedHash.room;
-
-  const shouldShowNetplayMenu = (isHost && !connectedToPeer) && joinUrl !== null
-  // I'm guessing these are the only times we'd want to see it
-  const shouldShowNetplayStats = connectedToPeer || errorMessage
+  const dispatch = useDispatch()
 
   return (
     <MainLayoutContainer>
+      <Modal
+        // title="SpicyMeatball.io"
+        // placement="left"
+        width="min-content"
+        closable={false}
+        footer={null}
+        // onClose={() => {dispatch({type: SET_UI_DATA, payload: { isMainDrawerOpen: false } })}}
+        visible={isMainDrawerOpen}
+      >
+        <Space direction="vertical" style={{width: '100%'}}>
+          <NetplayMenu />
+          <LocalPlayMenu />
+        </Space>
+      </Modal>
       <AspectRatioLetterbox>
         <GameCanvas />
       </AspectRatioLetterbox>
-      { shouldShowNetplayMenu && (
-        <NetplayMenu />
-      )}
       {/* <score-box />
       { shouldShowNetplayStats && (
         <NetplayStats />

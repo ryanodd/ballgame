@@ -8,7 +8,7 @@ import { RollbackNetcode } from '../../../lib/netplayjs/netcode/rollback';
 import Peer, { DataConnection } from 'peerjs';
 import { Store } from 'redux';
 import { MyGame } from './myGame';
-import { SET_NETPLAY_DATA } from '../../../redux/actions';
+import { SET_NETPLAY_DATA, SET_UI_DATA } from '../../../redux/actions';
 
 const PING_INTERVAL = 100;
 
@@ -72,7 +72,7 @@ export class MyRollbackWrapper {
 
     this.peer = new Peer();
     this.peer.on("error", (err) => {
-      // this.vueService.setNetplayErrorMessage(JSON.stringify(err))
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { errorMessage: JSON.stringify(err) } })
       console.error(err);
     });
 
@@ -85,9 +85,6 @@ export class MyRollbackWrapper {
       const isClient = !!parsedHash.room;
 
       if (isClient) {
-        // We are a client, so connect to the room from the hash.
-        // this.vueService.setNetplayConnectedToPeer(true)
-
         console.info(`Connecting to room ${parsedHash.room}.`);
 
         const conn = this.peer!.connect(parsedHash.room as string, {
@@ -101,7 +98,7 @@ export class MyRollbackWrapper {
         });
 
         conn.on("error", (err) => {
-          // this.vueService.setNetplayErrorMessage(JSON.stringify(err))
+          store.dispatch({ type: SET_NETPLAY_DATA, payload: { errorMessage: JSON.stringify(err) } })
           console.error(err)
         });
 
@@ -119,7 +116,6 @@ export class MyRollbackWrapper {
 
         // Show the join link.
         const joinURL = `${window.location.href}#room=${id}`;
-        // this.vueService.setNetplayJoinUrl(joinURL)
         store.dispatch({ type: SET_NETPLAY_DATA, payload: { joinUrl: joinURL } })
 
         // Construct the players array.
@@ -131,10 +127,9 @@ export class MyRollbackWrapper {
         // Wait for a connection from a client.
         this.peer!.on("connection", (conn) => {
           // Make the menu disappear.
-          // this.vueService.setNetplayConnectedToPeer(true)
           
           conn.on("error", (err) => {
-            // this.vueService.setNetplayErrorMessage(JSON.stringify(err))
+            store.dispatch({ type: SET_NETPLAY_DATA, payload: { errorMessage: JSON.stringify(err) } })
             console.error(err)
           });
 
@@ -191,12 +186,15 @@ export class MyRollbackWrapper {
     conn.on("open", () => {
       console.log("Client has connected... Starting game...");
       this.checkChannel(conn.dataChannel);
+      // TODO vueservice THIS is when connectedToPeer should be true
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { connectedToPeer: true } })
+      store.dispatch({ type: SET_UI_DATA, payload: { isMainDrawerOpen: false } })
 
       setInterval(() => {
         conn.send({ type: "ping-req", sent_time: Date.now() });
       }, PING_INTERVAL);
 
-      this.startGameLoop();
+      this.startGameLoop(store);
     });
   }
 
@@ -235,16 +233,19 @@ export class MyRollbackWrapper {
     conn.on("open", () => {
       console.log("Successfully connected to server... Starting game...");
       this.checkChannel(conn.dataChannel);
+      // TODO vueservice THIS is when connectedToPeer should be true
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { connectedToPeer: true } })
+      store.dispatch({ type: SET_UI_DATA, payload: { isMainDrawerOpen: false } }) // TODO this shouldn't need to be here
 
       setInterval(() => {
         conn.send({ type: "ping-req", sent_time: Date.now() });
       }, PING_INTERVAL);
 
-      this.startGameLoop();
+      this.startGameLoop(store);
     });
   }
 
-  startGameLoop() {
+  startGameLoop(store: Store) {
     // Start the netcode game loop.
     this.rollbackNetcode!.start();
 
@@ -260,6 +261,13 @@ export class MyRollbackWrapper {
       // this.vueService.setNetplayLargestFutureSize(this.rollbackNetcode!.largestFutureSize())
       // this.vueService.setNetplayPredictedFrames(this.rollbackNetcode!.predictedFrames())
       // this.vueService.setNetplayStalling(this.rollbackNetcode!.shouldStall())
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { ping: this.pingMeasure.average().toFixed(2) } })
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { pingStdDev: this.pingMeasure.stddev().toFixed(2) } })
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { historyLength: this.rollbackNetcode!.history.length } })
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { frame: this.rollbackNetcode!.currentFrame() } })
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { largestFutureSize: this.rollbackNetcode!.largestFutureSize() } })
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { predictedFrames: this.rollbackNetcode!.predictedFrames() } })
+      store.dispatch({ type: SET_NETPLAY_DATA, payload: { stalling: this.rollbackNetcode!.shouldStall() } })
 
       // Request another frame.
       requestAnimationFrame(animate);

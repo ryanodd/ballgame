@@ -17,7 +17,7 @@ const ARENA_WIDTH = 14.4; // Includes walls, but not net depth
 const ARENA_HEIGHT = 7.8;
 
 const NET_HEIGHT = 4;
-const NET_DEPTH = 0.6; // Doesn't include back wall of net, only hollow area
+const NET_DEPTH = 0.7; // Doesn't include back wall of net, only hollow area
 
 const ARENA_HORIZONTAL_PADDING = (SCENE_WIDTH - ARENA_WIDTH) / 2; // Doesn't include net depth
 const ARENA_VERTICAL_PADDING = (NON_UI_HEIGHT - ARENA_HEIGHT) / 2;
