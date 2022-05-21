@@ -1,5 +1,7 @@
-import { RigidBody } from "@dimforge/rapier2d";
+import { Collider, RigidBody } from "@dimforge/rapier2d";
+import { timeStamp } from "console";
 import { JSONObject } from "../../../../lib/netplayjs";
+import { normalize } from "../../../../utils/math";
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
 import PulseCharacterObject from "../../GameObject/GameObjectFactory/PulseCharacterObject";
 import { MyInput } from "../../netplayjs/MyInput";
@@ -22,7 +24,7 @@ export class PulseCharacter extends Character {
   RESTITUTION: number;
   RADIUS: number;
 
-  pulseObject: PulseCharacterObject | undefined;
+  pulseObject: PulseCharacterObject | null;
   mostRecentPulseFrame: number;
   pulseBuffered: boolean;
 
@@ -34,7 +36,7 @@ export class PulseCharacter extends Character {
     this.RESTITUTION = props.RESTITUTION;
     this.RADIUS = props.RADIUS;
 
-    this.pulseObject = undefined;
+    this.pulseObject = null;
     this.mostRecentPulseFrame = -PULSE_COOLDOWN
     this.pulseBuffered = false;
   }
@@ -86,12 +88,34 @@ export class PulseCharacter extends Character {
         this.pulseBuffered = false
         this.mostRecentPulseFrame = frame
 
+
         this.scene?.gameObjects.forEach(gameObject => {
-          if (gameObject.rigidBodyHandle !== null) {
-            console.log(gameObject.rigidBodyHandle)
-            const rigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandle)
-            console.log(rigidBody)
-            rigidBody?.applyImpulse({ x: 1, y: 1 }, true)
+          // TODO only affect ball.
+          if (
+            gameObject.colliderHandle !== null &&
+            gameObject.rigidBodyHandle !== null &&
+            this.pulseObject !== null &&
+            gameObject.colliderHandle !== this.pulseObject?.colliderHandle
+          ) {
+            const otherCollider = this.scene?.world.getCollider(gameObject.colliderHandle) as Collider
+            const otherRigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandle) as RigidBody
+            const myCollider = this.scene?.world.getCollider(this.pulseObject?.colliderHandle) as Collider
+            const IMPULSE_DISTANCE = 4
+            const IMPULSE_MAGNITUDE = 8
+            const xDiff = otherCollider.translation().x - myCollider.translation().x
+            const yDiff = otherCollider.translation().y - myCollider.translation().y
+            const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
+            console.log(xDiff)
+            console.log(yDiff)
+            const closeness = Math.max(0, (IMPULSE_DISTANCE - distance)/IMPULSE_DISTANCE) // 0 to 1
+            const normalizedDiff = normalize({ x: xDiff, y: yDiff })
+            const impulseVector = {
+              x: (normalizedDiff.x * closeness * IMPULSE_MAGNITUDE),
+              y: (normalizedDiff.y * closeness * IMPULSE_MAGNITUDE),
+            }
+            console.log(impulseVector.x)
+            console.log(impulseVector.y)
+            otherRigidBody?.applyImpulse(impulseVector, true)
           }
         })
       }
