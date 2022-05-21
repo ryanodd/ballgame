@@ -3,6 +3,7 @@ import { MyInput } from './MyInput';
 import { Session } from '../Session/Session';
 import { DefaultInput, Game, JSONObject, NetplayPlayer, NetplayState, TouchControl } from '../../../lib/netplayjs';
 import { Store } from 'redux';
+import { defaultInputConfig } from '../../InputService/contants/InputConfigDefaults';
 
 export class MyGame extends NetplayState<DefaultInput> {
   
@@ -25,6 +26,16 @@ export class MyGame extends NetplayState<DefaultInput> {
         playerIndex: 1,
         netplayPlayerIndex: 1, // client
         gamepadIndex: -1, // -1 is Keyboard/Mouse
+        // inputConfig: {
+        //   ...defaultInputConfig,
+        //   keyboardMouseInputMapping: {
+        //     ...defaultInputConfig.keyboardMouseInputMapping,
+        //     buttonLeftKey: 'a',
+        //     buttonRightKey: 'd',
+        //     buttonUpKey: 'w',
+        //     buttonDownKey: 's',
+        //   }
+        // }
       })
     ]
     this.session = new Session({ players: this.players })

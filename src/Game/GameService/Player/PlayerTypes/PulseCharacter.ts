@@ -26,7 +26,6 @@ export class PulseCharacter extends Character {
   pulseBuffered: boolean;
 
   constructor(props: PulseCharacterProps){
-    console.log(props.player)
     super({player: props.player})
 
     this.DENSITY = props.DENSITY;
@@ -79,8 +78,6 @@ export class PulseCharacter extends Character {
       (!isGamePadInputResult(input) && input.button1) ||
       (this.pulseBuffered)
     ){
-      console.log(frame)
-      console.log(this.mostRecentPulseFrame)
       if (frame >= this.mostRecentPulseFrame + PULSE_COOLDOWN) {
         this.pulseBuffered = false
         this.pulseObject?.pulse();
