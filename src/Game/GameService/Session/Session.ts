@@ -12,7 +12,9 @@ import { MyInput } from "../netplayjs/MyInput";
 import { Player } from "../Player/Player";
 import { JSONValue } from "../../../lib/netplayjs";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+// This class is meant to be the first class in common between single-client and multi-client games.
+// - In single-client, SingleClientGame is in charge of its own Session.
+// - In multi-client, each client's MyGame is charge of a Session.
 export interface SessionProps {
   players: Player[]
 }

@@ -2,8 +2,10 @@ import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } fr
 import PulseCharacterObject from "../../GameObject/GameObjectFactory/PulseCharacterObject";
 import { MyInput } from "../../netplayjs/MyInput";
 import { Scene } from "../../Scene/Scene";
-import { Character, CharacterProps } from "../Character";
+import { Character, CharacterProps, INPUT_BUFFER_FRAMES } from "../Character";
 import { Player, PlayerProps } from "../Player";
+
+const PULSE_COOLDOWN = 40
 
 export interface PulseCharacterProps extends CharacterProps {
   DENSITY: number;
@@ -19,6 +21,8 @@ export class PulseCharacter extends Character {
   RADIUS: number;
 
   pulseObject: PulseCharacterObject | undefined;
+  mostRecentPulseFrame: number;
+  pulseBuffered: boolean;
 
   constructor(props: PulseCharacterProps){
     console.log(props.player)
@@ -30,6 +34,8 @@ export class PulseCharacter extends Character {
     this.RADIUS = props.RADIUS;
 
     this.pulseObject = undefined;
+    this.mostRecentPulseFrame = -PULSE_COOLDOWN
+    this.pulseBuffered = false;
   }
 
   // Puts new player Game Objects (usually a single object) into the given Scene world.
@@ -47,17 +53,26 @@ export class PulseCharacter extends Character {
   }
 
   // Detect input, do stuff
-  tick(input: GamepadInputResult | KeyboardMouseInputResult){
-    this.handlePulse(input);
+  tick(input: GamepadInputResult | KeyboardMouseInputResult, frame: number){
+    this.handlePulse(input, frame);
     this.handleMovement(input);
   }
 
-  handlePulse(input: GamepadInputResult | KeyboardMouseInputResult) {
+  handlePulse(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
     if (
       (isGamePadInputResult(input) && input.button1) ||
-      (!isGamePadInputResult(input) && input.button1)
-    ) {
-      this.pulseObject?.pulse();
+      (!isGamePadInputResult(input) && input.button1) ||
+      (this.pulseBuffered)
+    ){
+      console.log(frame)
+      if (frame >= this.mostRecentPulseFrame + PULSE_COOLDOWN) {
+        this.pulseBuffered = false
+        this.pulseObject?.pulse();
+        this.mostRecentPulseFrame = frame
+      }
+      else if (frame + INPUT_BUFFER_FRAMES >= this.mostRecentPulseFrame + PULSE_COOLDOWN) {
+        this.pulseBuffered = true
+      }
     }
   }
 

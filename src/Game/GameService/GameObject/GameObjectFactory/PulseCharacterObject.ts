@@ -1,6 +1,6 @@
 import { Scene } from "../../Scene/Scene";
-import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
-import { ColliderDesc, ColliderHandle, RigidBodyDesc, Vector } from "@dimforge/rapier2d";
+import GameObject, { GameObjectProps } from "../GameObject";
+import { ColliderDesc, RigidBodyDesc } from "@dimforge/rapier2d";
 
 export interface PulseCharacterObjectProps extends GameObjectProps {
   r: number;
@@ -11,6 +11,7 @@ export interface PulseCharacterObjectProps extends GameObjectProps {
 
 export default class PulseCharacterObject extends GameObject { // extend something general?
   scene: Scene;
+
   
   constructor(props: PulseCharacterObjectProps){
     super();
@@ -75,7 +76,7 @@ export default class PulseCharacterObject extends GameObject { // extend somethi
     })
   }
 
-  render(c: CanvasRenderingContext2D ){
+  render(c: CanvasRenderingContext2D){
     c.fillStyle = 'rgb(126, 226, 151)';
 
     const collider = this.scene.world.getCollider(this.colliderHandle)

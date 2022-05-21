@@ -4,6 +4,8 @@ import { MyInput } from "../netplayjs/MyInput";
 import { Scene } from "../Scene/Scene";
 import { Player } from "./Player";
 
+export const INPUT_BUFFER_FRAMES = 10
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface CharacterProps {
   player: Player;
@@ -27,7 +29,7 @@ export abstract class Character {
   abstract createObjects(scene: Scene, x: number, y: number): void;
   
   // Detect input, do stuff
-  abstract tick(input: GamepadInputResult | KeyboardMouseInputResult): void
+  abstract tick(input: GamepadInputResult | KeyboardMouseInputResult, frame: number): void
 
   serialize(): JSONValue {
     return {

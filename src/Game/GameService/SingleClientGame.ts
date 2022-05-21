@@ -8,9 +8,11 @@ import { createScene1 } from './Scene/SceneFactory/Scene1';
 import { Session } from './Session/Session';
 import { Team } from './Team/Team';
 
+
+
 export class SingleClientGame {
   static timestep = 1000 / 60;
-  previousTimestamp;
+  frame = 1;
 
   canvas = document.getElementById('game-canvas') as HTMLCanvasElement
   inputReader = new MyInputReader(
@@ -57,24 +59,19 @@ export class SingleClientGame {
   }
 
   start() {
+    const tick = () => {
+      this.players.forEach(player => {
+        player.tick(this.inputReader.getInput(), this.frame)
+      })
+      this.session.tick()
+      this.frame++
+    }
     const animate = (timestamp: number) => {
-
-      const TARGET_FPS = 60;
-      const MS_PER_GAME_TICK = 1000 / TARGET_FPS;
-      //const actualFps = Math.round(1000 / msPassed); // TODO pass this somewhere. Is it accurate?
-
-      if ( !this.previousTimestamp || (timestamp - this.previousTimestamp) > MS_PER_GAME_TICK) {
-        this.previousTimestamp = timestamp
-
-        this.players.forEach(player => {
-          player.tick(this.inputReader.getInput())
-        })
-        this.session.tick()
-        this.draw(this.canvas);
-      }
+      this.draw(this.canvas);
 
       requestAnimationFrame(animate)
     };
+    setInterval(tick, SingleClientGame.timestep)
     requestAnimationFrame(animate);
   }
 }

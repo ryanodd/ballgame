@@ -28,8 +28,8 @@ export class Player {
   }
   
   // Detect input, do stuff
-  tick(input: MyInput) {
-    this.character?.tick(this.getInput(input))
+  tick(input: MyInput, frame: number) {
+    this.character?.tick(this.getInput(input), frame)
     // VueService.setPlayerResourceMeter(this.playerIndex, this.character.resourceMeter); // the frontend service plants its dirty fingers everywhere
   }
 

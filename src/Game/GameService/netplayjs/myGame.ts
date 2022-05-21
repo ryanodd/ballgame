@@ -39,11 +39,11 @@ export class MyGame extends NetplayState<DefaultInput> {
     this.session.deserialize(value)
   }
 
-  tick(playerInputs: Map<NetplayPlayer, MyInput>) {
+  tick(playerInputs: Map<NetplayPlayer, MyInput>, frame: number) {
     for (const [netplayPlayer, input] of playerInputs.entries()) {
       this.players.forEach(player => {
         if (netplayPlayer.getID() === player.netplayPlayerIndex) {
-          player.tick(input)
+          player.tick(input, frame)
         }
       })
     }

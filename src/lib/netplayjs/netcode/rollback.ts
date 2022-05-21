@@ -331,7 +331,7 @@ export class RollbackNetcode<
     }
 
     // Tick our state with the new inputs, which may include predictions.
-    this.state.tick(this.getStateInputs(newInputs));
+    this.state.tick(this.getStateInputs(newInputs), lastState.frame + 1);
 
     // Add a history entry into our rollback buffer.
     this.history.push(

@@ -2,7 +2,7 @@ import * as autoserialize from "./autoserialize";
 import { JSONObject, JSONValue } from "./json";
 
 export abstract class NetplayState<TInput extends NetplayInput<TInput>> {
-  abstract tick(playerInputs: Map<NetplayPlayer, TInput>): void;
+  abstract tick(playerInputs: Map<NetplayPlayer, TInput>, frame: number): void;
 
   /**
    * By default, use the auto serializer.
