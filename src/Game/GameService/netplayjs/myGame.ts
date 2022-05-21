@@ -1,7 +1,7 @@
 import { Player } from '../Player/Player';
 import { MyInput } from './MyInput';
 import { Session } from '../Session/Session';
-import { DefaultInput, Game, JSONValue, NetplayPlayer, NetplayState, TouchControl } from '../../../lib/netplayjs';
+import { DefaultInput, Game, JSONObject, NetplayPlayer, NetplayState, TouchControl } from '../../../lib/netplayjs';
 import { Store } from 'redux';
 
 export class MyGame extends NetplayState<DefaultInput> {
@@ -31,11 +31,11 @@ export class MyGame extends NetplayState<DefaultInput> {
     this.store = store
   }
 
-  serialize(): JSONValue {
+  serialize(): JSONObject {
     return this.session.serialize()
   }
 
-  deserialize(value: JSONValue): void {
+  deserialize(value: JSONObject): void {
     this.session.deserialize(value)
   }
 

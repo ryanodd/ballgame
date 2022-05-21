@@ -1,5 +1,5 @@
 import { store } from "../../../../pages/_app";
-import { JSONValue } from "../../../lib/netplayjs";
+import { JSONObject } from "../../../lib/netplayjs";
 import { SET_TEAM_DATA } from "../../../redux/actions";
 import { Character } from "../Player/Character";
 
@@ -20,14 +20,14 @@ export class Team {
     this.updateScore()
   }
 
-  serialize(): JSONValue {
+  serialize(): JSONObject {
     return {
       score: this.score,
       characters: this.characters.map(character => character.serialize())
     }
   }
 
-  deserialize(value: JSONValue) {
+  deserialize(value: JSONObject) {
     this.score = value['score']
     this.characters.forEach((character, i) => {
       character.deserialize(value['characters'][i])

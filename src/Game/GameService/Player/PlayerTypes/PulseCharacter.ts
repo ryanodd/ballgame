@@ -1,3 +1,4 @@
+import { JSONObject } from "../../../../lib/netplayjs";
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
 import PulseCharacterObject from "../../GameObject/GameObjectFactory/PulseCharacterObject";
 import { MyInput } from "../../netplayjs/MyInput";
@@ -58,6 +59,20 @@ export class PulseCharacter extends Character {
     this.handleMovement(input);
   }
 
+  serialize(): JSONObject {
+    return {
+      ...super.serialize(),
+      mostRecentPulseFrame: this.mostRecentPulseFrame,
+      pulseBuffered: this.pulseBuffered,
+    }
+  }
+
+  deserialize(value: any): void {
+    super.deserialize(value)
+    this.mostRecentPulseFrame = value['mostRecentPulseFrame']
+    this.pulseBuffered = value['pulseBuffered']
+  }
+
   handlePulse(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
     if (
       (isGamePadInputResult(input) && input.button1) ||
@@ -65,6 +80,7 @@ export class PulseCharacter extends Character {
       (this.pulseBuffered)
     ){
       console.log(frame)
+      console.log(this.mostRecentPulseFrame)
       if (frame >= this.mostRecentPulseFrame + PULSE_COOLDOWN) {
         this.pulseBuffered = false
         this.pulseObject?.pulse();

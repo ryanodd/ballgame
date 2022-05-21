@@ -3,7 +3,7 @@ import { get, shift, clone } from "../utils";
 
 import { DEV } from "../debugging";
 import { assert } from "chai";
-import { JSONValue } from "../json";
+import { JSONObject } from "../json";
 
 class RollbackHistory<TInput extends NetplayInput<TInput>> {
   /**
@@ -14,7 +14,7 @@ class RollbackHistory<TInput extends NetplayInput<TInput>> {
   /**
    * The serialized state of the game at this frame.
    */
-  state: JSONValue;
+  state: JSONObject;
 
   /**
    * These inputs represent the set of inputs that produced this state
@@ -25,7 +25,7 @@ class RollbackHistory<TInput extends NetplayInput<TInput>> {
 
   constructor(
     frame: number,
-    state: JSONValue,
+    state: JSONObject,
     inputs: Map<NetplayPlayer, { input: TInput; isPrediction: boolean }>
   ) {
     this.frame = frame;
@@ -77,7 +77,7 @@ export class RollbackNetcode<
    */
   isHost: boolean;
 
-  onStateSync(frame: number, state: JSONValue) {
+  onStateSync(frame: number, state: JSONObject) {
     DEV && assert.isFalse(this.isHost, "Only clients recieve state syncs.");
 
     // Cleanup states that we don't need anymore because we have the definitive
@@ -104,7 +104,7 @@ export class RollbackNetcode<
     for (let i = 1; i < this.history.length; ++i) {
       const currentState = this.history[i];
 
-      this.state.tick(this.getStateInputs(currentState.inputs));
+      this.state.tick(this.getStateInputs(currentState.inputs), currentState.frame);
       currentState.state = clone(this.state.serialize());
     }
     DEV &&
@@ -175,7 +175,7 @@ export class RollbackNetcode<
         currentPlayerInput.input = previousPlayerInput.input.predictNext();
       }
 
-      this.state.tick(this.getStateInputs(currentState.inputs));
+      this.state.tick(this.getStateInputs(currentState.inputs), currentState.frame);
       currentState.state = clone(this.state.serialize());
     }
 
@@ -208,7 +208,7 @@ export class RollbackNetcode<
   }
 
   broadcastInput: (frame: number, input: TInput) => void;
-  broadcastState?: (frame: number, state: JSONValue) => void;
+  broadcastState?: (frame: number, state: JSONObject) => void;
 
   pingMeasure: any;
   timestep: number;
@@ -228,7 +228,7 @@ export class RollbackNetcode<
     timestep: number,
     pollInput: () => TInput,
     broadcastInput: (frame: number, input: TInput) => void,
-    broadcastState?: (frame: number, state: JSONValue) => void
+    broadcastState?: (frame: number, state: JSONObject) => void
   ) {
     this.isHost = isHost;
     this.state = initialState;

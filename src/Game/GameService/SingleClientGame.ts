@@ -1,5 +1,5 @@
 import { EventQueue, World } from '@dimforge/rapier2d';
-import { JSONValue } from '../../lib/netplayjs';
+import { JSONObject } from '../../lib/netplayjs';
 import { defaultInputConfig } from '../InputService/contants/InputConfigDefaults';
 import { MyInput, MyInputReader } from './netplayjs/MyInput';
 import { Player } from './Player/Player';
@@ -43,11 +43,11 @@ export class SingleClientGame {
   ]
   session: Session = new Session({ players: this.players })
 
-  serialize(): JSONValue {
+  serialize(): JSONObject {
     return this.session.serialize()
   }
 
-  deserialize(value: JSONValue): void {
+  deserialize(value: JSONObject): void {
     this.session.deserialize(value)
   }
 

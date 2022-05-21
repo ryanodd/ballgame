@@ -1,7 +1,7 @@
-import { JSONObject, JSONValue } from "./json";
+import { JSONObject, JSONObject } from "./json";
 
-export function serialize(data: any): JSONValue {
-  return JSON.parse(JSON.stringify(data)) as JSONValue;
+export function serialize(data: any): JSONObject {
+  return JSON.parse(JSON.stringify(data)) as JSONObject;
 }
 
 export function deserialize(source: JSONObject, dest: Record<string, any>): void {

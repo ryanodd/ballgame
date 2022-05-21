@@ -10,7 +10,7 @@ import { createScene1 } from "../Scene/SceneFactory/Scene1";
 import { EventQueue, World } from "@dimforge/rapier2d";
 import { MyInput } from "../netplayjs/MyInput";
 import { Player } from "../Player/Player";
-import { JSONValue } from "../../../lib/netplayjs";
+import { JSONObject } from "../../../lib/netplayjs";
 
 // This class is meant to be the first class in common between single-client and multi-client games.
 // - In single-client, SingleClientGame is in charge of its own Session.
@@ -53,7 +53,7 @@ export class Session {
     this.scene = createScene1({ teams: this.teams, session: this });
   }
 
-  serialize(): JSONValue {
+  serialize(): JSONObject {
     return {
       worldSnapshot: this.scene.world.takeSnapshot().toString(),
       teams: this.teams.map(team => team.serialize()),
@@ -61,7 +61,7 @@ export class Session {
     };
   }
 
-  deserialize(value: JSONValue): void {
+  deserialize(value: JSONObject): void {
     const worldSnapshot = value['worldSnapshot']
     const splitSnapshot = worldSnapshot.split(',')
     const array = new Uint8Array(splitSnapshot)

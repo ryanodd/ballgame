@@ -1,4 +1,4 @@
-import { JSONValue } from "../../../lib/netplayjs";
+import { JSONObject } from "../../../lib/netplayjs";
 import { GamepadInputResult, KeyboardMouseInputResult } from "../../InputService/model/InputResult";
 import { MyInput } from "../netplayjs/MyInput";
 import { Scene } from "../Scene/Scene";
@@ -6,7 +6,6 @@ import { Player } from "./Player";
 
 export const INPUT_BUFFER_FRAMES = 10
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface CharacterProps {
   player: Player;
 }
@@ -31,13 +30,13 @@ export abstract class Character {
   // Detect input, do stuff
   abstract tick(input: GamepadInputResult | KeyboardMouseInputResult, frame: number): void
 
-  serialize(): JSONValue {
+  serialize(): JSONObject {
     return {
       resourceMeter: this.resourceMeter,
     }
   }
 
-  deserialize(value: JSONValue) {
+  deserialize(value: JSONObject) {
     this.resourceMeter = value['resourceMeter']
   }
 
