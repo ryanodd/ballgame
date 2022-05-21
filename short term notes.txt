@@ -4,7 +4,11 @@
 	- would allow joining game differently (via pause menu)
 
 - pause menu
+	- need to be able to destroy an existing game...
+		- would the old game be garbage collected? Those requestAnimationFRames are gonna keep going
+			- maybe throw an error to stop it or something?
 	- start game in local, online button in menu?
+		- would need to init a netplay game (it wouldnt be looping until it starts tho, its ez)
 
 - game end conditions: time, but allow unlimited. leave design room for first-to-X
 - matchmaking server w/ rooms
@@ -20,6 +24,7 @@
 		- diagonal speed cheats
 		- anything else?
 	- attraction ability
+- sticky player
 
 - curved walls
 	- just jack up the border-radius on a hollow rectangle? is that possible?
@@ -43,6 +48,14 @@
 			- I promised myself it would be an easy p2p->sever port
 				- therefore it must be easy to do p2p stall handling assuming host's machine doesn't stall..
 
+encourage controller
+- support controller
+
+controls tutorial graphic
+OR
+- control config menu
+	- localStorage??
+
 LOW PRIORITY
 - convert to simpler configged inputs BEFORE input serialization
 	- no reason to at the moment? How costly is it.
@@ -58,5 +71,4 @@ LOW PRIORITY
 	- are there any actual advantages to the server-of-truth approach?
 	- how difficult would it be to port to server-of-truth?
 	- what is the tech debt of sticking with p2p? methinks not very high?
-- control config menu
-	- localStorage??
+

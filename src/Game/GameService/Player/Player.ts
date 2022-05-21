@@ -15,7 +15,7 @@ export interface PlayerProps {
 // A Player is everything that needs to be stored/done per-player.
 export class Player {
   playerIndex: number; // in-game player e.g. "Player 1"
-  character: Character | null;
+  character: Character | null = null;
   netplayPlayerIndex?: number; // client index
   gamepadIndex?: number; // index in the browser's 'GamePad' interface
   inputConfig?: InputConfig;
@@ -29,7 +29,7 @@ export class Player {
   
   // Detect input, do stuff
   tick(input: MyInput) {
-    this.character.tick(this.getInput(input))
+    this.character?.tick(this.getInput(input))
     // VueService.setPlayerResourceMeter(this.playerIndex, this.character.resourceMeter); // the frontend service plants its dirty fingers everywhere
   }
 

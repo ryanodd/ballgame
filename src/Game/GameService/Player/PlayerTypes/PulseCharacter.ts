@@ -21,6 +21,7 @@ export class PulseCharacter extends Character {
   pulseObject: PulseCharacterObject | undefined;
 
   constructor(props: PulseCharacterProps){
+    console.log(props.player)
     super({player: props.player})
 
     this.DENSITY = props.DENSITY;
@@ -47,7 +48,17 @@ export class PulseCharacter extends Character {
 
   // Detect input, do stuff
   tick(input: GamepadInputResult | KeyboardMouseInputResult){
+    this.handlePulse(input);
     this.handleMovement(input);
+  }
+
+  handlePulse(input: GamepadInputResult | KeyboardMouseInputResult) {
+    if (
+      (isGamePadInputResult(input) && input.button1) ||
+      (!isGamePadInputResult(input) && input.button1)
+    ) {
+      this.pulseObject?.pulse();
+    }
   }
 
   handleMovement(input: GamepadInputResult | KeyboardMouseInputResult){
@@ -63,6 +74,10 @@ export class PulseCharacter extends Character {
       if (input.buttonRight) xAxisInput += 1
       if (input.buttonUp) yAxisInput += 1
       if (input.buttonDown) yAxisInput -= 1
+      if (xAxisInput !== 0 && yAxisInput !== 0) {
+        xAxisInput *= Math.cos(Math.PI/4)
+        yAxisInput *= Math.sin(Math.PI/4)
+      }
     }
     
     this.pulseObject?.handleMovement(xAxisInput, yAxisInput);

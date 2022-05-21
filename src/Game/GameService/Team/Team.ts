@@ -1,4 +1,6 @@
+import { store } from "../../../../pages/_app";
 import { JSONValue } from "../../../lib/netplayjs";
+import { SET_TEAM_DATA } from "../../../redux/actions";
 import { Character } from "../Player/Character";
 
 export interface TeamProps {
@@ -15,6 +17,7 @@ export class Team {
     this.teamIndex = teamIndex
     this.characters = characters
     this.score = 0;
+    this.updateScore()
   }
 
   serialize(): JSONValue {
@@ -41,11 +44,9 @@ export class Team {
     this.updateScore()
   }
   updateScore() {
-    if (this.teamIndex === 0) {
-      // VueService.setTeam1Score(this.score)
-    }
-    else if (this.teamIndex === 1) {
-      // VueService.setTeam2Score(this.score)
-    }
+    store.dispatch({type: SET_TEAM_DATA, payload: {
+      teamIndex: this.teamIndex,
+      teamData: { score: this.score }
+    }})
   }
 }

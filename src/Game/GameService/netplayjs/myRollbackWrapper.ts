@@ -186,7 +186,6 @@ export class MyRollbackWrapper {
     conn.on("open", () => {
       console.log("Client has connected... Starting game...");
       this.checkChannel(conn.dataChannel);
-      // TODO vueservice THIS is when connectedToPeer should be true
       store.dispatch({ type: SET_NETPLAY_DATA, payload: { connectedToPeer: true } })
       store.dispatch({ type: SET_UI_DATA, payload: { isMainDrawerOpen: false } })
 
@@ -233,7 +232,6 @@ export class MyRollbackWrapper {
     conn.on("open", () => {
       console.log("Successfully connected to server... Starting game...");
       this.checkChannel(conn.dataChannel);
-      // TODO vueservice THIS is when connectedToPeer should be true
       store.dispatch({ type: SET_NETPLAY_DATA, payload: { connectedToPeer: true } })
       store.dispatch({ type: SET_UI_DATA, payload: { isMainDrawerOpen: false } }) // TODO this shouldn't need to be here
 

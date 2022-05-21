@@ -36,8 +36,8 @@ export default class PulseCharacterObject extends GameObject { // extend somethi
   // No tick
 
   handleMovement(xAxisInput: number, yAxisInput: number){
-    const ACCELERATION_CONSTANT_X = 3;
-    const ACCELERATION_CONSTANT_Y = 3;
+    const ACCELERATION_CONSTANT_X = 4.5;
+    const ACCELERATION_CONSTANT_Y = 4.5;
 
     const collider = this.scene.world.getCollider(this.colliderHandle)
     const rigidBody = this.scene.world.getRigidBody(collider.parent() as number)
@@ -66,6 +66,13 @@ export default class PulseCharacterObject extends GameObject { // extend somethi
   }
 
   pulse(){
+    this.scene.gameObjects.forEach(gameObject => {
+      const rigidBodyHandle = this.scene.world.getCollider(gameObject.colliderHandle).parent()
+      if (rigidBodyHandle) {
+        const rigidBody = this.scene.world.getRigidBody(rigidBodyHandle)
+        rigidBody.applyImpulse({ x: 1, y: 1 }, true)
+      }
+    })
   }
 
   render(c: CanvasRenderingContext2D ){

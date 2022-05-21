@@ -57,7 +57,7 @@ export function createScene1(props: Scene1Props): Scene {
     x: 8,
     y: 7,
     r: 0.50,
-    density: 1.0,
+    density: 0.8,
     friction: 0.6,
     restitution: 0.9,
   })

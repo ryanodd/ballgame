@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { CanvasOverlay } from "./CanvasOverlay";
+import { ScoreBox } from "./ScoreBox";
 
 const CanvasContainer = styled.div`
   position: relative;
@@ -19,7 +21,9 @@ export const GameCanvas = () => {
   return (
     <CanvasContainer>
       <CanvasElement id="game-canvas"/>
-      {/* <CanvasOverlay /> */}
+      <CanvasOverlay>
+        <ScoreBox />
+      </CanvasOverlay>
     </CanvasContainer>
   )
 }
