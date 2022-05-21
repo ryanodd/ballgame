@@ -6,6 +6,7 @@ export interface GameObjectProps {
 
   x: number;
   y: number;
+  spawnFrame?: number;
 } 
 
 export interface BodyGameObject extends GameObject {
@@ -13,9 +14,12 @@ export interface BodyGameObject extends GameObject {
 }
 
 export default abstract class GameObject {
+  abstract id: string;
   abstract scene: Scene;
   abstract colliderHandle: ColliderHandle | null;
   abstract rigidBodyHandle: RigidBodyHandle | null;
+  abstract spawnFrame: number;
+  lifespanFrames: number | null = null;
   markedForDeletion: boolean = false;
 
   abstract render(c: CanvasRenderingContext2D): void;

@@ -9,14 +9,22 @@ export interface PulseCharacterObjectProps extends GameObjectProps {
   restitution: number;
 }
 
+export const PULSE_OBJ = 'Pulse'
+export const isPulseCharacterObject = (o: GameObject): o is PulseCharacterObject => {
+  return o.id === PULSE_OBJ
+}
+
 export default class PulseCharacterObject extends GameObject implements BodyGameObject { // extend something general?
+  id = PULSE_OBJ
   scene: Scene;
+  spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: RigidBodyHandle;
   
   constructor(props: PulseCharacterObjectProps){
     super();
     this.scene = props.scene;
+    this.spawnFrame = props.spawnFrame ?? 0;
     const { collider, rigidBody } = this.createColliderAndRigidBody(props);
     this.colliderHandle = collider.handle
     this.rigidBodyHandle = rigidBody.handle

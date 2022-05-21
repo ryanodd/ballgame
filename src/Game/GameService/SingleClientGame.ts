@@ -32,7 +32,8 @@ export class SingleClientGame {
           buttonRightKey: 'd',
           buttonDownKey: 's',
           buttonLeftKey: 'a',
-          button1Key: ' '
+          button1Key: ' ',
+          button2Key: 'Shift',
         },
       }
     }),

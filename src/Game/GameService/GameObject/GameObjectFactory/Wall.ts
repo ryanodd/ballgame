@@ -8,16 +8,23 @@ export interface WallProps extends GameObjectProps {
   rotation?: number;
 }
 
+export const WALL_OBJ = 'Wall'
+export const isWallObject = (o: GameObject): o is Wall => {
+  return o.id === WALL_OBJ
+}
 // At this moment this component is translating from corner origins to center origin for rapier
 // I think I want to use corner positioning to make wall layout math easier
 export default class Wall extends GameObject { // extend something general?
+  id = WALL_OBJ;
   scene: Scene;
+  spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: null = null;
   
   constructor(props: WallProps) {
     super();
     this.scene = props.scene;
+    this.spawnFrame = props.spawnFrame ?? 0;
     this.colliderHandle = this.createCollider(props);
   }
 

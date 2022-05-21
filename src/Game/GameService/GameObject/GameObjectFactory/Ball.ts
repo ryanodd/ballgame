@@ -9,14 +9,22 @@ export interface BallProps extends GameObjectProps {
   restitution: number;
 }
 
+export const BALL_OBJ = 'Ball'
+export const isBallObject = (o: GameObject): o is Ball => {
+  return o.id === BALL_OBJ
+}
+
 export default class Ball extends GameObject {
+  id = BALL_OBJ;
   scene: Scene;
+  spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: RigidBodyHandle;
   
   constructor(props: BallProps){
     super();
     this.scene = props.scene;
+    this.spawnFrame = props.spawnFrame ?? 0;
     const { collider, rigidBody } = this.createColliderAndRigidBody(props);
     this.colliderHandle = collider.handle
     this.rigidBodyHandle = rigidBody.handle

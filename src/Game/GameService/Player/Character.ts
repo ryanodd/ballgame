@@ -19,7 +19,6 @@ export abstract class Character {
   // This is a character-wide rule for now.
   RESOURCE_METER_MAXIMUM = 101;
   RESOURCE_METER_BEGIN = 50;
-  
 
   constructor(props: CharacterProps){
     this.resourceMeter = this.RESOURCE_METER_BEGIN;

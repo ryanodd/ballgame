@@ -1,62 +1,93 @@
+//////////////////
+HIGH PRIORITY
+//////////////////
 
-- multiplayer hash as myGame param
-	- requires some refactoring.
-	- would allow joining game differently (via pause menu)
+- pass entire Session down the init chain, to make upward references easier to access?
+	- then chain configs up to the very top! & init characters within scene
 
+- team colors
+
+Add/Remove game objects... How to work with rollback? Gotta serialize, but how much?
+
+- attract/repel animations
+	- store frame, then pass frame to render
+
+- game end conditions: time, but allow unlimited. leave design room for first-to-X
+
+- adjust start positions duhdoy
+
+- victory screen
 - pause menu
 	- need to be able to destroy an existing game...
 		- would the old game be garbage collected? Those requestAnimationFRames are gonna keep going
 			- maybe throw an error to stop it or something?
-	- start game in local, online button in menu?
-		- would need to init a netplay game (it wouldnt be looping until it starts tho, its ez)
 
-- game end conditions: time, but allow unlimited. leave design room for first-to-X
-- matchmaking server w/ rooms
+- lazy controls tutorial graphic
 
-- research: game physics. How to make better-feeling physics objects.
-	- ball max speed vs character max speed is quite relevant. Maybe RL boost has it right
-	- ball spin, render it in a way where spin is visible
-	- ball needs to slow down faster, I think
-	- game speed??
-- pulse player
-	- pulse ability
-	- movement
-		- diagonal speed cheats
-		- anything else?
-	- attraction ability
-- sticky player
+- resource meters!
+	- enforce
+	- refill over time
+	- display
+
+- REFACTOR
+	- character abilities can be more standardized.
+		- mostRecentUse 
+		- cooldowns
+		- bufferable
+		- resource meter
+		- serialization
+
+- DEPLOY
+	- Amplify
+	- point domain to it
+
+//////////////////
+MEDIUM PRIORITY
+//////////////////
+
+- goal animation
+
+- crunchy animations:
+	- contacts should probably glow (lighting on walls & objects) & spark (particle effects)
+	- screen shake?
+
+- display netplay stats (with polling intervals, perchance)
+	- try testing without polling intervals
 
 - curved walls
 	- just jack up the border-radius on a hollow rectangle? is that possible?
 	- polylines or https://rapier.rs/docs/user_guides/javascript/colliders/#heightfields
 	- research: HTML canvas drawing methods for this
 
-- cpu players
+- combine control stick inputs and keyboard WASD inputs more automatically
 
-- think about: character,stage,cpu select
-	- COULD I INCORPORATE PHYSICS TWEAKING IN HERE SOMEHOW
+- control config menu
+	- can maybe be extended to be a HUD tutorial display as well
+	- eventually should have specialized instructions for each bindable control for each character.
+	- localStorage??
 
-- animations:
-	- cpu canvas animation. Google it biyatch
-	- contacts should probably glow (lighting on walls & objects) & spark (particle effects)
-	- screen shake?
+- think about name
 
 - research: deal with stalling better
+	- for one, we could display netplay errors & prompt a restart
 	- game should not stall... at all. ie the clock should just keep ticking while stalled
 	- ^ maybe only possible with authoratative server..
 		-BUT what would it even look like to NOT stall on a server?
 			- I promised myself it would be an easy p2p->sever port
 				- therefore it must be easy to do p2p stall handling assuming host's machine doesn't stall..
 
-encourage controller
-- support controller
+- cpu players
 
-controls tutorial graphic
-OR
-- control config menu
-	- localStorage??
-
+//////////////////
 LOW PRIORITY
+//////////////////
+
+- matchmaking server w/ rooms
+- think about: character,stage,cpu select
+	- COULD I INCORPORATE PHYSICS TWEAKING IN HERE SOMEHOW
+- multiplayer hash as myGame param
+	- requires some refactoring.
+	- would allow joining game differently (via pause menu)
 - convert to simpler configged inputs BEFORE input serialization
 	- no reason to at the moment? How costly is it.
 	- is there actually any advantage?

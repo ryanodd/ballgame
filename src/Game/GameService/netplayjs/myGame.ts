@@ -20,12 +20,10 @@ export class MyGame extends NetplayState<DefaultInput> {
       new Player({
         playerIndex: 0,
         netplayPlayerIndex: 0, // host
-        gamepadIndex: -1, // -1 is Keyboard/Mouse
       }),
       new Player({
         playerIndex: 1,
         netplayPlayerIndex: 1, // client
-        gamepadIndex: -1, // -1 is Keyboard/Mouse
         // inputConfig: {
         //   ...defaultInputConfig,
         //   keyboardMouseInputMapping: {

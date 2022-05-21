@@ -9,16 +9,23 @@ export interface PicWallProps extends GameObjectProps {
   rotation?: number;
 }
 
+export const PIC_WALL_OBJ = 'PicWall'
+export const isPicWallObject = (o: GameObject): o is PicWall => {
+  return o.id === PIC_WALL_OBJ
+}
 // At this moment this component is translating from corner origins to center origin for rapier
 // I think I want to use corner positioning to make wall layout math easier
 export default class PicWall extends GameObject { // extend something general?
+  id = PIC_WALL_OBJ;
   scene: Scene;
+  spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: null = null;
   
   constructor(props: PicWallProps) {
     super();
     this.scene = props.scene;
+    this.spawnFrame = props.spawnFrame ?? 0;
     this.colliderHandle = this.createCollider(props);
   }
 

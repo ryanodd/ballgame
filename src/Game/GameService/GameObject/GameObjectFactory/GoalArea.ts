@@ -10,10 +10,14 @@ export interface GoalAreaProps extends GameObjectProps {
   rotation?: number;
 }
 
-// At this moment this component is translating from corner origins to center origin for rapier
-// I think I want to use corner positioning to make wall layout math easier
+export const GOAL_AREA_OBJ = 'GoalArea'
+export const isGoalAreaObject = (o: GameObject): o is GoalArea => {
+  return o.id === GOAL_AREA_OBJ
+}
 export default class GoalArea extends GameObject { // extend something general?
+  id = GOAL_AREA_OBJ;
   scene: Scene;
+  spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: null = null;
 
@@ -23,6 +27,7 @@ export default class GoalArea extends GameObject { // extend something general?
   constructor(props: GoalAreaProps) {
     super();
     this.scene = props.scene;
+    this.spawnFrame = props.spawnFrame ?? 0;
     this.colliderHandle = this.createCollider(props);
     this.ballColliders = props.ballColliders;
     this.onGoal = props.onGoal
