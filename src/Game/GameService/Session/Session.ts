@@ -33,7 +33,7 @@ export class Session {
             RADIUS: 0.240,
             DENSITY: 0.5,
             FRICTION: 0.5,
-            RESTITUTION: 0.0
+            RESTITUTION: 0.0,
           })
         ],
       }),

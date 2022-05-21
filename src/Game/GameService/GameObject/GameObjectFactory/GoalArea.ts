@@ -1,6 +1,6 @@
-import { ActiveEvents, Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
+import { ActiveEvents, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
 import { Scene } from "../../Scene/Scene";
-import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
+import GameObject, { GameObjectProps } from "../GameObject";
 
 export interface GoalAreaProps extends GameObjectProps {
   w: number;
@@ -14,6 +14,9 @@ export interface GoalAreaProps extends GameObjectProps {
 // I think I want to use corner positioning to make wall layout math easier
 export default class GoalArea extends GameObject { // extend something general?
   scene: Scene;
+  colliderHandle: ColliderHandle;
+  rigidBodyHandle: null = null;
+
   onGoal: () => void;
   ballColliders: ColliderHandle[];
   

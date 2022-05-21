@@ -54,7 +54,12 @@ export class MyGame extends NetplayState<DefaultInput> {
     for (const [netplayPlayer, input] of playerInputs.entries()) {
       this.players.forEach(player => {
         if (netplayPlayer.getID() === player.netplayPlayerIndex) {
-          player.tick(input, frame)
+          player.tickMovement(input, frame)
+        }
+      })
+      this.players.forEach(player => {
+        if (netplayPlayer.getID() === player.netplayPlayerIndex) {
+          player.tickAbilities(input, frame)
         }
       })
     }

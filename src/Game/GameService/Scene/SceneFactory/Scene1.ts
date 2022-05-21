@@ -45,10 +45,12 @@ export function createScene1(props: Scene1Props): Scene {
   const character1: Character | undefined = props.teams[0].characters[0];
   if (character1){
     character1.createObjects(returnScene, 4, 4);
+    character1.setScene(returnScene)
   }
   const character2: Character | undefined = props.teams[1].characters[0];
   if (character2){
     character2.createObjects(returnScene, 8, 4);
+    character2.setScene(returnScene)
   }
 
   // Need to declare separately to give handle for collision tracking purposes.

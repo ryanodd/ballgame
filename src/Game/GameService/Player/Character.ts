@@ -12,6 +12,7 @@ export interface CharacterProps {
 
 export abstract class Character {
   resourceMeter: number;
+  scene: Scene | null = null;
   
   // 101 for rounding issues. I want fractional costs like 1/3 which is 33.33
   // So we'll use 101 and round down for displaying.
@@ -28,7 +29,8 @@ export abstract class Character {
   abstract createObjects(scene: Scene, x: number, y: number): void;
   
   // Detect input, do stuff
-  abstract tick(input: GamepadInputResult | KeyboardMouseInputResult, frame: number): void
+  abstract tickMovement(input: GamepadInputResult | KeyboardMouseInputResult, frame: number): void
+  abstract tickAbilities(input: GamepadInputResult | KeyboardMouseInputResult, frame: number): void
 
   serialize(): JSONObject {
     return {
@@ -43,5 +45,9 @@ export abstract class Character {
   setResourceMeter(value: number){
     const newValue = Math.min(value, this.RESOURCE_METER_MAXIMUM);
     this.resourceMeter = newValue;
+  }
+
+  setScene(scene: Scene) {
+    this.scene = scene
   }
 }

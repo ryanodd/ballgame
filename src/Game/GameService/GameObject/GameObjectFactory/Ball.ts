@@ -1,6 +1,6 @@
-import { Collider, ColliderDesc, ColliderHandle, RigidBody, RigidBodyDesc } from "@dimforge/rapier2d";
+import { Collider, ColliderDesc, ColliderHandle, RigidBody, RigidBodyDesc, RigidBodyHandle } from "@dimforge/rapier2d";
 import { Scene } from "../../Scene/Scene";
-import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
+import GameObject, { GameObjectProps } from "../GameObject";
 
 export interface BallProps extends GameObjectProps {
   r: number;
@@ -11,14 +11,18 @@ export interface BallProps extends GameObjectProps {
 
 export default class Ball extends GameObject {
   scene: Scene;
+  colliderHandle: ColliderHandle;
+  rigidBodyHandle: RigidBodyHandle;
   
   constructor(props: BallProps){
     super();
     this.scene = props.scene;
-    this.colliderHandle = this.createCollider(props);
+    const { collider, rigidBody } = this.createColliderAndRigidBody(props);
+    this.colliderHandle = collider.handle
+    this.rigidBodyHandle = rigidBody.handle
   }
 
-  createCollider(props: BallProps){
+  createColliderAndRigidBody(props: BallProps){
     const rigidBodyDesc = RigidBodyDesc.dynamic();
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 
@@ -28,15 +32,14 @@ export default class Ball extends GameObject {
       .setDensity(props.density)
       .setFriction(props.friction)
       .setRestitution(props.restitution)
-    const returnCollider = this.scene.world.createCollider(colliderDesc, rigidBody.handle).handle;
+    const collider = this.scene.world.createCollider(colliderDesc, rigidBody.handle);
     
-    return returnCollider;
+    return { collider, rigidBody };
   }
 
   // No tick
 
   render(c: CanvasRenderingContext2D ){
-
     const collider = this.scene.world.getCollider(this.colliderHandle)
     const { x: xPosition, y: yPosition} = collider.translation(); 
     const radius = collider.radius()

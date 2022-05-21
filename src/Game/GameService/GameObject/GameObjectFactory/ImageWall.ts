@@ -1,7 +1,7 @@
 import { Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
 // import { GRASS_IMAGE } from "../../../AssetService/assetService";
 import { Scene } from "../../Scene/Scene";
-import GameObject, { BodyUserData, GameObjectProps } from "../GameObject";
+import GameObject, { GameObjectProps } from "../GameObject";
 
 export interface PicWallProps extends GameObjectProps {
   w: number;
@@ -13,6 +13,8 @@ export interface PicWallProps extends GameObjectProps {
 // I think I want to use corner positioning to make wall layout math easier
 export default class PicWall extends GameObject { // extend something general?
   scene: Scene;
+  colliderHandle: ColliderHandle;
+  rigidBodyHandle: null = null;
   
   constructor(props: PicWallProps) {
     super();

@@ -24,7 +24,6 @@ export class SingleClientGame {
   players: Player[] = [
     new Player({
       playerIndex: 0,
-      gamepadIndex: -1, // -1 is Keyboard/Mouse
       inputConfig: {
         ...defaultInputConfig,
         keyboardMouseInputMapping: {
@@ -33,12 +32,12 @@ export class SingleClientGame {
           buttonRightKey: 'd',
           buttonDownKey: 's',
           buttonLeftKey: 'a',
+          button1Key: ' '
         },
       }
     }),
     new Player({
       playerIndex: 1,
-      gamepadIndex: -1, // -1 is Keyboard/Mouse
     })
   ]
   session: Session = new Session({ players: this.players })
@@ -61,7 +60,10 @@ export class SingleClientGame {
   start() {
     const tick = () => {
       this.players.forEach(player => {
-        player.tick(this.inputReader.getInput(), this.frame)
+        player.tickMovement(this.inputReader.getInput(), this.frame)
+      })
+      this.players.forEach(player => {
+        player.tickAbilities(this.inputReader.getInput(), this.frame)
       })
       this.session.tick()
       this.frame++
