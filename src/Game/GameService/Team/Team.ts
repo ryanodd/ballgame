@@ -5,17 +5,14 @@ import { Character } from "../Player/Character";
 
 export interface TeamProps {
   teamIndex: number;
-  characters: Character[];
 }
 
 export class Team {
   teamIndex: number;
-  characters: Character[];
   score: number;
 
-  constructor({teamIndex, characters}: TeamProps) {
+  constructor({teamIndex}: TeamProps) {
     this.teamIndex = teamIndex
-    this.characters = characters
     this.score = 0;
     this.updateScore()
   }
@@ -23,15 +20,11 @@ export class Team {
   serialize(): JSONObject {
     return {
       score: this.score,
-      characters: this.characters.map(character => character.serialize())
     }
   }
 
   deserialize(value: JSONObject) {
     this.score = value['score']
-    this.characters.forEach((character, i) => {
-      character.deserialize(value['characters'][i])
-    })
     this.updateScore()
   }
 

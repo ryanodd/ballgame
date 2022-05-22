@@ -2,6 +2,7 @@ import { EventQueue, World } from '@dimforge/rapier2d';
 import { JSONObject } from '../../lib/netplayjs';
 import { defaultInputConfig } from '../InputService/contants/InputConfigDefaults';
 import { MyInput, MyInputReader } from './netplayjs/MyInput';
+import { CharacterType } from './Player/CharacterType';
 import { Player } from './Player/Player';
 import { Scene } from './Scene/Scene';
 import { createScene1 } from './Scene/SceneFactory/Scene1';
@@ -24,6 +25,8 @@ export class SingleClientGame {
   players: Player[] = [
     new Player({
       playerIndex: 0,
+      teamIndex: 0,
+      characterType: CharacterType.Pulse,
       inputConfig: {
         ...defaultInputConfig,
         keyboardMouseInputMapping: {
@@ -39,6 +42,8 @@ export class SingleClientGame {
     }),
     new Player({
       playerIndex: 1,
+      teamIndex: 1,
+      characterType: CharacterType.Pulse,
     })
   ]
   session: Session = new Session({ players: this.players })
@@ -54,7 +59,7 @@ export class SingleClientGame {
   draw(canvas: HTMLCanvasElement) {
     const c = canvas.getContext('2d')
     if (c !== null) {
-      this.session.scene.render(c)
+      this.session.scene.render(c, this.frame)
     }
   }
 
@@ -66,7 +71,7 @@ export class SingleClientGame {
       this.players.forEach(player => {
         player.tickAbilities(this.inputReader.getInput(), this.frame)
       })
-      this.session.tick()
+      this.session.tick(this.frame)
       this.frame++
     }
     const animate = (timestamp: number) => {

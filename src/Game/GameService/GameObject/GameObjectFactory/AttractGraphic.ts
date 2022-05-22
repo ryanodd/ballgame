@@ -31,7 +31,7 @@ export default class AttractGraphic extends GameObject { // extend something gen
 
   // No tick
 
-  render(c: CanvasRenderingContext2D ){
+  render(c: CanvasRenderingContext2D, frame: number){
     c.beginPath()
     c.fillStyle = 'rgb(60, 60, 60)';
   }

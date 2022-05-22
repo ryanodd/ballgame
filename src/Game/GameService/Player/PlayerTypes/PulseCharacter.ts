@@ -1,14 +1,10 @@
 import { Collider, RigidBody } from "@dimforge/rapier2d";
-import { timeStamp } from "console";
 import { JSONObject } from "../../../../lib/netplayjs";
 import { normalize } from "../../../../utils/math";
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
 import { isBallObject } from "../../GameObject/GameObjectFactory/Ball";
 import PulseCharacterObject from "../../GameObject/GameObjectFactory/PulseCharacterObject";
-import { MyInput } from "../../netplayjs/MyInput";
-import { Scene } from "../../Scene/Scene";
 import { Character, CharacterProps, INPUT_BUFFER_FRAMES } from "../Character";
-import { Player, PlayerProps } from "../Player";
 
 const ATTRACT_COOLDOWN = 0
 const REPEL_COOLDOWN = 40
@@ -18,6 +14,9 @@ export interface PulseCharacterProps extends CharacterProps {
   FRICTION: number;
   RESTITUTION: number;
   RADIUS: number;
+  
+  x: number;
+  y: number;
 }
 
 export class PulseCharacter extends Character {
@@ -26,38 +25,33 @@ export class PulseCharacter extends Character {
   RESTITUTION: number;
   RADIUS: number;
 
-  pulseObject: PulseCharacterObject | null;
+  pulseObject: PulseCharacterObject;
   mostRecentAttractFrame: number;
   mostRecentRepelFrame: number;
   repelBuffered: boolean;
 
   constructor(props: PulseCharacterProps){
-    super({player: props.player})
+    super({player: props.player, scene: props.scene })
 
     this.DENSITY = props.DENSITY;
     this.FRICTION = props.FRICTION;
     this.RESTITUTION = props.RESTITUTION;
     this.RADIUS = props.RADIUS;
-
-    this.pulseObject = null;
     this.mostRecentAttractFrame = -ATTRACT_COOLDOWN
     // this.attractBuffered = false; // continuous input, not needed?
     this.mostRecentRepelFrame = -REPEL_COOLDOWN
     this.repelBuffered = false;
-  }
 
-  // Puts new player Game Objects (usually a single object) into the given Scene world.
-  createObjects(scene: Scene, x: number, y: number){
     this.pulseObject = new PulseCharacterObject({
-      scene: scene,
-      x: x,
-      y: y,
+      scene: props.scene,
+      x: props.x,
+      y: props.y,
       r: this.RADIUS,
       density: this.DENSITY,
       friction: this.FRICTION,
       restitution: this.RESTITUTION,
     });
-    scene.addGameObject(this.pulseObject);
+    props.scene.addGameObject(this.pulseObject);
   }
 
   tickMovement(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) { 
@@ -93,16 +87,13 @@ export class PulseCharacter extends Character {
     ) {
       if (frame >= this.mostRecentAttractFrame + ATTRACT_COOLDOWN) {
         this.mostRecentAttractFrame = frame
-        this.scene?.gameObjects.forEach(gameObject => {
-          if (
-            this.pulseObject !== null &&
-            isBallObject(gameObject)
-          ) {
+        this.scene.gameObjects.forEach(gameObject => {
+          if (isBallObject(gameObject)) {
             const IMPULSE_DISTANCE = 2.5
             const IMPULSE_MAGNITUDE = 0.1
-            const otherCollider = this.scene?.world.getCollider(gameObject.colliderHandle) as Collider
-            const otherRigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandle) as RigidBody
-            const myCollider = this.scene?.world.getCollider(this.pulseObject?.colliderHandle) as Collider
+            const otherCollider = this.scene.world.getCollider(gameObject.colliderHandle)
+            const otherRigidBody = this.scene.world.getRigidBody(gameObject.rigidBodyHandle)
+            const myCollider = this.scene.world.getCollider(this.pulseObject.colliderHandle)
             const xDiff = otherCollider.translation().x - myCollider.translation().x
             const yDiff = otherCollider.translation().y - myCollider.translation().y
             const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
@@ -112,7 +103,7 @@ export class PulseCharacter extends Character {
               x: (-normalizedDiff.x * closeness * IMPULSE_MAGNITUDE),
               y: (-normalizedDiff.y * closeness * IMPULSE_MAGNITUDE),
             }
-            otherRigidBody?.applyImpulse(impulseVector, true)
+            otherRigidBody.applyImpulse(impulseVector, true)
           }
         })
       }
@@ -130,13 +121,10 @@ export class PulseCharacter extends Character {
         this.mostRecentRepelFrame = frame
 
         this.scene?.gameObjects.forEach(gameObject => {
-          if (
-            this.pulseObject !== null &&
-            isBallObject(gameObject)
-          ) {
+          if (isBallObject(gameObject)) {
             const IMPULSE_DISTANCE = 4
             const IMPULSE_MAGNITUDE = 7
-            const otherCollider = this.scene?.world.getCollider(gameObject.colliderHandle) as Collider
+            const otherCollider = this.scene.world.getCollider(gameObject.colliderHandle) as Collider
             const otherRigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandle) as RigidBody
             const myCollider = this.scene?.world.getCollider(this.pulseObject?.colliderHandle) as Collider
             const xDiff = otherCollider.translation().x - myCollider.translation().x

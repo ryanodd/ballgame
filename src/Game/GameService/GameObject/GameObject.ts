@@ -22,7 +22,7 @@ export default abstract class GameObject {
   lifespanFrames: number | null = null;
   markedForDeletion: boolean = false;
 
-  abstract render(c: CanvasRenderingContext2D): void;
+  abstract render(c: CanvasRenderingContext2D, frame: number): void;
   tick(){
   }
   handleCollision(oppositeColliderHandle: ColliderHandle, started: boolean): void {

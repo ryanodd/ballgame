@@ -2,7 +2,8 @@ import { World } from "@dimforge/rapier2d";
 import Ball from "../../GameObject/GameObjectFactory/Ball";
 import GoalArea from "../../GameObject/GameObjectFactory/GoalArea";
 import Wall from "../../GameObject/GameObjectFactory/Wall";
-import { Character } from "../../Player/Character";
+import { createCharacterForPlayer } from "../../Player/CharacterType";
+import { Player } from "../../Player/Player";
 import { Session } from "../../Session/Session";
 import { Team } from "../../Team/Team";
 import { Scene } from "../Scene";
@@ -28,6 +29,7 @@ const WALL_THICKNESS = 0.1;
 
 export interface Scene1Props {
   teams: Team[];
+  players: Player[];
   session: Session;
 }
 
@@ -38,20 +40,22 @@ export function createScene1(props: Scene1Props): Scene {
   const returnScene: Scene = new Scene({
     world: world,
     unitWidth: SCENE_WIDTH,
-    unitHeight: SCENE_HEIGHT,
-    gameObjects: []
+    unitHeight: SCENE_HEIGHT
   });
 
-  const character1: Character | undefined = props.teams[0].characters[0];
-  if (character1){
-    character1.createObjects(returnScene, 4, 4);
-    character1.setScene(returnScene)
-  }
-  const character2: Character | undefined = props.teams[1].characters[0];
-  if (character2){
-    character2.createObjects(returnScene, 8, 4);
-    character2.setScene(returnScene)
-  }
+  let team1Count = 0
+  let team2Count = 0
+  props.players.forEach((player) => {
+    // todo get config 4 tha chararacter
+    if (player.teamIndex === 0) {
+      const character = createCharacterForPlayer(player, returnScene, 4, 4 + (2 * team1Count))
+      team1Count++
+    }
+    if (player.teamIndex === 1) {
+      const character = createCharacterForPlayer(player, returnScene, 8, 4 + (2 * team2Count))
+      team2Count++
+    }
+  })
 
   // Need to declare separately to give handle for collision tracking purposes.
   const ball = new Ball({

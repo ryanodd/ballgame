@@ -28,8 +28,7 @@ export class RepelGraphic extends GameObject {
     this.y = props.y;
   }
 
-  render(c: CanvasRenderingContext2D): void {
-    const frame = 69; // jk. todo take in as a param
+  render(c: CanvasRenderingContext2D, frame: number): void {
     const radius = this.pulseRadius * ((frame - this.spawnFrame) / this.lifespanFrames)
     const gradient = c.createRadialGradient(
       this.x,

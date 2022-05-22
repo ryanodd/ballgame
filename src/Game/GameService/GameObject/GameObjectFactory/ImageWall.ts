@@ -1,4 +1,4 @@
-import { Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
+import { ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
 // import { GRASS_IMAGE } from "../../../AssetService/assetService";
 import { Scene } from "../../Scene/Scene";
 import GameObject, { GameObjectProps } from "../GameObject";

@@ -4,6 +4,7 @@ import { Session } from '../Session/Session';
 import { DefaultInput, Game, JSONObject, NetplayPlayer, NetplayState, TouchControl } from '../../../lib/netplayjs';
 import { Store } from 'redux';
 import { defaultInputConfig } from '../../InputService/contants/InputConfigDefaults';
+import { CharacterType } from '../Player/CharacterType';
 
 export class MyGame extends NetplayState<DefaultInput> {
   
@@ -13,17 +14,20 @@ export class MyGame extends NetplayState<DefaultInput> {
   session: Session
   store: Store
 
-
   constructor(store: Store) {
     super()
     this.players = [
       new Player({
         playerIndex: 0,
         netplayPlayerIndex: 0, // host
+        characterType: CharacterType.Pulse,
+        teamIndex: 0,
       }),
       new Player({
         playerIndex: 1,
         netplayPlayerIndex: 1, // client
+        characterType: CharacterType.Pulse,
+        teamIndex: 1,
         // inputConfig: {
         //   ...defaultInputConfig,
         //   keyboardMouseInputMapping: {
@@ -61,13 +65,13 @@ export class MyGame extends NetplayState<DefaultInput> {
         }
       })
     }
-    this.session.tick()
+    this.session.tick(frame)
   }
 
   draw(canvas: HTMLCanvasElement) {
     const c = canvas.getContext('2d');
     if (c !== null) {
-      this.session.scene.render(c)
+      this.session.render(c)
     }
   }
 }

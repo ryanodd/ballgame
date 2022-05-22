@@ -1,33 +1,46 @@
 import GameObject from "../GameObject/GameObject";
 import { ColliderHandle, World } from '@dimforge/rapier2d';
+import { JSONObject } from "../../../lib/netplayjs";
+import { Character } from "../Player/Character";
 
 export interface SceneProps {
   world: World;
   unitWidth: number;
   unitHeight: number;
-  gameObjects: GameObject[];
 }
 
 export class Scene {
   world: World;
   unitWidth: number;
   unitHeight: number;
-  gameObjects: GameObject[];
+  gameObjects: GameObject[] = [];
+  characters: Character[] = [];
 
   constructor(props: SceneProps){
     this.world = props.world;
     this.unitWidth = props.unitWidth;
     this.unitHeight = props.unitHeight;
-    this.gameObjects = props.gameObjects;
-
-    this.setup();
   }
 
-  setup() {
-    //nothin yet
+  serialize(): JSONObject {
+    return {
+      worldSnapshot: this.world.takeSnapshot().toString(),
+      characters: this.characters.map(character => character.serialize())
+    }
   }
 
-  render(c: CanvasRenderingContext2D) {
+  deserialize(value: JSONObject) {
+    const worldSnapshot = value['worldSnapshot']
+    const splitSnapshot = worldSnapshot.split(',')
+    const array = new Uint8Array(splitSnapshot)
+    this.world = World.restoreSnapshot(array);
+
+    this.characters.forEach((character, i) => {
+      character.deserialize(value['characters'][i])
+    })
+  }
+
+  render(c: CanvasRenderingContext2D, frame: number) {
     // Set rendering size to actual pixel size (to render at the best possible resolution)
     const canvasElementWidth = c.canvas.getBoundingClientRect().width
     const canvasElementHeight = c.canvas.getBoundingClientRect().height
@@ -44,11 +57,15 @@ export class Scene {
     c.scale(squareScaling, squareScaling);
 
     this.renderBackground(c)
-    this.renderGameObjects(c)
+    this.renderGameObjects(c, frame)
   }
 
   addGameObject(newObject: GameObject){
     this.gameObjects.push(newObject);
+  }
+
+  addCharacter(newCharacter: Character) {
+    this.characters.push(newCharacter);
   }
 
   handleCollision(colliderHandle1: ColliderHandle, colliderHandle2: ColliderHandle, started: boolean) {
@@ -62,9 +79,9 @@ export class Scene {
     }
   }
   
-  private renderGameObjects(c: CanvasRenderingContext2D) {
+  private renderGameObjects(c: CanvasRenderingContext2D, frame: number) {
     this.gameObjects.forEach(gameObject => {      
-      gameObject.render(c)
+      gameObject.render(c, frame)
     })
   }
 

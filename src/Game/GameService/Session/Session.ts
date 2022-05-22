@@ -20,59 +20,47 @@ export interface SessionProps {
 }
 
 export class Session {
+  frame = 1
+
   teams: Team[]
   scene: Scene;
+  // If 'Character's ever need to persist state across scene resets, lift them to this class
+  players: Player[] // copy of parent. They share a reference. Don't reassign the array itself
 
   constructor(props: SessionProps){
     this.teams = [
       new Team({
         teamIndex: 0,
-        characters: [
-          new PulseCharacter({ // todo: probably just CHOOSE these here and construct them in createScene
-            player: props.players[0],
-            RADIUS: 0.240,
-            DENSITY: 0.5,
-            FRICTION: 0.5,
-            RESTITUTION: 0.0,
-          })
-        ],
       }),
       new Team({
         teamIndex: 1,
-        characters: [
-          new PulseCharacter({
-            player: props.players[1],
-            RADIUS: 0.240,
-            DENSITY: 0.5,
-            FRICTION: 0.5,
-            RESTITUTION: 0.0
-          })
-        ]
       }),
     ]
-    this.scene = createScene1({ teams: this.teams, session: this });
+    this.scene = createScene1({ teams: this.teams, players: props.players, session: this });
+    this.players = props.players
   }
 
   serialize(): JSONObject {
     return {
-      worldSnapshot: this.scene.world.takeSnapshot().toString(),
+      frame: this.frame,
+      scene: this.scene.serialize(),
+      //worldSnapshot: this.scene.world.takeSnapshot().toString(),
       teams: this.teams.map(team => team.serialize()),
       // Todo serialize game objects in scene, they'll probably contain data that needs to be synced at some point
     };
   }
 
   deserialize(value: JSONObject): void {
-    const worldSnapshot = value['worldSnapshot']
-    const splitSnapshot = worldSnapshot.split(',')
-    const array = new Uint8Array(splitSnapshot)
-    this.scene.world = World.restoreSnapshot(array);
+    this.frame = value['frame']
+    this.scene.deserialize(value['scene']),
 
     this.teams.forEach((team, i) => {
       team.deserialize(value['teams'][i])
     })
   }
 
-  tick() {
+  tick(frame: number) {
+    this.frame = frame
     this.tickWorld();
     // this.scene.world.colliders.forEachCollider((collider) => {
     //   console.log(`x: ${collider.translation().x}, y: ${collider.translation().y}, hw: ${collider.halfExtents().x}, hh: ${collider.halfExtents().y}`)
@@ -89,6 +77,10 @@ export class Session {
   }
 
   resetScene() {
-    this.scene = createScene1({ teams: this.teams, session: this })
+    this.scene = createScene1({ teams: this.teams, players: this.players, session: this })
+  }
+
+  render(c: CanvasRenderingContext2D) {
+    this.scene.render(c, this.frame)
   }
 }
