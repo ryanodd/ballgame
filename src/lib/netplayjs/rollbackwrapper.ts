@@ -125,7 +125,7 @@ export class RollbackWrapper extends GameWrapper {
     // Start the netcode game loop.
     this.rollbackNetcode!.start();
 
-    const animate = (timestamp) => {
+    const animate = () => {
       // Draw state to canvas.
       this.game!.draw(this.canvas);
 

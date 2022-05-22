@@ -59,7 +59,9 @@ export class RepelGraphic extends GameObject {
   }
 
   render(c: CanvasRenderingContext2D, frame: number): void {
-    const radius = this.pulseRadius * ((frame - this.spawnFrame) / this.lifespanFrames)
+    const progress = ((frame - this.spawnFrame) / this.lifespanFrames)
+    const radius = this.pulseRadius * progress
+    const opacity = 1 - progress
 
     c.beginPath();
     c.arc(this.x, this.y, radius, 0, Math.PI * 2, true);
@@ -67,15 +69,15 @@ export class RepelGraphic extends GameObject {
     const gradient = c.createRadialGradient(
       this.x,
       this.y,
-      radius/7,
+      radius*(1/4),
 
       this.x,
       this.y,
-      radius
+      radius*(3/4),
     );
     //console.log(`radius: ${radius}, x: ${this.x}, y: ${this.y}`)
-    gradient.addColorStop(0, 'rgb(0, 0, 255)');
-    gradient.addColorStop(1, 'rgb(0, 0, 0)');
+    gradient.addColorStop(0, `rgba(242, 193, 56, ${opacity/3})`);
+    gradient.addColorStop(1, `rgba(242, 193, 56, ${opacity})`);
     c.fillStyle = gradient;
     c.fill();
   }
