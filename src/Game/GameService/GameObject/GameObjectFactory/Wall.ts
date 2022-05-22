@@ -1,21 +1,31 @@
 import { Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
+import { JSONObject } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
-import GameObject, { GameObjectProps } from "../GameObject";
+import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps } from "../GameObject";
 
-export interface WallProps extends GameObjectProps {
+export interface WallPhysicsProps extends GameObjectPhysicsProps {
   w: number;
   h: number;
   rotation?: number;
 }
 
-export const WALL_OBJ = 'Wall'
+export interface WallPhysicsHandles extends GameObjectPhysicsHandles {
+  colliderHandle: ColliderHandle;
+}
+
+
+export interface WallProps extends GameObjectProps {
+  physics: WallPhysicsProps | WallPhysicsHandles;
+}
+
+export const WALL_OBJ_ID = 'Wall'
 export const isWallObject = (o: GameObject): o is Wall => {
-  return o.id === WALL_OBJ
+  return o.id === WALL_OBJ_ID
 }
 // At this moment this component is translating from corner origins to center origin for rapier
 // I think I want to use corner positioning to make wall layout math easier
 export default class Wall extends GameObject { // extend something general?
-  id = WALL_OBJ;
+  id = WALL_OBJ_ID;
   scene: Scene;
   spawnFrame: number;
   colliderHandle: ColliderHandle;
@@ -25,10 +35,34 @@ export default class Wall extends GameObject { // extend something general?
     super();
     this.scene = props.scene;
     this.spawnFrame = props.spawnFrame ?? 0;
-    this.colliderHandle = this.createCollider(props);
+
+    if ('x' in props.physics) {
+      this.colliderHandle = this.createCollider(props.physics);
+    }
+    else {
+      this.colliderHandle = props.physics.colliderHandle
+    }
   }
 
-  createCollider(props: WallProps){
+  serialize(): JSONObject {
+    return {
+      ...super.serialize(),
+      id: this.id,
+    }
+  };
+
+  static deserialize(value: any, scene: Scene): Wall {
+    return new Wall({
+      scene,
+      spawnFrame: value['spawnFrame'],
+      physics: {
+        colliderHandle: value['colliderHandle'],
+        rigidBodyHandle: null,
+      },
+    })
+  }
+
+  createCollider(props: WallPhysicsProps){
     const groundColliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
       .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
       .setRotation((props.rotation ?? 0)*Math.PI/180)

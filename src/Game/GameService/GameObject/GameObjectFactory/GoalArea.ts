@@ -1,42 +1,73 @@
-import { ActiveEvents, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
+import { ActiveEvents, ColliderDesc, ColliderHandle, World } from "@dimforge/rapier2d";
+import { JSONObject } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
-import GameObject, { GameObjectProps } from "../GameObject";
+import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps } from "../GameObject";
+import { isBallObject } from "./Ball";
 
-export interface GoalAreaProps extends GameObjectProps {
+export interface GoalAreaPhysicsProps extends GameObjectPhysicsProps {
   w: number;
   h: number;
-  color: string;
-  onGoal: () => void;
-  ballColliders: ColliderHandle[];
   rotation?: number;
 }
 
-export const GOAL_AREA_OBJ = 'GoalArea'
+export interface GoalAreaPhysicsHandles extends GameObjectPhysicsHandles {
+  colliderHandle: ColliderHandle;
+}
+
+export interface GoalAreaProps extends GameObjectProps {
+  physics: GoalAreaPhysicsProps | GoalAreaPhysicsHandles;
+  teamIndex: number,
+}
+
+export const GOAL_AREA_OBJ_ID = 'GoalArea'
 export const isGoalAreaObject = (o: GameObject): o is GoalArea => {
-  return o.id === GOAL_AREA_OBJ
+  return o.id === GOAL_AREA_OBJ_ID
 }
 export default class GoalArea extends GameObject { // extend something general?
-  id = GOAL_AREA_OBJ;
-  color: string;
+  id = GOAL_AREA_OBJ_ID;
   scene: Scene;
   spawnFrame: number;
+
   colliderHandle: ColliderHandle;
   rigidBodyHandle: null = null;
 
-  onGoal: () => void;
-  ballColliders: ColliderHandle[];
-  
+  teamIndex: number;
+
   constructor(props: GoalAreaProps) {
     super();
     this.scene = props.scene;
-    this.color = props.color;
     this.spawnFrame = props.spawnFrame ?? 0;
-    this.colliderHandle = this.createCollider(props);
-    this.ballColliders = props.ballColliders;
-    this.onGoal = props.onGoal
+    this.teamIndex = props.teamIndex;
+
+    if ('x' in props.physics) {
+      this.colliderHandle = this.createCollider(props.physics);
+    }
+    else {
+      this.colliderHandle = props.physics.colliderHandle
+    }
   }
 
-  createCollider(props: GoalAreaProps){
+  serialize(): JSONObject {
+    return {
+      ...super.serialize(),
+      id: this.id,
+      teamIndex: this.teamIndex,
+    }
+  };
+
+  static deserialize(value: any, scene: Scene): GoalArea {
+    return new GoalArea({
+      scene,
+      spawnFrame: value['spawnFrame'],
+      physics: {
+        colliderHandle: value['colliderHandle'],
+        rigidBodyHandle: null,
+      },
+      teamIndex: value['teamIndex'],
+    })
+  }
+
+  createCollider(props: GoalAreaPhysicsProps){
     const groundColliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
       .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
       .setRotation((props.rotation ?? 0)*Math.PI/180)
@@ -64,14 +95,19 @@ export default class GoalArea extends GameObject { // extend something general?
     const { x: xPosition, y: yPosition} = collider.translation();
     const rotation = collider.rotation()
 
+    const color = this.scene.teams[this.teamIndex].color;
+
     c.beginPath()
-    c.fillStyle = this.color;
+    c.fillStyle = color;
     c.fillRect( xPosition - halfX, yPosition - halfY, halfX*2, halfY*2);
   }
 
   handleCollision(oppositeColliderHandle: ColliderHandle, started: boolean){
-    if (started && this.ballColliders.includes(oppositeColliderHandle)) {
-      this.onGoal()
+    const otherGameObject = this.scene.gameObjects.find((gameObject) => {
+      return oppositeColliderHandle === gameObject.colliderHandle
+    })
+    if (started && otherGameObject && isBallObject(otherGameObject)) {
+      this.scene.session.onGoal(this.teamIndex)
     }
   }
 }

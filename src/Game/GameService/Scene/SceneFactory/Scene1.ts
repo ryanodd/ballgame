@@ -41,6 +41,7 @@ export function createScene1(props: Scene1Props): Scene {
     world: world,
     unitWidth: SCENE_WIDTH,
     unitHeight: SCENE_HEIGHT,
+    session: props.session,
     teams: props.teams,
     players: props.players,
   });
@@ -62,47 +63,57 @@ export function createScene1(props: Scene1Props): Scene {
   // Need to declare separately to give handle for collision tracking purposes.
   const ball = new Ball({
     scene: returnScene,
-    x: 8,
-    y: 7,
-    r: 0.50,
-    density: 0.8,
-    friction: 0.6,
-    restitution: 0.9,
+    physics: {
+      x: 8,
+      y: 7,
+      r: 0.50,
+      density: 0.8,
+      friction: 0.6,
+      restitution: 0.9,
+    }
   })
   returnScene.addGameObject(ball);
 
   // Bottom Wall
   returnScene.addGameObject(new Wall({
     scene: returnScene,
-    x: ARENA_HORIZONTAL_PADDING,
-    y: ARENA_VERTICAL_PADDING,
-    w: ARENA_WIDTH,
-    h: WALL_THICKNESS
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING,
+      y: ARENA_VERTICAL_PADDING,
+      w: ARENA_WIDTH,
+      h: WALL_THICKNESS
+    }
   }));
 
   // Top Wall
   returnScene.addGameObject(new Wall({
     scene: returnScene,
-    x: ARENA_HORIZONTAL_PADDING,
-    y: ARENA_VERTICAL_PADDING + ARENA_HEIGHT - WALL_THICKNESS,
-    w: ARENA_WIDTH,
-    h: WALL_THICKNESS
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING,
+      y: ARENA_VERTICAL_PADDING + ARENA_HEIGHT - WALL_THICKNESS,
+      w: ARENA_WIDTH,
+      h: WALL_THICKNESS
+    }
   }));
 
   // Left Side
   returnScene.addGameObject(new Wall({
     scene: returnScene,
-    x: ARENA_HORIZONTAL_PADDING,
-    y: ARENA_VERTICAL_PADDING,
-    w: WALL_THICKNESS,
-    h: NON_NET_HEIGHT
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING,
+      y: ARENA_VERTICAL_PADDING,
+      w: WALL_THICKNESS,
+      h: NON_NET_HEIGHT
+    }
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
-    x: ARENA_HORIZONTAL_PADDING,
-    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
-    w: WALL_THICKNESS,
-    h: NON_NET_HEIGHT
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING,
+      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
+      w: WALL_THICKNESS,
+      h: NON_NET_HEIGHT
+    }
   }));
   // returnScene.addGameObject(new GoalArea({
   //   scene: returnScene,
@@ -113,49 +124,52 @@ export function createScene1(props: Scene1Props): Scene {
   // }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
-    x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
-    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
-    w: NET_DEPTH + WALL_THICKNESS,
-    h: WALL_THICKNESS
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
+      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
+      w: NET_DEPTH + WALL_THICKNESS,
+      h: WALL_THICKNESS
+    }
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
-    x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
-    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
-    w: NET_DEPTH + WALL_THICKNESS,
-    h: WALL_THICKNESS
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
+      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
+      w: NET_DEPTH + WALL_THICKNESS,
+      h: WALL_THICKNESS
+    }
   }));
   returnScene.addGameObject(new GoalArea({
     scene: returnScene,
-    color: props.teams[0].color,
-    x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
-    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,
-    w: WALL_THICKNESS,
-    h: NET_HEIGHT,
-    ballColliders: [
-      ball.colliderHandle
-    ],
-    onGoal: () => {
-      props.teams[1].onGoal();
-      props.session.resetScene();
-    }
+    teamIndex: 0,
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
+      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,
+      w: WALL_THICKNESS,
+      h: NET_HEIGHT,
+    },
   }));
 
 
   //Right Wall
   returnScene.addGameObject(new Wall({
     scene: returnScene,
-    x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
-    y: ARENA_VERTICAL_PADDING,
-    w: WALL_THICKNESS,
-    h: NON_NET_HEIGHT
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
+      y: ARENA_VERTICAL_PADDING,
+      w: WALL_THICKNESS,
+      h: NON_NET_HEIGHT
+    }
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
-    x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
-    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
-    w: WALL_THICKNESS,
-    h: NON_NET_HEIGHT
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
+      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
+      w: WALL_THICKNESS,
+      h: NON_NET_HEIGHT
+    }
   }));
   // returnScene.addGameObject(new GoalArea({
   //   scene: returnScene,
@@ -166,32 +180,31 @@ export function createScene1(props: Scene1Props): Scene {
   // }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
-    x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
-    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
-    w: NET_DEPTH + WALL_THICKNESS,
-    h: WALL_THICKNESS
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
+      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
+      w: NET_DEPTH + WALL_THICKNESS,
+      h: WALL_THICKNESS
+    }
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
-    x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
-    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
-    w: NET_DEPTH + WALL_THICKNESS,
-    h: WALL_THICKNESS
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
+      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
+      w: NET_DEPTH + WALL_THICKNESS,
+      h: WALL_THICKNESS
+    }
   }));
   returnScene.addGameObject(new GoalArea({
     scene: returnScene,
-    color: props.teams[1].color,
-    x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH + NET_DEPTH - WALL_THICKNESS,
-    y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,
-    w: WALL_THICKNESS,
-    h: NET_HEIGHT,
-    ballColliders: [
-      ball.colliderHandle
-    ],
-    onGoal: () => {
-      props.teams[0].onGoal();
-      props.session.resetScene();
-    }
+    teamIndex: 0,
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH + NET_DEPTH - WALL_THICKNESS,
+      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,
+      w: WALL_THICKNESS,
+      h: NET_HEIGHT,
+    },
   }));
 
   return returnScene;

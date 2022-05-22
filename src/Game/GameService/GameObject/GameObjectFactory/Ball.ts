@@ -1,21 +1,33 @@
 import { Collider, ColliderDesc, ColliderHandle, RigidBody, RigidBodyDesc, RigidBodyHandle } from "@dimforge/rapier2d";
+import { JSONObject } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
-import GameObject, { GameObjectProps } from "../GameObject";
+import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps } from "../GameObject";
 
-export interface BallProps extends GameObjectProps {
+export interface BallPhysicsProps extends GameObjectPhysicsProps {
   r: number;
   density: number;
   friction: number;
   restitution: number;
 }
 
-export const BALL_OBJ = 'Ball'
+export interface BallPhysicsHandles extends GameObjectPhysicsHandles {
+  colliderHandle: ColliderHandle;
+  rigidBodyHandle: RigidBodyHandle;
+}
+
+
+export interface BallProps extends GameObjectProps {
+  physics: BallPhysicsProps | BallPhysicsHandles;
+}
+
+
+export const BALL_OBJ_ID = 'Ball'
 export const isBallObject = (o: GameObject): o is Ball => {
-  return o.id === BALL_OBJ
+  return o.id === BALL_OBJ_ID
 }
 
 export default class Ball extends GameObject {
-  id = BALL_OBJ;
+  id = BALL_OBJ_ID;
   scene: Scene;
   spawnFrame: number;
   colliderHandle: ColliderHandle;
@@ -25,12 +37,37 @@ export default class Ball extends GameObject {
     super();
     this.scene = props.scene;
     this.spawnFrame = props.spawnFrame ?? 0;
-    const { collider, rigidBody } = this.createColliderAndRigidBody(props);
-    this.colliderHandle = collider.handle
-    this.rigidBodyHandle = rigidBody.handle
+
+    if ('x' in props.physics) {
+      const { collider, rigidBody } = this.createColliderAndRigidBody(props.physics);
+      this.colliderHandle = collider.handle
+      this.rigidBodyHandle = rigidBody.handle
+    }
+    else {
+      this.colliderHandle = props.physics.colliderHandle
+      this.rigidBodyHandle = props.physics.rigidBodyHandle
+    }
   }
 
-  createColliderAndRigidBody(props: BallProps){
+  serialize(): JSONObject {
+    return {
+      ...super.serialize(),
+      id: this.id,
+    }
+  };
+
+  static deserialize(value: any, scene: Scene): Ball {
+    return new Ball({
+      scene,
+      spawnFrame: value['spawnFrame'],
+      physics: {
+        colliderHandle: value['colliderHandle'],
+        rigidBodyHandle: value['rigidBodyHandle'],
+      }
+    })
+  }
+
+  createColliderAndRigidBody(props: BallPhysicsProps){
     const rigidBodyDesc = RigidBodyDesc.dynamic();
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 

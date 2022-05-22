@@ -63,22 +63,14 @@ export class Session {
 
   tick(frame: number) {
     this.frame = frame
-    this.tickWorld();
+    this.scene.tick(frame)
     // this.scene.world.colliders.forEachCollider((collider) => {
     //   console.log(`x: ${collider.translation().x}, y: ${collider.translation().y}, hw: ${collider.halfExtents().x}, hh: ${collider.halfExtents().y}`)
     // })
   }
 
-  // Physics tick
-  tickWorld() {
-    const eventQueue = new EventQueue(true);
-    this.scene.world.step(eventQueue);
-    eventQueue.drainCollisionEvents((handle1, handle2, started) => {
-      this.scene.handleCollision(handle1, handle2, started)
-    })
-  }
-
-  resetScene() {
+  onGoal(teamIndex: number) {
+    this.teams[teamIndex].onGoal();
     this.scene = createScene1({ teams: this.teams, players: this.players, session: this })
   }
 

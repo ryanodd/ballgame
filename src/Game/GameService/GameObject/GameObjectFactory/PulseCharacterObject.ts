@@ -1,22 +1,35 @@
 import { Scene } from "../../Scene/Scene";
-import GameObject, { GameObjectProps, BodyGameObject } from "../GameObject";
+import GameObject, { GameObjectProps, BodyGameObject, GameObjectPhysicsProps, GameObjectPhysicsHandles } from "../GameObject";
 import { Collider, ColliderDesc, ColliderHandle, RigidBodyDesc, RigidBodyHandle } from "@dimforge/rapier2d";
+import { JSONObject } from "../../../../lib/netplayjs";
 
-export interface PulseCharacterObjectProps extends GameObjectProps {
+
+export interface PulseCharacterObjectPhysicsProps extends GameObjectPhysicsProps {
   r: number;
   density: number;
   friction: number;
   restitution: number;
+}
+
+export interface PulseCharacterObjectPhysicsHandles extends GameObjectPhysicsHandles {
+  colliderHandle: ColliderHandle;
+  rigidBodyHandle: RigidBodyHandle;
+}
+
+
+
+export interface PulseCharacterObjectProps extends GameObjectProps {
+  physics: PulseCharacterObjectPhysicsProps | PulseCharacterObjectPhysicsHandles;
   color: string;
 }
 
-export const PULSE_OBJ = 'Pulse'
+export const PULSE_OBJ_ID = 'Pulse'
 export const isPulseCharacterObject = (o: GameObject): o is PulseCharacterObject => {
-  return o.id === PULSE_OBJ
+  return o.id === PULSE_OBJ_ID
 }
 
 export default class PulseCharacterObject extends GameObject implements BodyGameObject { // extend something general?
-  id = PULSE_OBJ
+  id = PULSE_OBJ_ID
   scene: Scene;
   spawnFrame: number;
   colliderHandle: ColliderHandle;
@@ -27,13 +40,40 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
     super();
     this.scene = props.scene;
     this.spawnFrame = props.spawnFrame ?? 0;
-    const { collider, rigidBody } = this.createColliderAndRigidBody(props);
-    this.colliderHandle = collider.handle
-    this.rigidBodyHandle = rigidBody.handle
     this.color = props.color
+
+    if ('x' in props.physics) {
+      const { collider, rigidBody } = this.createColliderAndRigidBody(props.physics);
+      this.colliderHandle = collider.handle
+      this.rigidBodyHandle = rigidBody.handle
+    }
+    else {
+      this.colliderHandle = props.physics.colliderHandle
+      this.rigidBodyHandle = props.physics.rigidBodyHandle
+    }
   }
 
-  createColliderAndRigidBody(props: PulseCharacterObjectProps){
+  serialize(): JSONObject {
+    return {
+      ...super.serialize(),
+      id: this.id,
+      color: this.color, // todo store team instead
+    }
+  };
+
+  static deserialize(value: any, scene: Scene): PulseCharacterObject {
+    return new PulseCharacterObject({
+      scene,
+      spawnFrame: value['spawnFrame'],
+      physics: {
+        colliderHandle: value['colliderHandle'],
+        rigidBodyHandle: value['rigidBodyHandle'],
+      },
+      color: value['color'],
+    })
+  }
+
+  createColliderAndRigidBody(props: PulseCharacterObjectPhysicsProps){
     const rigidBodyDesc = RigidBodyDesc.dynamic();
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 

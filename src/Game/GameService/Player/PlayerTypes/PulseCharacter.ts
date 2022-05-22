@@ -4,6 +4,7 @@ import { normalize } from "../../../../utils/math";
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
 import { isBallObject } from "../../GameObject/GameObjectFactory/Ball";
 import PulseCharacterObject from "../../GameObject/GameObjectFactory/PulseCharacterObject";
+import { RepelGraphic } from "../../GameObject/GameObjectFactory/RepelGraphic";
 import { Character, CharacterProps, INPUT_BUFFER_FRAMES } from "../Character";
 
 const ATTRACT_COOLDOWN = 0
@@ -45,12 +46,14 @@ export class PulseCharacter extends Character {
     this.pulseObject = new PulseCharacterObject({
       scene: props.scene,
       color: this.scene.teams[this.player.teamIndex].color,
-      x: props.x,
-      y: props.y,
-      r: this.RADIUS,
-      density: this.DENSITY,
-      friction: this.FRICTION,
-      restitution: this.RESTITUTION,
+      physics: {
+        x: props.x,
+        y: props.y,
+        r: this.RADIUS,
+        density: this.DENSITY,
+        friction: this.FRICTION,
+        restitution: this.RESTITUTION,
+      }
     });
     props.scene.addGameObject(this.pulseObject);
   }
@@ -121,13 +124,23 @@ export class PulseCharacter extends Character {
         this.repelBuffered = false
         this.mostRecentRepelFrame = frame
 
+        const myCollider = this.scene?.world.getCollider(this.pulseObject?.colliderHandle) as Collider
+
+        this.scene.addGameObject(new RepelGraphic({
+          scene: this.scene,
+          spawnFrame: frame,
+          physics: {
+            x: myCollider.translation().x,
+            y: myCollider.translation().y,
+          }
+        }))
+
         this.scene?.gameObjects.forEach(gameObject => {
           if (isBallObject(gameObject)) {
             const IMPULSE_DISTANCE = 4
             const IMPULSE_MAGNITUDE = 7
             const otherCollider = this.scene.world.getCollider(gameObject.colliderHandle) as Collider
             const otherRigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandle) as RigidBody
-            const myCollider = this.scene?.world.getCollider(this.pulseObject?.colliderHandle) as Collider
             const xDiff = otherCollider.translation().x - myCollider.translation().x
             const yDiff = otherCollider.translation().y - myCollider.translation().y
             const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))

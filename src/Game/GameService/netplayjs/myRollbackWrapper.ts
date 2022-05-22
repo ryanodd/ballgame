@@ -52,7 +52,7 @@ export class MyRollbackWrapper {
      * every frame. Set to zero to indicate that the state is deterministic
      * and doesn't need to be synced.
      */
-    this.stateSyncPeriod = 1;
+    this.stateSyncPeriod = 0;
 
     // Find canvas for game.
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement

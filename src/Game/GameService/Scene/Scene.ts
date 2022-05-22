@@ -1,14 +1,17 @@
 import GameObject from "../GameObject/GameObject";
-import { ColliderHandle, World } from '@dimforge/rapier2d';
+import { ColliderHandle, EventQueue, World } from '@dimforge/rapier2d';
 import { JSONObject } from "../../../lib/netplayjs";
 import { Character } from "../Player/Character";
 import { Team } from "../Team/Team";
 import { Player } from "../Player/Player";
+import { getGameObjectById } from "../GameObject/GameObjectType";
+import { Session } from "../Session/Session";
 
 export interface SceneProps {
   world: World;
   unitWidth: number;
   unitHeight: number;
+  session: Session;
   players: Player[];
   teams: Team[];
 }
@@ -17,7 +20,8 @@ export class Scene {
   world: World;
   unitWidth: number;
   unitHeight: number;
-  readonly gameObjects: GameObject[] = [];
+  gameObjects: GameObject[] = [];
+  readonly session: Session;
   readonly characters: Character[] = [];
   readonly players: Player[];
   readonly teams: Team[];
@@ -26,6 +30,7 @@ export class Scene {
     this.world = props.world;
     this.unitWidth = props.unitWidth;
     this.unitHeight = props.unitHeight;
+    this.session = props.session;
     this.players = props.players;
     this.teams = props.teams;
   }
@@ -33,7 +38,8 @@ export class Scene {
   serialize(): JSONObject {
     return {
       worldSnapshot: this.world.takeSnapshot().toString(),
-      characters: this.characters.map(character => character.serialize())
+      gameObjects: this.gameObjects.map(gameObject => gameObject.serialize()),
+      characters: this.characters.map(character => character.serialize()),
     }
   }
 
@@ -43,9 +49,28 @@ export class Scene {
     const array = new Uint8Array(splitSnapshot)
     this.world = World.restoreSnapshot(array);
 
+    this.gameObjects = value['gameObjects'].map((gameObjectValue: JSONObject) => {
+      return getGameObjectById(gameObjectValue['id']).deserialize(gameObjectValue, this)
+    })
+
     this.characters.forEach((character, i) => {
       character.deserialize(value['characters'][i])
     })
+  }
+
+  tick(frame: number) {
+    const eventQueue = new EventQueue(true);
+    this.world.step(eventQueue);
+    eventQueue.drainCollisionEvents((handle1, handle2, started) => {
+      this.handleCollision(handle1, handle2, started)
+    })
+    this.gameObjects.forEach((gameObject) => {
+      gameObject.tick(frame)
+    })
+    this.gameObjects = this.gameObjects.filter((gameObject) => {
+      return !gameObject.markedForDeletion
+    })
+
   }
 
   render(c: CanvasRenderingContext2D, frame: number) {
