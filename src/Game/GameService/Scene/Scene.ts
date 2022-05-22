@@ -2,24 +2,32 @@ import GameObject from "../GameObject/GameObject";
 import { ColliderHandle, World } from '@dimforge/rapier2d';
 import { JSONObject } from "../../../lib/netplayjs";
 import { Character } from "../Player/Character";
+import { Team } from "../Team/Team";
+import { Player } from "../Player/Player";
 
 export interface SceneProps {
   world: World;
   unitWidth: number;
   unitHeight: number;
+  players: Player[];
+  teams: Team[];
 }
 
 export class Scene {
   world: World;
   unitWidth: number;
   unitHeight: number;
-  gameObjects: GameObject[] = [];
-  characters: Character[] = [];
+  readonly gameObjects: GameObject[] = [];
+  readonly characters: Character[] = [];
+  readonly players: Player[];
+  readonly teams: Team[];
 
   constructor(props: SceneProps){
     this.world = props.world;
     this.unitWidth = props.unitWidth;
     this.unitHeight = props.unitHeight;
+    this.players = props.players;
+    this.teams = props.teams;
   }
 
   serialize(): JSONObject {

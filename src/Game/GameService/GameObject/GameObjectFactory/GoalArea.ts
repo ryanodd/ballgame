@@ -5,6 +5,7 @@ import GameObject, { GameObjectProps } from "../GameObject";
 export interface GoalAreaProps extends GameObjectProps {
   w: number;
   h: number;
+  color: string;
   onGoal: () => void;
   ballColliders: ColliderHandle[];
   rotation?: number;
@@ -16,6 +17,7 @@ export const isGoalAreaObject = (o: GameObject): o is GoalArea => {
 }
 export default class GoalArea extends GameObject { // extend something general?
   id = GOAL_AREA_OBJ;
+  color: string;
   scene: Scene;
   spawnFrame: number;
   colliderHandle: ColliderHandle;
@@ -27,6 +29,7 @@ export default class GoalArea extends GameObject { // extend something general?
   constructor(props: GoalAreaProps) {
     super();
     this.scene = props.scene;
+    this.color = props.color;
     this.spawnFrame = props.spawnFrame ?? 0;
     this.colliderHandle = this.createCollider(props);
     this.ballColliders = props.ballColliders;
@@ -62,7 +65,7 @@ export default class GoalArea extends GameObject { // extend something general?
     const rotation = collider.rotation()
 
     c.beginPath()
-    c.fillStyle = 'rgb(24, 144, 255)';
+    c.fillStyle = this.color;
     c.fillRect( xPosition - halfX, yPosition - halfY, halfX*2, halfY*2);
   }
 

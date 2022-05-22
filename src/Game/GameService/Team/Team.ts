@@ -1,18 +1,20 @@
 import { store } from "../../../../pages/_app";
 import { JSONObject } from "../../../lib/netplayjs";
 import { SET_TEAM_DATA } from "../../../redux/actions";
-import { Character } from "../Player/Character";
 
 export interface TeamProps {
   teamIndex: number;
+  color: string; // used as fillStyle of the canvas
 }
 
 export class Team {
   teamIndex: number;
   score: number;
+  color: string;
 
-  constructor({teamIndex}: TeamProps) {
+  constructor({teamIndex, color}: TeamProps) {
     this.teamIndex = teamIndex
+    this.color = color;
     this.score = 0;
     this.updateScore()
   }

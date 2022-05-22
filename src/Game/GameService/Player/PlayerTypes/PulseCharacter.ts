@@ -44,6 +44,7 @@ export class PulseCharacter extends Character {
 
     this.pulseObject = new PulseCharacterObject({
       scene: props.scene,
+      color: this.scene.teams[this.player.teamIndex].color,
       x: props.x,
       y: props.y,
       r: this.RADIUS,

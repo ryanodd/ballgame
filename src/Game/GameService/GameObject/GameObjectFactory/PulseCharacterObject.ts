@@ -7,6 +7,7 @@ export interface PulseCharacterObjectProps extends GameObjectProps {
   density: number;
   friction: number;
   restitution: number;
+  color: string;
 }
 
 export const PULSE_OBJ = 'Pulse'
@@ -20,6 +21,7 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
   spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: RigidBodyHandle;
+  color: string;
   
   constructor(props: PulseCharacterObjectProps){
     super();
@@ -28,6 +30,7 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
     const { collider, rigidBody } = this.createColliderAndRigidBody(props);
     this.colliderHandle = collider.handle
     this.rigidBodyHandle = rigidBody.handle
+    this.color = props.color
   }
 
   createColliderAndRigidBody(props: PulseCharacterObjectProps){
@@ -52,7 +55,7 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
 
     c.beginPath();
     c.arc(xPosition, yPosition, radius, 0, Math.PI * 2, true); // Outer circle
-    c.fillStyle = 'rgb(126, 226, 151)';
+    c.fillStyle = this.color;
     c.fill();
   }
 }

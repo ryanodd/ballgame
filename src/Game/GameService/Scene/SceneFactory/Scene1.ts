@@ -40,7 +40,9 @@ export function createScene1(props: Scene1Props): Scene {
   const returnScene: Scene = new Scene({
     world: world,
     unitWidth: SCENE_WIDTH,
-    unitHeight: SCENE_HEIGHT
+    unitHeight: SCENE_HEIGHT,
+    teams: props.teams,
+    players: props.players,
   });
 
   let team1Count = 0
@@ -125,6 +127,7 @@ export function createScene1(props: Scene1Props): Scene {
   }));
   returnScene.addGameObject(new GoalArea({
     scene: returnScene,
+    color: props.teams[0].color,
     x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,
     w: WALL_THICKNESS,
@@ -177,6 +180,7 @@ export function createScene1(props: Scene1Props): Scene {
   }));
   returnScene.addGameObject(new GoalArea({
     scene: returnScene,
+    color: props.teams[1].color,
     x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH + NET_DEPTH - WALL_THICKNESS,
     y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,
     w: WALL_THICKNESS,

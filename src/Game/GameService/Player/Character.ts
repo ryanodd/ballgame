@@ -14,6 +14,7 @@ export interface CharacterProps {
 export abstract class Character {
   resourceMeter: number;
   scene: Scene;
+  player: Player;
   
   // 101 for rounding issues. I want fractional costs like 1/3 which is 33.33
   // So we'll use 101 and round down for displaying.
@@ -24,6 +25,7 @@ export abstract class Character {
   constructor(props: CharacterProps){
     this.resourceMeter = this.RESOURCE_METER_BEGIN;
     this.scene = props.scene
+    this.player = props.player
     props.player.setCharacter(this)
   }
   

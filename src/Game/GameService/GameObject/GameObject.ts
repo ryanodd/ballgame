@@ -19,7 +19,7 @@ export default abstract class GameObject {
   abstract colliderHandle: ColliderHandle | null;
   abstract rigidBodyHandle: RigidBodyHandle | null;
   abstract spawnFrame: number;
-  lifespanFrames: number | null = null;
+  readonly lifespanFrames: number | null = null;
   markedForDeletion: boolean = false;
 
   abstract render(c: CanvasRenderingContext2D, frame: number): void;

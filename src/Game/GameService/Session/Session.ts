@@ -31,9 +31,11 @@ export class Session {
     this.teams = [
       new Team({
         teamIndex: 0,
+        color: 'rgb(24, 144, 255)'
       }),
       new Team({
         teamIndex: 1,
+        color: 'rgb(126, 226, 151)'
       }),
     ]
     this.scene = createScene1({ teams: this.teams, players: props.players, session: this });
