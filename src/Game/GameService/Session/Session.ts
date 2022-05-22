@@ -46,9 +46,7 @@ export class Session {
     return {
       frame: this.frame,
       scene: this.scene.serialize(),
-      //worldSnapshot: this.scene.world.takeSnapshot().toString(),
       teams: this.teams.map(team => team.serialize()),
-      // Todo serialize game objects in scene, they'll probably contain data that needs to be synced at some point
     };
   }
 
@@ -64,13 +62,11 @@ export class Session {
   tick(frame: number) {
     this.frame = frame
     this.scene.tick(frame)
-    // this.scene.world.colliders.forEachCollider((collider) => {
-    //   console.log(`x: ${collider.translation().x}, y: ${collider.translation().y}, hw: ${collider.halfExtents().x}, hh: ${collider.halfExtents().y}`)
-    // })
   }
 
-  onGoal(teamIndex: number) {
-    this.teams[teamIndex].onGoal();
+  onGoalAgainst(teamIndex: number) {
+    const otherTeamIndex = teamIndex === 0 ? 1 : 0
+    this.teams[otherTeamIndex].onGoal();
     this.scene = createScene1({ teams: this.teams, players: this.players, session: this })
   }
 

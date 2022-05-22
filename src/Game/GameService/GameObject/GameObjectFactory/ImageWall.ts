@@ -2,7 +2,7 @@ import { ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
 import { JSONObject } from "../../../../lib/netplayjs";
 // import { GRASS_IMAGE } from "../../../AssetService/assetService";
 import { Scene } from "../../Scene/Scene";
-import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps } from "../GameObject";
+import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
 
 export interface ImageWallPhysicsProps extends GameObjectPhysicsProps {
   w: number;
@@ -36,7 +36,7 @@ export default class ImageWall extends GameObject { // extend something general?
     super();
     this.scene = props.scene;
     this.spawnFrame = props.spawnFrame ?? 0;
-    if ('x' in props.physics) {
+    if (isPhysicsProps(props.physics)) {
       this.colliderHandle = this.createCollider(props.physics);
     }
     else {

@@ -1,7 +1,7 @@
 import { Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
 import { JSONObject } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
-import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps } from "../GameObject";
+import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
 
 export interface WallPhysicsProps extends GameObjectPhysicsProps {
   w: number;
@@ -36,7 +36,7 @@ export default class Wall extends GameObject { // extend something general?
     this.scene = props.scene;
     this.spawnFrame = props.spawnFrame ?? 0;
 
-    if ('x' in props.physics) {
+    if (isPhysicsProps(props.physics)) {
       this.colliderHandle = this.createCollider(props.physics);
     }
     else {

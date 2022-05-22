@@ -2,6 +2,10 @@ import { ColliderHandle, RigidBodyHandle } from "@dimforge/rapier2d";
 import { JSONObject } from "../../../lib/netplayjs";
 import { Scene } from "../Scene/Scene";
 
+export const isPhysicsProps = (physics: GameObjectPhysicsProps | GameObjectPhysicsHandles): physics is GameObjectPhysicsProps => {
+  return 'x' in physics
+}
+
 export interface GameObjectPhysicsProps {
   x: number;
   y: number;

@@ -51,11 +51,11 @@ export function createScene1(props: Scene1Props): Scene {
   props.players.forEach((player) => {
     // todo get config 4 tha chararacter
     if (player.teamIndex === 0) {
-      const character = createCharacterForPlayer(player, returnScene, 4, 4 + (2 * team1Count))
+      const character = createCharacterForPlayer(player, returnScene, 2.8, 3.9 + (2 * team1Count))
       team1Count++
     }
     if (player.teamIndex === 1) {
-      const character = createCharacterForPlayer(player, returnScene, 8, 4 + (2 * team2Count))
+      const character = createCharacterForPlayer(player, returnScene, 12.8, 3.9 + (2 * team2Count))
       team2Count++
     }
   })
@@ -64,8 +64,8 @@ export function createScene1(props: Scene1Props): Scene {
   const ball = new Ball({
     scene: returnScene,
     physics: {
-      x: 8,
-      y: 7,
+      x: 7.45,
+      y: 3.65,
       r: 0.50,
       density: 0.8,
       friction: 0.6,
@@ -198,7 +198,7 @@ export function createScene1(props: Scene1Props): Scene {
   }));
   returnScene.addGameObject(new GoalArea({
     scene: returnScene,
-    teamIndex: 0,
+    teamIndex: 1,
     physics: {
       x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH + NET_DEPTH - WALL_THICKNESS,
       y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT,

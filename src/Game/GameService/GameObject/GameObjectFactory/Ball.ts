@@ -1,7 +1,7 @@
 import { Collider, ColliderDesc, ColliderHandle, RigidBody, RigidBodyDesc, RigidBodyHandle } from "@dimforge/rapier2d";
 import { JSONObject } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
-import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps } from "../GameObject";
+import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
 
 export interface BallPhysicsProps extends GameObjectPhysicsProps {
   r: number;
@@ -38,7 +38,7 @@ export default class Ball extends GameObject {
     this.scene = props.scene;
     this.spawnFrame = props.spawnFrame ?? 0;
 
-    if ('x' in props.physics) {
+    if (isPhysicsProps(props.physics)) {
       const { collider, rigidBody } = this.createColliderAndRigidBody(props.physics);
       this.colliderHandle = collider.handle
       this.rigidBodyHandle = rigidBody.handle

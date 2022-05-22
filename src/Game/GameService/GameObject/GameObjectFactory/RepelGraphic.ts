@@ -77,7 +77,8 @@ export class RepelGraphic extends GameObject {
     );
     //console.log(`radius: ${radius}, x: ${this.x}, y: ${this.y}`)
     gradient.addColorStop(0, `rgba(242, 193, 56, ${opacity/3})`);
-    gradient.addColorStop(1, `rgba(242, 193, 56, ${opacity})`);
+    gradient.addColorStop(0.8, `rgba(242, 193, 56, ${opacity})`);
+    gradient.addColorStop(1, `rgba(242, 193, 56, 0)`);
     c.fillStyle = gradient;
     c.fill();
   }

@@ -1,7 +1,7 @@
 import { ActiveEvents, ColliderDesc, ColliderHandle, World } from "@dimforge/rapier2d";
 import { JSONObject } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
-import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps } from "../GameObject";
+import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
 import { isBallObject } from "./Ball";
 
 export interface GoalAreaPhysicsProps extends GameObjectPhysicsProps {
@@ -39,7 +39,7 @@ export default class GoalArea extends GameObject { // extend something general?
     this.spawnFrame = props.spawnFrame ?? 0;
     this.teamIndex = props.teamIndex;
 
-    if ('x' in props.physics) {
+    if (isPhysicsProps(props.physics)) {
       this.colliderHandle = this.createCollider(props.physics);
     }
     else {
@@ -107,7 +107,7 @@ export default class GoalArea extends GameObject { // extend something general?
       return oppositeColliderHandle === gameObject.colliderHandle
     })
     if (started && otherGameObject && isBallObject(otherGameObject)) {
-      this.scene.session.onGoal(this.teamIndex)
+      this.scene.session.onGoalAgainst(this.teamIndex)
     }
   }
 }

@@ -91,6 +91,7 @@ export class PulseCharacter extends Character {
     ) {
       if (frame >= this.mostRecentAttractFrame + ATTRACT_COOLDOWN) {
         this.mostRecentAttractFrame = frame
+        this.pulseObject.mostRecentAttractFrame = frame // data duplication, booo
         this.scene.gameObjects.forEach(gameObject => {
           if (isBallObject(gameObject)) {
             const IMPULSE_DISTANCE = 2.5
