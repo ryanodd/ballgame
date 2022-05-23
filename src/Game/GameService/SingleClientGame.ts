@@ -73,13 +73,17 @@ export class SingleClientGame {
       })
       this.session.tick(this.frame)
       this.frame++
+
+      if (this.session.ended) {
+        clearInterval(intervalHandle)
+      }
     }
     const animate = (timestamp: number) => {
       this.draw(this.canvas);
 
       requestAnimationFrame(animate)
     };
-    setInterval(tick, SingleClientGame.timestep)
+    const intervalHandle = setInterval(tick, SingleClientGame.timestep)
     requestAnimationFrame(animate);
   }
 }

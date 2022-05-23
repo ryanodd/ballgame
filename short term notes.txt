@@ -2,22 +2,7 @@
 HIGH PRIORITY
 //////////////////
 
-Add/Remove game objects over rollback? or anything really... players, characters
-- the only solution I can think of for the moment is:
-	- need to compare serialized map/list with your own, & create/delete
-	- need to COMPLETELY serialize gameobjects, & be prepared to create them on-the-fly from a serialized message.
-		- but I don't know if the rapier handles will be the same on both ends when they're created
-- or, work around the problem: NEVER add/remove. store things off-screen when they're 'destroyed'
-	- we can have a different class of animation that CAN be added/removed but CAN'T be guaranteed to sync over rollback. and can't use physics. 	
-
-
-- attract/repel animations
-	- store frame, then pass frame to render
-
 - game end conditions: time, but allow unlimited. leave design room for first-to-X
-
-- adjust start positions duhdoy
-
 - victory screen
 - pause menu
 	- need to be able to destroy an existing game...
@@ -31,14 +16,6 @@ Add/Remove game objects over rollback? or anything really... players, characters
 	- refill over time
 	- display
 
-- REFACTOR
-	- character abilities can be more standardized.
-		- mostRecentUse 
-		- cooldowns
-		- bufferable
-		- resource meter
-		- serialization
-
 - DEPLOY
 	- Amplify
 	- point domain to it
@@ -46,6 +23,14 @@ Add/Remove game objects over rollback? or anything really... players, characters
 //////////////////
 MEDIUM PRIORITY
 //////////////////
+
+- REFACTOR
+	- character abilities can be more standardized.
+		- mostRecentUse 
+		- cooldowns
+		- bufferable
+		- resource meter
+		- serialization
 
 - goal animation
 
@@ -79,6 +64,8 @@ MEDIUM PRIORITY
 				- therefore it must be easy to do p2p stall handling assuming host's machine doesn't stall..
 
 - cpu players
+
+- sentry reporting
 
 //////////////////
 LOW PRIORITY

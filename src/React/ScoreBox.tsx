@@ -14,11 +14,21 @@ const ScoreBoxWrapper = styled.div`
 `
 
 export const ScoreBox = () => {
-  const { teams } = useTypedSelector((state) => {
+  const { framesRemaining, overtime, teams } = useTypedSelector((state) => {
     return {
-      teams: state.teams,
+      framesRemaining: state.game.framesRemaining,
+      overtime: state.game.overtime,
+      teams: state.game.teams,
     }
   })
+
+
+  let secondsRemaining = Math.ceil((framesRemaining ?? 0) / 60)
+  let minutesRemaining = 0
+  if (secondsRemaining > 59) {
+    minutesRemaining = secondsRemaining / 60
+    secondsRemaining = secondsRemaining % 60
+  }
   return (
     <ScoreBoxWrapper>
       <Title level={1} style={{margin: 0}}>
@@ -26,6 +36,16 @@ export const ScoreBox = () => {
           `${teams[0]?.score} - ${teams[1]?.score}`
         }
       </Title>
+        { framesRemaining !== null && (
+          <Text>
+            {`${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`}
+          </Text>
+        )}
+        { overtime === true && (
+          <Text>
+            {'NEXT GOAL WINS'}
+          </Text>
+        )}
     </ScoreBoxWrapper>
   )
 }

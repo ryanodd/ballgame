@@ -87,6 +87,10 @@ export class RollbackNetcode<
     while (this.history.length > 1) {
       DEV && assert.isTrue(this.history[0].allInputsSynced());
       if (this.history[0].frame < frame) {
+        if (this.history[0].state.ended) {
+          console.warn('client rollback ending!')
+          this.ended = true
+        }
         shift(this.history);
         cleanedUpStates++;
       } else break;
@@ -201,6 +205,10 @@ export class RollbackNetcode<
           const syncedState = shift(this.history);
           cleanedUpStates++;
           this.broadcastState!(syncedState.frame, syncedState.state);
+          if (this.history[0].state.ended) {
+            console.warn('host rollback ending!')
+            this.ended = true
+          }
         } else break;
       }
       DEV && console.debug(`Cleaned up ${cleanedUpStates} states.`);
@@ -217,6 +225,8 @@ export class RollbackNetcode<
   pollInput: () => TInput;
 
   players: Array<NetplayPlayer>;
+
+  ended: boolean = false;
 
   constructor(
     isHost: boolean,
@@ -359,7 +369,10 @@ export class RollbackNetcode<
   }
 
   start() {
-    setInterval(() => {
+    
+    const intervalId = setInterval(() => {
+      
+
       // If us and our peer are running at the same simulation clock,
       // we should expect inputs from our peer to arrive after we have
       // simulated that state. If inputs from our peer are arriving before
@@ -373,6 +386,10 @@ export class RollbackNetcode<
 
       for (let i = 0; i < numTicks; ++i) {
         this.tick();
+      }
+
+      if (this.ended) {
+        clearInterval(intervalId)
       }
     }, this.timestep);
   }

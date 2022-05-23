@@ -31,7 +31,7 @@ export const LocalPlayMenu = () => {
     const game = new SingleClientGame()
     dispatch({type: SET_CURRENT_GAME, payload: game })
     game.start()
-    dispatch({type: SET_UI_DATA, payload: { isMainDrawerOpen: false } })
+    dispatch({type: SET_UI_DATA, payload: { isMainMenuOpen: false } })
   }, [])
   return (
     <LocalPlayMenuWrapper>

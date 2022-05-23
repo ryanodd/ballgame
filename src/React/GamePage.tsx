@@ -19,22 +19,27 @@ const GamePageContainer = styled.div`
 `
 
 const GamePage = () => {
-
   const store = useStore()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    // Quick & dirty hack to see whether we're the host tab
+    // Grab query string of room code & decide whether we're host or client
     const parsedHash = query.parse(window.location.hash);
-    const isHost = !parsedHash.room;
+    const removeHash = () => { 
+      history.replaceState("", document.title, window.location.pathname + window.location.search)
+    }
+    removeHash()
+    const clientRoomCode = typeof (parsedHash.room) === 'string' ? parsedHash.room : null
+    const isHost = !clientRoomCode;
 
     dispatch({type: SET_NETPLAY_DATA, isHost: isHost })
-    dispatch({type: SET_UI_DATA, payload: { isMainDrawerOpen: isHost }})
+    dispatch({type: SET_UI_DATA, payload: { isMainMenuOpen: isHost }})
 
-    const game = new MyRollbackWrapper()
-    dispatch({type: SET_CURRENT_GAME, payload: game })
-    
-    game.start(store)
+    if (!isHost) {
+      const game = new MyRollbackWrapper(clientRoomCode)
+      dispatch({type: SET_CURRENT_GAME, payload: game })
+      game.start(store)
+    }
   }, [])
 
   return (

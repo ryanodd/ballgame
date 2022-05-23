@@ -11,6 +11,8 @@ import { EventQueue, World } from "@dimforge/rapier2d";
 import { MyInput } from "../netplayjs/MyInput";
 import { Player } from "../Player/Player";
 import { JSONObject } from "../../../lib/netplayjs";
+import { store } from "../../../../pages/_app";
+import { SET_GAME_DATA, SET_UI_DATA } from "../../../redux/actions";
 
 // This class is meant to be the first class in common between single-client and multi-client games.
 // - In single-client, SingleClientGame is in charge of its own Session.
@@ -21,6 +23,10 @@ export interface SessionProps {
 
 export class Session {
   frame = 1
+  //                        FPS  Sec  Min
+  endFrame: number | null = 60 * 5 * 1
+  ended: boolean = false
+  overtime: boolean = false
 
   teams: Team[]
   scene: Scene;
@@ -40,6 +46,14 @@ export class Session {
     ]
     this.scene = createScene1({ teams: this.teams, players: props.players, session: this });
     this.players = props.players
+
+    store.dispatch({
+      type: SET_GAME_DATA,
+      payload: {
+        overtime: false,
+        framesRemaining: this.endFrame,
+      }
+    })
   }
 
   serialize(): JSONObject {
@@ -52,22 +66,74 @@ export class Session {
 
   deserialize(value: JSONObject): void {
     this.frame = value['frame']
-    this.scene.deserialize(value['scene']),
+    this.scene.deserialize(value['scene'])
 
-    this.teams.forEach((team, i) => {
-      team.deserialize(value['teams'][i])
-    })
+    // TODO this is a total hack job:
+    // don't accept updates to team score
+    // for some reason when the game ends, the score gets overwritten by zeroes without this check... firgure it OUT!
+    if (!this.ended) {
+      this.teams.forEach((team, i) => {
+        team.deserialize(value['teams'][i])
+      })
+    }
   }
 
   tick(frame: number) {
+    if (this.ended) {
+      return
+    }
     this.frame = frame
+    if (this.endFrame !== null) {
+
+      // Send time remaining data to frontend
+      store.dispatch({
+        type: SET_GAME_DATA,
+        payload: {
+          framesRemaining: this.endFrame - frame
+        }
+      })
+
+      // Check for last frame
+      if (frame >= this.endFrame){
+        if (this.teams[0].score !== this.teams[1].score) {
+          this.end()
+        } else {
+          this.endFrame = null
+          this.overtime = true
+          store.dispatch({
+            type: SET_GAME_DATA,
+            payload: {
+              framesRemaining: null,
+              overtime: true,
+            }
+          })
+        }
+        
+      }
+    }
     this.scene.tick(frame)
   }
 
   onGoalAgainst(teamIndex: number) {
     const otherTeamIndex = teamIndex === 0 ? 1 : 0
+    console.log('on goal against, about to call onGoal')
     this.teams[otherTeamIndex].onGoal();
-    this.scene = createScene1({ teams: this.teams, players: this.players, session: this })
+    if (this.overtime) {
+      console.log('overtime you say? calling end()')
+      this.end()
+    } else {
+      this.scene = createScene1({ teams: this.teams, players: this.players, session: this })
+    }
+  }
+
+  end() {
+    this.ended = true
+    store.dispatch({
+      type: SET_UI_DATA,
+      payload: {
+        isGameEndOpen: true,
+      }
+    })
   }
 
   render(c: CanvasRenderingContext2D) {

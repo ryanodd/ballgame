@@ -13,6 +13,7 @@ export class MyGame extends NetplayState<DefaultInput> {
   players: Player[]
   session: Session
   store: Store
+  ended: boolean = false
 
   constructor(store: Store) {
     super()
@@ -45,14 +46,21 @@ export class MyGame extends NetplayState<DefaultInput> {
   }
 
   serialize(): JSONObject {
-    return this.session.serialize()
+    return {
+      ...this.session.serialize(),
+      ended: this.ended,
+    }
   }
 
   deserialize(value: JSONObject): void {
+    this.ended = value['ended']
     this.session.deserialize(value)
   }
 
   tick(playerInputs: Map<NetplayPlayer, MyInput>, frame: number) {
+    if (this.session.ended) {
+      this.ended = true
+    }
     for (const [netplayPlayer, input] of playerInputs.entries()) {
       this.players.forEach(player => {
         if (netplayPlayer.getID() === player.netplayPlayerIndex) {

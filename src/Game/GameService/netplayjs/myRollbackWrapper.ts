@@ -28,6 +28,8 @@ export class MyRollbackWrapper {
 
   rollbackNetcode?: RollbackNetcode<MyGame, DefaultInput>;
 
+  pingIntervalHandle: ReturnType<typeof setInterval> | null = null// because we need to clear it
+
   isChannelOrdered(channel: RTCDataChannel) {
     return channel.ordered;
   }
@@ -46,7 +48,7 @@ export class MyRollbackWrapper {
     assert.isTrue(this.isChannelReliable(channel), "Channel must be reliable.");
   }
 
-  constructor() {
+  constructor(roomCode: string | null) {
     /**
      * How often should the state be synced. By default this happens
      * every frame. Set to zero to indicate that the state is deterministic
@@ -62,9 +64,12 @@ export class MyRollbackWrapper {
       false,
       {}
     );
+
+    this.roomCode = roomCode
   }
 
   peer?: Peer;
+  readonly roomCode: string | null;
 
   start(store: Store) {
     console.info("Creating a PeerJS instance.");
@@ -79,15 +84,11 @@ export class MyRollbackWrapper {
     this.peer!.on("open", (id) => {
       store.dispatch({ type: SET_NETPLAY_DATA, payload: { connectingToServer: false } })
 
-      // Try to parse the room from the hash. If we find one,
-      // we are a client.
-      const parsedHash = query.parse(window.location.hash);
-      const isClient = !!parsedHash.room;
+      // If Client
+      if (this.roomCode !== null) {
+        console.info(`Connecting to room ${this.roomCode}.`);
 
-      if (isClient) {
-        console.info(`Connecting to room ${parsedHash.room}.`);
-
-        const conn = this.peer!.connect(parsedHash.room as string, {
+        const conn = this.peer!.connect(this.roomCode, {
           serialization: "json",
           reliable: true,
           // @ts-ignore: This is a hack written by netplayjs to get around a bug in PeerJS
@@ -172,6 +173,11 @@ export class MyRollbackWrapper {
     );
 
     conn.on("data", (data) => {
+      if (this.rollbackNetcode!.ended) {
+        conn.close()
+        return
+      }
+      console.log('im in here')
       if (data.type === "input") {
         const input = new DefaultInput();
         input.deserialize(data.input);
@@ -187,9 +193,13 @@ export class MyRollbackWrapper {
       console.log("Client has connected... Starting game...");
       this.checkChannel(conn.dataChannel);
       store.dispatch({ type: SET_NETPLAY_DATA, payload: { connectedToPeer: true } })
-      store.dispatch({ type: SET_UI_DATA, payload: { isMainDrawerOpen: false } })
+      store.dispatch({ type: SET_UI_DATA, payload: { isMainMenuOpen: false } })
 
-      setInterval(() => {
+      this.pingIntervalHandle = setInterval(() => {
+        if (this.rollbackNetcode!.ended) {
+          if (this.pingIntervalHandle) clearInterval(this.pingIntervalHandle)
+          return
+        }
         conn.send({ type: "ping-req", sent_time: Date.now() });
       }, PING_INTERVAL);
 
@@ -216,6 +226,10 @@ export class MyRollbackWrapper {
     );
 
     conn.on("data", (data) => {
+      if (this.rollbackNetcode!.ended) {
+        conn.close()
+        return
+      }
       if (data.type === "input") {
         const input = new DefaultInput();
         input.deserialize(data.input);
@@ -233,14 +247,25 @@ export class MyRollbackWrapper {
       console.log("Successfully connected to server... Starting game...");
       this.checkChannel(conn.dataChannel);
       store.dispatch({ type: SET_NETPLAY_DATA, payload: { connectedToPeer: true } })
-      store.dispatch({ type: SET_UI_DATA, payload: { isMainDrawerOpen: false } }) // TODO this shouldn't need to be here
+      store.dispatch({ type: SET_UI_DATA, payload: { isMainMenuOpen: false } }) // TODO this shouldn't need to be here
 
-      setInterval(() => {
+      this.pingIntervalHandle = setInterval(() => {
+        if (this.rollbackNetcode!.ended) {
+          if (this.pingIntervalHandle) clearInterval(this.pingIntervalHandle)
+          return
+        }
         conn.send({ type: "ping-req", sent_time: Date.now() });
       }, PING_INTERVAL);
 
       this.startGameLoop(store);
     });
+    conn.on("close", () => {
+      // In this case the host ended the session without the client detecting a game end itself.
+      // We always hit this path for some reason.
+      if (!this.rollbackNetcode!.ended) {
+        if (this.pingIntervalHandle) clearInterval(this.pingIntervalHandle)
+      }
+    })
   }
 
   startGameLoop(store: Store) {

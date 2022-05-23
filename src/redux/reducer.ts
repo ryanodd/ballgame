@@ -1,10 +1,10 @@
 
 import { MyGame } from '../Game/GameService/netplayjs/myGame';
 import { SingleClientGame } from '../Game/GameService/SingleClientGame';
-import { Action, SET_TEAM_DATA_PAYLOAD, SET_TEAM_DATA, SET_NETPLAY_DATA, SET_UI_DATA, SET_CURRENT_GAME} from './actions'
+import { Action, SET_TEAM_DATA_PAYLOAD, SET_TEAM_DATA, SET_NETPLAY_DATA, SET_UI_DATA, SET_CURRENT_GAME, SET_GAME_DATA} from './actions'
 
 export type AppState = {
-  currentGame: MyGame | SingleClientGame | null
+  gameClass: MyGame | SingleClientGame | null
   netplay: {
     isHost: boolean;
     connectingToServer: boolean;
@@ -19,16 +19,21 @@ export type AppState = {
     predictedFrames: number | null;
     stalling: boolean;
   };
-  teams: {
-    score: number;
-  }[]
+  game: {
+    framesRemaining: number | null;
+    overtime: boolean;
+    teams: {
+      score: number;
+    }[]
+  }
   ui: {
-    isMainDrawerOpen: boolean;
+    isMainMenuOpen: boolean;
+    isGameEndOpen: boolean;
   }
 }
 
 export const initialState: AppState = {
-  currentGame: null,
+  gameClass: null,
   netplay: {
     isHost: false,
     connectingToServer: false,
@@ -43,9 +48,14 @@ export const initialState: AppState = {
     predictedFrames: null,
     stalling: false
   },
-  teams: [],
+  game: {
+    framesRemaining: null,
+    overtime: false,
+    teams: [],
+  },
   ui: {
-    isMainDrawerOpen: false,
+    isMainMenuOpen: false,
+    isGameEndOpen: false,
   }
 }
 
@@ -53,16 +63,19 @@ export const initialState: AppState = {
 export default function appReducer(state = initialState, action: Action): AppState {
   switch (action.type) {
     case SET_CURRENT_GAME: {
-      return { ...state, currentGame: action.payload }
+      return { ...state, gameClass: action.payload }
     }
     case SET_NETPLAY_DATA: {
       return { ...state, netplay: { ...state.netplay, ...action.payload } }
     }
+    case SET_GAME_DATA: {
+      return { ...state, game: { ...state.game, ...action.payload }}
+    }
     case SET_TEAM_DATA: {
       const { teamIndex, teamData } = action.payload as SET_TEAM_DATA_PAYLOAD
-      const newTeams = [...state.teams]
-      newTeams[teamIndex] = { ...state.teams[teamIndex], ...teamData }
-      return { ...state, teams: newTeams }
+      const newTeams = [...state.game.teams]
+      newTeams[teamIndex] = { ...state.game.teams[teamIndex], ...teamData }
+      return { ...state, game: {...state.game, teams: newTeams } }
     }
     case SET_UI_DATA: {
       return { ...state, ui: { ...state.ui, ...action.payload } }

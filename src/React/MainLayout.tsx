@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import { useTypedSelector } from '../redux/typedHooks';
-import * as query from "query-string";
 import { AspectRatioLetterbox } from './AspectRatioLetterbox';
 import { GameCanvas } from './GameCanvas';
 import { NetplayMenu } from './NetplayMenu';
-import { Drawer, Modal, Space } from 'antd';
+import { Button, Drawer, Modal, Space } from 'antd';
 import { useDispatch } from 'react-redux';
 import { SET_UI_DATA } from '../redux/actions';
 import { LocalPlayMenu } from './LocalPlayMenu';
+import { GameEndMenu } from './GameEndMenu';
 
 const MainLayoutContainer = styled.div`
   width: 100%;
@@ -19,12 +19,19 @@ const MainLayoutContainer = styled.div`
 `
 
 export const MainLayout = () => {
-  const { connectedToPeer, errorMessage, joinUrl, isMainDrawerOpen } = useTypedSelector(({netplay, ui}) => {
+  const {
+    connectedToPeer,
+    errorMessage,
+    joinUrl,
+    isGameEndOpen,
+    isMainMenuOpen
+  } = useTypedSelector(({netplay, ui}) => {
     return {
       connectedToPeer: netplay.connectedToPeer,
       errorMessage: netplay.errorMessage,
       joinUrl: netplay.joinUrl,
-      isMainDrawerOpen: ui.isMainDrawerOpen,
+      isMainMenuOpen: ui.isMainMenuOpen,
+      isGameEndOpen: ui.isGameEndOpen,
     }
   })
   const dispatch = useDispatch()
@@ -32,13 +39,26 @@ export const MainLayout = () => {
   return (
     <MainLayoutContainer>
       <Modal
+        width="min-content"
+        closable={false}
+        visible={isGameEndOpen}
+        footer={[
+          <Button key="ok" type="primary" onClick={() => {
+            dispatch({type: SET_UI_DATA, payload: { isGameEndOpen: false } })
+            dispatch({type: SET_UI_DATA, payload: { isMainMenuOpen: true } })
+          }}>
+            Alrighty then
+          </Button>
+        ]}
+      >
+        <GameEndMenu />
+      </Modal>
+      <Modal
         // title="SpicyMeatball.io"
-        // placement="left"
         width="min-content"
         closable={false}
         footer={null}
-        // onClose={() => {dispatch({type: SET_UI_DATA, payload: { isMainDrawerOpen: false } })}}
-        visible={isMainDrawerOpen}
+        visible={isMainMenuOpen}
       >
         <Space direction="vertical" style={{width: '100%'}}>
           <NetplayMenu />
