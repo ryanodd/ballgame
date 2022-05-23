@@ -1,6 +1,7 @@
 import { ActiveEvents, ColliderDesc, ColliderHandle, World } from "@dimforge/rapier2d";
 import { JSONObject } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
+import { CollisionGroups } from "../CollisionGroups";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
 import { isBallObject } from "./Ball";
 
@@ -71,7 +72,8 @@ export default class GoalArea extends GameObject { // extend something general?
     const groundColliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
       .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
       .setRotation((props.rotation ?? 0)*Math.PI/180)
-      .setActiveEvents(ActiveEvents.COLLISION_EVENTS);
+      .setActiveEvents(ActiveEvents.COLLISION_EVENTS)
+      .setCollisionGroups(CollisionGroups.WALLS)
 
     // // Sensor: no collisions triggered, only collision detection
     // fixDef.isSensor = true;

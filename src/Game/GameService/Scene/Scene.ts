@@ -17,14 +17,14 @@ export interface SceneProps {
 }
 
 export class Scene {
-  world: World;
+  world: World; // restored by game world.
   unitWidth: number;
   unitHeight: number;
-  gameObjects: GameObject[] = [];
+  gameObjects: GameObject[] = []; // get reconstructed every deserialize
   readonly session: Session;
-  readonly characters: Character[] = [];
-  readonly players: Player[];
-  readonly teams: Team[];
+  readonly characters: Character[] = []; // Can't add/remove/reorder. Sorted by playerIndex
+  readonly players: Player[]; // can't add/remove/reorder
+  readonly teams: Team[]; // Can't add/remove/reorder
 
   constructor(props: SceneProps){
     this.world = props.world;

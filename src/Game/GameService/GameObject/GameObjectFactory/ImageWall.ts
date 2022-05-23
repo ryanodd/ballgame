@@ -2,6 +2,7 @@ import { ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
 import { JSONObject } from "../../../../lib/netplayjs";
 // import { GRASS_IMAGE } from "../../../AssetService/assetService";
 import { Scene } from "../../Scene/Scene";
+import { CollisionGroups } from "../CollisionGroups";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
 
 export interface ImageWallPhysicsProps extends GameObjectPhysicsProps {
@@ -66,6 +67,7 @@ export default class ImageWall extends GameObject { // extend something general?
     const groundColliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
       .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
       .setRotation((props.rotation ?? 0)*Math.PI/180)
+      .setCollisionGroups(CollisionGroups.WALLS)
     const returnColliderHandle = this.scene.world.createCollider(groundColliderDesc).handle;
     return returnColliderHandle;
   }

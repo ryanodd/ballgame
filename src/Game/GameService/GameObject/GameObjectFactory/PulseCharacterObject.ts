@@ -3,7 +3,8 @@ import GameObject, { GameObjectProps, BodyGameObject, GameObjectPhysicsProps, Ga
 import { Collider, ColliderDesc, ColliderHandle, RigidBodyDesc, RigidBodyHandle } from "@dimforge/rapier2d";
 import { JSONObject } from "../../../../lib/netplayjs";
 import { Character } from "../../Player/Character";
-
+import { PulseCharacter } from "../../Player/PlayerTypes/PulseCharacter";
+import { CollisionGroups } from "../CollisionGroups";
 
 export interface PulseCharacterObjectPhysicsProps extends GameObjectPhysicsProps {
   r: number;
@@ -17,12 +18,9 @@ export interface PulseCharacterObjectPhysicsHandles extends GameObjectPhysicsHan
   rigidBodyHandle: RigidBodyHandle;
 }
 
-
-
 export interface PulseCharacterObjectProps extends GameObjectProps {
   physics: PulseCharacterObjectPhysicsProps | PulseCharacterObjectPhysicsHandles;
-  color: string;
-  mostRecentAttractFrame?: number;
+  playerIndex: number
 }
 
 export const PULSE_OBJ_ID = 'Pulse'
@@ -36,15 +34,13 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
   spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: RigidBodyHandle;
-  mostRecentAttractFrame: number;
-  color: string;
+  playerIndex: number;
   
   constructor(props: PulseCharacterObjectProps){
     super();
     this.scene = props.scene;
     this.spawnFrame = props.spawnFrame ?? 0;
-    this.mostRecentAttractFrame = props.mostRecentAttractFrame ?? 0; // not serializing because it's not very imporant. Just for animation: ;
-    this.color = props.color
+    this.playerIndex = props.playerIndex
 
     if (isPhysicsProps(props.physics)) {
       const { collider, rigidBody } = this.createColliderAndRigidBody(props.physics);
@@ -61,8 +57,7 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
     return {
       ...super.serialize(),
       id: this.id,
-      color: this.color, // todo store team instead
-      mostRecentAttractFrame: this.mostRecentAttractFrame, // todo retrieve from character instead
+      playerIndex: this.playerIndex,
     }
   };
 
@@ -74,8 +69,7 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
         colliderHandle: value['colliderHandle'],
         rigidBodyHandle: value['rigidBodyHandle'],
       },
-      color: value['color'],
-      mostRecentAttractFrame: value['mostRecentAttractFrame'],
+      playerIndex: value['playerIndex'],
     })
   }
 
@@ -89,6 +83,7 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
       .setDensity(props.density)
       .setFriction(props.friction)
       .setRestitution(props.restitution)
+      .setCollisionGroups(CollisionGroups.GHOST_CHARACTERS)
     const collider = this.scene.world.createCollider(colliderDesc, rigidBody.handle);
     
     return { collider, rigidBody };
@@ -99,28 +94,41 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
     const { x: xPosition, y: yPosition} = collider.translation(); 
     const radius = collider.radius()
 
+    const character = this.scene.characters[this.playerIndex] as PulseCharacter
+    const mostRecentAttractFrame = character.mostRecentAttractFrame
+
     // ATTRACT ANIMATION
-    if (frame <= this.mostRecentAttractFrame + 3) { // data passing tolerance
+    if (frame <= mostRecentAttractFrame + 1) {
       const ATTRACT_RADIUS = 2.5
       const ANIMATION_PERIOD = 16
       const animationFrame = frame % ANIMATION_PERIOD
-      const animationProgress = animationFrame / ANIMATION_PERIOD
+      const progress = animationFrame / ANIMATION_PERIOD
       c.beginPath();
-
+  
+      const TRANSLATION = 0.5 // adjust based on radius.... 7r = 1.37t, 2.5r = .5t
+  
       c.arc(xPosition, yPosition, ATTRACT_RADIUS, 0, Math.PI * 2, true); // Outer circle
       const gradient = c.createRadialGradient(
         xPosition,
         yPosition,
-        (ATTRACT_RADIUS*0.3)*(1 - (animationProgress)),
-
+        TRANSLATION-((progress)*TRANSLATION),
+  
         xPosition,
         yPosition,
-        (ATTRACT_RADIUS*0.8)*(1 - (animationProgress)),
+        ATTRACT_RADIUS-((progress)*TRANSLATION),
       );
-      console.log(animationProgress)
-      gradient.addColorStop(0, `rgba(114, 180, 207, 0)`);
-      gradient.addColorStop(0.5, `rgba(114, 180, 207, ${animationProgress*(2/3)})`);
-      gradient.addColorStop(1, `rgba(114, 180, 207, 0)`);
+      const color = '114, 180, 207'
+      const opacityDelta = 0.4 // must be < 0.5
+      const opacityModifier = progress*opacityDelta
+      gradient.addColorStop(0, `rgba(${color}, 0)`);
+      gradient.addColorStop(0.125, `rgba(${color}, ${opacityDelta-opacityModifier})`);
+      gradient.addColorStop(0.25, `rgba(${color}, 0)`);
+      gradient.addColorStop(0.375, `rgba(${color}, ${2*opacityDelta-opacityModifier})`);
+      gradient.addColorStop(0.5, `rgba(${color}, 0)`);
+      gradient.addColorStop(0.625, `rgba(${color}, ${opacityDelta+opacityModifier})`);
+      gradient.addColorStop(0.75, `rgba(${color}, 0)`);
+      gradient.addColorStop(0.875, `rgba(${color}, ${0+opacityModifier})`);
+      gradient.addColorStop(1, `rgba(${color}, 0)`);
       c.fillStyle = gradient;
       c.fill();
     }
@@ -128,7 +136,7 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
     // After the attract ability, draw us above
     c.beginPath();
     c.arc(xPosition, yPosition, radius, 0, Math.PI * 2, true); // Outer circle
-    c.fillStyle = this.color;
+    c.fillStyle = this.scene.teams[character.player.teamIndex].color;
     c.fill();
   }
 }

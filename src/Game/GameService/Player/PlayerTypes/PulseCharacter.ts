@@ -38,14 +38,14 @@ export class PulseCharacter extends Character {
     this.FRICTION = props.FRICTION;
     this.RESTITUTION = props.RESTITUTION;
     this.RADIUS = props.RADIUS;
-    this.mostRecentAttractFrame = -ATTRACT_COOLDOWN
+    this.mostRecentAttractFrame = -1
     // this.attractBuffered = false; // continuous input, not needed?
     this.mostRecentRepelFrame = -REPEL_COOLDOWN
     this.repelBuffered = false;
 
     this.pulseObject = new PulseCharacterObject({
       scene: props.scene,
-      color: this.scene.teams[this.player.teamIndex].color,
+      playerIndex: this.player.playerIndex,
       physics: {
         x: props.x,
         y: props.y,
@@ -91,7 +91,6 @@ export class PulseCharacter extends Character {
     ) {
       if (frame >= this.mostRecentAttractFrame + ATTRACT_COOLDOWN) {
         this.mostRecentAttractFrame = frame
-        this.pulseObject.mostRecentAttractFrame = frame // data duplication, booo
         this.scene.gameObjects.forEach(gameObject => {
           if (isBallObject(gameObject)) {
             const IMPULSE_DISTANCE = 2.5

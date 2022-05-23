@@ -1,6 +1,7 @@
 import { Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
 import { JSONObject } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
+import { CollisionGroups } from "../CollisionGroups";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
 
 export interface WallPhysicsProps extends GameObjectPhysicsProps {
@@ -66,6 +67,7 @@ export default class Wall extends GameObject { // extend something general?
     const groundColliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
       .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
       .setRotation((props.rotation ?? 0)*Math.PI/180)
+      .setCollisionGroups(CollisionGroups.WALLS)
     const returnColliderHandle = this.scene.world.createCollider(groundColliderDesc).handle;
     return returnColliderHandle;
   }

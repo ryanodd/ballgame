@@ -69,7 +69,7 @@ export class SingleClientGame {
         player.tickMovement(this.inputReader.getInput(), this.frame)
       })
       this.players.forEach(player => {
-        player.tickAbilities(this.inputReader.getInput(), this.frame)
+      player.tickAbilities(this.inputReader.getInput(), this.frame)
       })
       this.session.tick(this.frame)
       this.frame++

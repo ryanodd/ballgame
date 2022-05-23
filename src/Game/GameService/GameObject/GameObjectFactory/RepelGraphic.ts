@@ -19,7 +19,7 @@ export class RepelGraphic extends GameObject {
   rigidBodyHandle: null = null;
   x: number;
   y: number;
-  lifespanFrames = 15
+  lifespanFrames = 13
   pulseRadius = 4
 
   constructor(props: RepelGraphicProps) {
@@ -51,9 +51,7 @@ export class RepelGraphic extends GameObject {
   }
 
   tick(frame: number) {
-    console.log(`frame: ${frame}, spawn: ${this.spawnFrame}, life: ${this.lifespanFrames}`)
-    if (frame >= (this.spawnFrame + this.lifespanFrames - 1)) {
-      console.log('marking for deletions')
+    if (frame >= (this.spawnFrame + this.lifespanFrames)) {
       this.markedForDeletion = true
     }
   }
@@ -75,10 +73,10 @@ export class RepelGraphic extends GameObject {
       this.y,
       radius*(3/4),
     );
-    //console.log(`radius: ${radius}, x: ${this.x}, y: ${this.y}`)
-    gradient.addColorStop(0, `rgba(242, 193, 56, ${opacity/3})`);
-    gradient.addColorStop(0.8, `rgba(242, 193, 56, ${opacity})`);
-    gradient.addColorStop(1, `rgba(242, 193, 56, 0)`);
+    const color = '245, 111, 27'
+    gradient.addColorStop(0, `rgba(${color}, ${opacity/3})`);
+    gradient.addColorStop(0.8, `rgba(${color}, ${opacity})`);
+    gradient.addColorStop(1, `rgba(${color}, 0)`);
     c.fillStyle = gradient;
     c.fill();
   }

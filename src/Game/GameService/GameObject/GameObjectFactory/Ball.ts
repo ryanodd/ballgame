@@ -1,6 +1,7 @@
 import { Collider, ColliderDesc, ColliderHandle, RigidBody, RigidBodyDesc, RigidBodyHandle } from "@dimforge/rapier2d";
 import { JSONObject } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
+import { CollisionGroups } from "../CollisionGroups";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
 
 export interface BallPhysicsProps extends GameObjectPhysicsProps {
@@ -77,6 +78,7 @@ export default class Ball extends GameObject {
       .setDensity(props.density)
       .setFriction(props.friction)
       .setRestitution(props.restitution)
+      .setCollisionGroups(CollisionGroups.BALL)
     const collider = this.scene.world.createCollider(colliderDesc, rigidBody.handle);
     
     return { collider, rigidBody };
