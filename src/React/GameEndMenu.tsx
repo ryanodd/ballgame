@@ -33,7 +33,7 @@ export const GameEndMenu = () => {
         </Title>
         <Space direction="vertical" size="small">
           <Text>
-            {`${teams[0].score} - ${teams[1].score}`}
+            {`It was a thrilling match. ${teams[0].score} - ${teams[1].score} was the score.`}
           </Text>
         </Space>
       </Card>
