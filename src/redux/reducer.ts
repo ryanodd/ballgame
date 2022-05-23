@@ -1,7 +1,7 @@
 
 import { MyGame } from '../Game/GameService/netplayjs/myGame';
 import { SingleClientGame } from '../Game/GameService/SingleClientGame';
-import { Action, SET_TEAM_DATA_PAYLOAD, SET_TEAM_DATA, SET_NETPLAY_DATA, SET_UI_DATA, SET_CURRENT_GAME, SET_GAME_DATA} from './actions'
+import { Action, SET_TEAM_DATA_PAYLOAD, SET_TEAM_DATA, SET_NETPLAY_DATA, SET_UI_DATA, SET_CURRENT_GAME, SET_GAME_DATA, SET_CHARACTER_DATA, SET_CHARACTER_DATA_PAYLOAD} from './actions'
 
 export type AppState = {
   gameClass: MyGame | SingleClientGame | null
@@ -22,8 +22,14 @@ export type AppState = {
   game: {
     framesRemaining: number | null;
     overtime: boolean;
+    characters: {
+      resourceMeter: number;
+      playerIndex: number;
+      teamIndex: number;
+    }[]
     teams: {
       score: number;
+      color: string;
     }[]
   }
   ui: {
@@ -51,6 +57,7 @@ export const initialState: AppState = {
   game: {
     framesRemaining: null,
     overtime: false,
+    characters: [],
     teams: [],
   },
   ui: {
@@ -76,6 +83,12 @@ export default function appReducer(state = initialState, action: Action): AppSta
       const newTeams = [...state.game.teams]
       newTeams[teamIndex] = { ...state.game.teams[teamIndex], ...teamData }
       return { ...state, game: {...state.game, teams: newTeams } }
+    }
+    case SET_CHARACTER_DATA: {
+      const { playerIndex, characterData } = action.payload as SET_CHARACTER_DATA_PAYLOAD
+      const newCharacters = [...state.game.characters]
+      newCharacters[playerIndex] = { ...state.game.characters[playerIndex], ...characterData }
+      return { ...state, game: {...state.game, characters: newCharacters } }
     }
     case SET_UI_DATA: {
       return { ...state, ui: { ...state.ui, ...action.payload } }

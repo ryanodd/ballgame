@@ -24,10 +24,17 @@ const CanvasOverlayContainer = styled.div<{heightPercent: string}>`
 `
 
 const ChildWrapper = styled.div<{targetHeight: number}>`
-  height: 80px;
-  transform: scale(calc(${props => props.targetHeight}/80));
+  height: 75px;
+  margin-top: 5px;
+  transform: scale(calc(${props => props.targetHeight}/75));
   
   position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  > :not(:last-child) {
+    margin-right: 10px;
+  }
 `
 
 // This is logically tied to scene1's 8/9 height
@@ -38,19 +45,15 @@ export type CanvasContainerProps = {
 }
 
 export const CanvasOverlay = ({children}: CanvasContainerProps) => {
-  const { teams } = useTypedSelector((state) => {
-    return {
-      teams: state.game.teams,
-    }
-  })
-
   const [ targetHeight, setTargetHeight ] = useState(0)
 
   const onResize = useCallback(() => {
-    const container = document.querySelector('#canvas-overlay-container')
-    if (container !== null) {
-      setTargetHeight(container.getBoundingClientRect().height)
-    }
+    setTimeout(() => {
+      const container = document.querySelector('#canvas-overlay-container')
+      if (container !== null) {
+        setTargetHeight(container.getBoundingClientRect().height)
+      }
+    }, 0) // Shhh... It works now
   }, [])
 
   useEffect(() => {

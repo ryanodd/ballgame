@@ -37,7 +37,7 @@ export class Session {
     this.teams = [
       new Team({
         teamIndex: 0,
-        color: 'rgb(24, 144, 255)'
+        color: 'rgb(86, 218, 245)'
       }),
       new Team({
         teamIndex: 1,

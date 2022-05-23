@@ -14,4 +14,10 @@ export type SET_TEAM_DATA_PAYLOAD = {
   teamData: any; // object? but nah?
 }
 
+export const SET_CHARACTER_DATA = 'setCharacterData'
+export type SET_CHARACTER_DATA_PAYLOAD = {
+  playerIndex: number;
+  characterData: any; // object? but nah?
+}
+
 export const SET_UI_DATA = 'setUiData'

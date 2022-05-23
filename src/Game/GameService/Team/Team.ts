@@ -1,3 +1,4 @@
+import { urlToHttpOptions } from "url";
 import { store } from "../../../../pages/_app";
 import { JSONObject } from "../../../lib/netplayjs";
 import { SET_TEAM_DATA } from "../../../redux/actions";
@@ -15,6 +16,15 @@ export class Team {
   constructor({teamIndex, color}: TeamProps) {
     this.teamIndex = teamIndex
     this.color = color;
+    store.dispatch({
+      type: SET_TEAM_DATA,
+      payload: {
+        teamIndex: this.teamIndex,
+        teamData: {
+          color: this.color,
+        },
+      }
+    })
     this.score = 0;
     this.updateScore()
   }

@@ -2,14 +2,7 @@
 HIGH PRIORITY
 //////////////////
 
-- score & clock better ui
-
 - lazy controls tutorial graphic
-
-- resource meters!
-	- enforce
-	- refill over time
-	- display
 
 - DEPLOY
 	- Amplify
@@ -18,6 +11,10 @@ HIGH PRIORITY
 //////////////////
 MEDIUM PRIORITY
 //////////////////
+
+- event when someone tries to do an ability but can't
+
+- replace all instances of 60 with an fps constant duhdoy
 
 - REFACTOR
 	- character abilities can be more standardized.

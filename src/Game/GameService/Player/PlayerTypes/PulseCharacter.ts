@@ -1,14 +1,18 @@
 import { Collider, RigidBody } from "@dimforge/rapier2d";
+import { store } from "../../../../../pages/_app";
 import { JSONObject } from "../../../../lib/netplayjs";
+import { SET_CHARACTER_DATA } from "../../../../redux/actions";
 import { normalize } from "../../../../utils/math";
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
 import { isBallObject } from "../../GameObject/GameObjectFactory/Ball";
 import PulseCharacterObject from "../../GameObject/GameObjectFactory/PulseCharacterObject";
 import { RepelGraphic } from "../../GameObject/GameObjectFactory/RepelGraphic";
-import { Character, CharacterProps, INPUT_BUFFER_FRAMES } from "../Character";
+import { Character, CharacterProps, INPUT_BUFFER_FRAMES, RESOURCE_GAIN_PER_FRAME } from "../Character";
 
 const ATTRACT_COOLDOWN = 0
+const ATTRACT_COST = 7 / 60
 const REPEL_COOLDOWN = 40
+const REPEL_COST = 30
 
 export interface PulseCharacterProps extends CharacterProps {
   DENSITY: number;
@@ -29,7 +33,7 @@ export class PulseCharacter extends Character {
   pulseObject: PulseCharacterObject;
   mostRecentAttractFrame: number;
   mostRecentRepelFrame: number;
-  repelBuffered: boolean;
+  repelBufferedFrame: number;
 
   constructor(props: PulseCharacterProps){
     super({player: props.player, scene: props.scene })
@@ -41,7 +45,7 @@ export class PulseCharacter extends Character {
     this.mostRecentAttractFrame = -1
     // this.attractBuffered = false; // continuous input, not needed?
     this.mostRecentRepelFrame = -REPEL_COOLDOWN
-    this.repelBuffered = false;
+    this.repelBufferedFrame = -INPUT_BUFFER_FRAMES;
 
     this.pulseObject = new PulseCharacterObject({
       scene: props.scene,
@@ -64,8 +68,20 @@ export class PulseCharacter extends Character {
 
   // Detect input, do stuff
   tickAbilities(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
+    this.resourceMeter = Math.min(this.resourceMeter + RESOURCE_GAIN_PER_FRAME, 100)
     this.handleRepel(input, frame);
     this.handleAttract(input, frame);
+    store.dispatch({
+      type: SET_CHARACTER_DATA,
+      payload: {
+        playerIndex: this.player.playerIndex,
+        characterData: {
+          playerIndex: this.player.playerIndex,
+          teamIndex: this.player.teamIndex,
+          resourceMeter: this.resourceMeter,
+        }
+      }
+    })
   }
 
   serialize(): JSONObject {
@@ -73,7 +89,7 @@ export class PulseCharacter extends Character {
       ...super.serialize(),
       mostRecentAttractFrame: this.mostRecentAttractFrame,
       mostRecentRepelFrame: this.mostRecentRepelFrame,
-      repelBuffered: this.repelBuffered,
+      repelBuffered: this.repelBufferedFrame,
     }
   }
 
@@ -81,83 +97,104 @@ export class PulseCharacter extends Character {
     super.deserialize(value)
     this.mostRecentAttractFrame = value['mostRecentAttractFrame']
     this.mostRecentRepelFrame = value['mostRecentRepelFrame']
-    this.repelBuffered = value['repelBuffered']
+    this.repelBufferedFrame = value['repelBufferedFrame']
   }
 
   handleAttract(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
-    if (
+    const canPerformAttract = (
+      (frame >= this.mostRecentAttractFrame + ATTRACT_COOLDOWN) &&
+      (this.resourceMeter >= ATTRACT_COST)
+    )
+    const didInputAttract = (
       (isGamePadInputResult(input) && input.button1) ||
       (!isGamePadInputResult(input) && input.button1)
-    ) {
-      if (frame >= this.mostRecentAttractFrame + ATTRACT_COOLDOWN) {
-        this.mostRecentAttractFrame = frame
-        this.scene.gameObjects.forEach(gameObject => {
-          if (isBallObject(gameObject)) {
-            const IMPULSE_DISTANCE = 2.5
-            const IMPULSE_MAGNITUDE = 0.1
-            const otherCollider = this.scene.world.getCollider(gameObject.colliderHandle)
-            const otherRigidBody = this.scene.world.getRigidBody(gameObject.rigidBodyHandle)
-            const myCollider = this.scene.world.getCollider(this.pulseObject.colliderHandle)
-            const xDiff = otherCollider.translation().x - myCollider.translation().x
-            const yDiff = otherCollider.translation().y - myCollider.translation().y
-            const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
-            const closeness = Math.max(0, (IMPULSE_DISTANCE - distance)/IMPULSE_DISTANCE) // 0 to 1
-            const normalizedDiff = normalize({ x: xDiff, y: yDiff })
-            const impulseVector = {
-              x: (-normalizedDiff.x * closeness * IMPULSE_MAGNITUDE),
-              y: (-normalizedDiff.y * closeness * IMPULSE_MAGNITUDE),
-            }
-            otherRigidBody.applyImpulse(impulseVector, true)
-          }
-        })
+    )
+
+    if (didInputAttract) {
+      if (canPerformAttract) {
+        this.doAttract(frame)
       }
     }
   }
 
+  doAttract(frame: number) {
+    this.mostRecentAttractFrame = frame
+    this.resourceMeter -= ATTRACT_COST
+
+    this.scene.gameObjects.forEach(gameObject => {
+      if (isBallObject(gameObject)) {
+        const IMPULSE_DISTANCE = 2.5
+        const IMPULSE_MAGNITUDE = 0.1
+        const otherCollider = this.scene.world.getCollider(gameObject.colliderHandle)
+        const otherRigidBody = this.scene.world.getRigidBody(gameObject.rigidBodyHandle)
+        const myCollider = this.scene.world.getCollider(this.pulseObject.colliderHandle)
+        const xDiff = otherCollider.translation().x - myCollider.translation().x
+        const yDiff = otherCollider.translation().y - myCollider.translation().y
+        const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
+        const closeness = Math.max(0, (IMPULSE_DISTANCE - distance)/IMPULSE_DISTANCE) // 0 to 1
+        const normalizedDiff = normalize({ x: xDiff, y: yDiff })
+        const impulseVector = {
+          x: (-normalizedDiff.x * closeness * IMPULSE_MAGNITUDE),
+          y: (-normalizedDiff.y * closeness * IMPULSE_MAGNITUDE),
+        }
+        otherRigidBody.applyImpulse(impulseVector, true)
+      }
+    })
+  }
+  
   handleRepel(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
-    if (
+    const canPerformRepel = (
+      (frame >= this.mostRecentRepelFrame + REPEL_COOLDOWN) &&
+      (this.resourceMeter >= REPEL_COST)
+    )
+    const didInputRepel = (
       (isGamePadInputResult(input) && input.button2) ||
-      (!isGamePadInputResult(input) && input.button2) ||
-      (this.repelBuffered)
-    ){
-      if (frame >= this.mostRecentRepelFrame + REPEL_COOLDOWN) {
-        this.repelBuffered = false
-        this.mostRecentRepelFrame = frame
+      (!isGamePadInputResult(input) && input.button2)
+    )
 
-        const myCollider = this.scene?.world.getCollider(this.pulseObject?.colliderHandle) as Collider
-
-        this.scene.addGameObject(new RepelGraphic({
-          scene: this.scene,
-          spawnFrame: frame,
-          physics: {
-            x: myCollider.translation().x,
-            y: myCollider.translation().y,
-          }
-        }))
-
-        this.scene?.gameObjects.forEach(gameObject => {
-          if (isBallObject(gameObject)) {
-            const IMPULSE_DISTANCE = 4
-            const IMPULSE_MAGNITUDE = 7
-            const otherCollider = this.scene.world.getCollider(gameObject.colliderHandle) as Collider
-            const otherRigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandle) as RigidBody
-            const xDiff = otherCollider.translation().x - myCollider.translation().x
-            const yDiff = otherCollider.translation().y - myCollider.translation().y
-            const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
-            const closeness = Math.max(0, (IMPULSE_DISTANCE - distance)/IMPULSE_DISTANCE) // 0 to 1
-            const normalizedDiff = normalize({ x: xDiff, y: yDiff })
-            const impulseVector = {
-              x: (normalizedDiff.x * closeness * IMPULSE_MAGNITUDE),
-              y: (normalizedDiff.y * closeness * IMPULSE_MAGNITUDE),
-            }
-            otherRigidBody?.applyImpulse(impulseVector, true)
-          }
-        })
-      }
-      else if (frame + INPUT_BUFFER_FRAMES >= this.mostRecentRepelFrame + REPEL_COOLDOWN) {
-        this.repelBuffered = true
-      }
+    if (didInputRepel && !canPerformRepel) {
+      this.repelBufferedFrame = frame
     }
+
+    const isRepelBuffered = this.repelBufferedFrame + INPUT_BUFFER_FRAMES >= frame
+
+    if ((didInputRepel || isRepelBuffered) && canPerformRepel) {
+      this.doRepel(frame)
+    }
+  }
+
+  doRepel(frame: number) {
+    this.mostRecentRepelFrame = frame
+    this.resourceMeter -= REPEL_COST
+    const myCollider = this.scene?.world.getCollider(this.pulseObject?.colliderHandle) as Collider
+
+    this.scene.addGameObject(new RepelGraphic({
+      scene: this.scene,
+      spawnFrame: frame,
+      physics: {
+        x: myCollider.translation().x,
+        y: myCollider.translation().y,
+      }
+    }))
+
+    this.scene?.gameObjects.forEach(gameObject => {
+      if (isBallObject(gameObject)) {
+        const IMPULSE_DISTANCE = 4
+        const IMPULSE_MAGNITUDE = 7
+        const otherCollider = this.scene.world.getCollider(gameObject.colliderHandle) as Collider
+        const otherRigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandle) as RigidBody
+        const xDiff = otherCollider.translation().x - myCollider.translation().x
+        const yDiff = otherCollider.translation().y - myCollider.translation().y
+        const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
+        const closeness = Math.max(0, (IMPULSE_DISTANCE - distance)/IMPULSE_DISTANCE) // 0 to 1
+        const normalizedDiff = normalize({ x: xDiff, y: yDiff })
+        const impulseVector = {
+          x: (normalizedDiff.x * closeness * IMPULSE_MAGNITUDE),
+          y: (normalizedDiff.y * closeness * IMPULSE_MAGNITUDE),
+        }
+        otherRigidBody?.applyImpulse(impulseVector, true)
+      }
+    })
   }
 
   handleMovement(input: GamepadInputResult | KeyboardMouseInputResult){

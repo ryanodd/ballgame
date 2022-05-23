@@ -5,6 +5,7 @@ import { Scene } from "../Scene/Scene";
 import { Player } from "./Player";
 
 export const INPUT_BUFFER_FRAMES = 10
+export const RESOURCE_GAIN_PER_FRAME = 6 / 60
 
 export interface CharacterProps {
   player: Player;
@@ -19,8 +20,8 @@ export abstract class Character {
   // 101 for rounding issues. I want fractional costs like 1/3 which is 33.33
   // So we'll use 101 and round down for displaying.
   // This is a character-wide rule for now.
-  RESOURCE_METER_MAXIMUM = 101;
-  RESOURCE_METER_BEGIN = 50;
+  RESOURCE_METER_MAXIMUM = 100;
+  RESOURCE_METER_BEGIN = 40;
 
   constructor(props: CharacterProps){
     this.resourceMeter = this.RESOURCE_METER_BEGIN;

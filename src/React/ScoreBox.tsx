@@ -10,14 +10,12 @@ import { useTypedSelector } from "../redux/typedHooks"
 const { Text, Title } = Typography
 
 const ScoreBoxWrapper = styled.div`
-  position: absolute;
-  top:0;
-  bottom: 0;
   width: 200px;
-  transform: translateX(-50%);
+  height: 100%;
   
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.15);
   border-radius: 3px;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
 
   display: flex;
   flex-direction: column;
@@ -36,11 +34,17 @@ export const ScoreBox = () => {
 
 
   let secondsRemaining = Math.ceil((framesRemaining ?? 0) / 60)
+  const isFinalCountdown = secondsRemaining <= 10 && secondsRemaining > 0
   let minutesRemaining = 0
   if (secondsRemaining > 59) {
     minutesRemaining = Math.floor(secondsRemaining / 60)
     secondsRemaining = secondsRemaining % 60
   }
+
+  const timerStyles = isFinalCountdown ? {
+    fontWeight: 700,
+    color: '#e14141',
+ } : {}
   return (
     <ScoreBoxWrapper>
       <Title level={2} style={{margin: 0}}>
@@ -49,7 +53,13 @@ export const ScoreBox = () => {
         }
       </Title>
         { framesRemaining !== null && (
-          <Text style={{fontSize: 22, margin: 0}}>
+          <Text
+            style={{
+              fontSize: 22,
+              margin: 0,
+              ...timerStyles,
+            }}
+          >
             {`${minutesRemaining.toString()}:${secondsRemaining.toString().padStart(2, '0')}`}
           </Text>
         )}

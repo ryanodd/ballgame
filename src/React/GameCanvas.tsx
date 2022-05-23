@@ -1,6 +1,8 @@
 import styled from "styled-components";
+import { useTypedSelector } from "../redux/typedHooks";
 import { CanvasOverlay } from "./CanvasOverlay";
 import { ScoreBox } from "./ScoreBox";
+import { TeamHud } from "./TeamHud";
 
 const CanvasContainer = styled.div`
   position: relative;
@@ -18,11 +20,26 @@ const CanvasElement = styled.canvas`
 `
 
 export const GameCanvas = () => {
+  const { teams } = useTypedSelector((state) => {
+    return {
+      teams: state.game.teams,
+    }
+  })
+  
   return (
     <CanvasContainer>
       <CanvasElement id="game-canvas"/>
       <CanvasOverlay>
-        <ScoreBox />
+        {
+          teams !== [] && (
+            <>
+              <TeamHud teamIndex={0} />
+              <ScoreBox />
+              <TeamHud teamIndex={1} />
+            </>
+          )
+        }
+        
       </CanvasOverlay>
     </CanvasContainer>
   )
