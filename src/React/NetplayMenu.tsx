@@ -65,7 +65,7 @@ export const NetplayMenu = () => {
           </Title>
           <Space direction="vertical" size="small">
             <Text>
-              The game will begin when someone else enters this URL.
+              The game will begin when someone else enters this URL into their browser.
             </Text>
             <Space>
               {/* <Title code level={4}>

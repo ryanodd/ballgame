@@ -2,12 +2,7 @@
 HIGH PRIORITY
 //////////////////
 
-- game end conditions: time, but allow unlimited. leave design room for first-to-X
-- victory screen
-- pause menu
-	- need to be able to destroy an existing game...
-		- would the old game be garbage collected? Those requestAnimationFRames are gonna keep going
-			- maybe throw an error to stop it or something?
+- score & clock better ui
 
 - lazy controls tutorial graphic
 
@@ -32,6 +27,8 @@ MEDIUM PRIORITY
 		- resource meter
 		- serialization
 
+- game end first-to-x ui & implementation
+
 - goal animation
 
 - crunchy animations:
@@ -54,6 +51,7 @@ MEDIUM PRIORITY
 	- localStorage??
 
 - think about name
+	- tab title https://nextjs.org/docs/api-reference/next/head
 
 - research: deal with stalling better
 	- for one, we could display netplay errors & prompt a restart

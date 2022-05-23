@@ -24,7 +24,7 @@ export interface SessionProps {
 export class Session {
   frame = 1
   //                        FPS  Sec  Min
-  endFrame: number | null = 60 * 5 * 1
+  endFrame: number | null = 60 * 60 * 1.5
   ended: boolean = false
   overtime: boolean = false
 

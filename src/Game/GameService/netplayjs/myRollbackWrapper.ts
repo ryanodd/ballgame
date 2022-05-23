@@ -1,6 +1,5 @@
 import { MyInputReader } from './MyInput'
 
-import * as query from "query-string";
 import { assert } from "chai";
 import EWMASD from '../../../lib/netplayjs/ewmasd';
 import { DefaultInput, NetplayPlayer } from '../../../lib/netplayjs';
@@ -262,6 +261,7 @@ export class MyRollbackWrapper {
     conn.on("close", () => {
       // In this case the host ended the session without the client detecting a game end itself.
       // We always hit this path for some reason.
+      // TODO Pretty sure the client can properly detect end at state sync stages, not history clearing stages.
       if (!this.rollbackNetcode!.ended) {
         if (this.pingIntervalHandle) clearInterval(this.pingIntervalHandle)
       }

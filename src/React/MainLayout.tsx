@@ -47,7 +47,7 @@ export const MainLayout = () => {
             dispatch({type: SET_UI_DATA, payload: { isGameEndOpen: false } })
             dispatch({type: SET_UI_DATA, payload: { isMainMenuOpen: true } })
           }}>
-            Alrighty then
+            OK
           </Button>
         ]}
       >

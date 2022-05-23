@@ -26,7 +26,7 @@ export const ScoreBox = () => {
   let secondsRemaining = Math.ceil((framesRemaining ?? 0) / 60)
   let minutesRemaining = 0
   if (secondsRemaining > 59) {
-    minutesRemaining = secondsRemaining / 60
+    minutesRemaining = Math.floor(secondsRemaining / 60)
     secondsRemaining = secondsRemaining % 60
   }
   return (
@@ -38,7 +38,7 @@ export const ScoreBox = () => {
       </Title>
         { framesRemaining !== null && (
           <Text>
-            {`${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`}
+            {`${minutesRemaining.toString()}:${secondsRemaining.toString().padStart(2, '0')}`}
           </Text>
         )}
         { overtime === true && (
