@@ -1,3 +1,5 @@
+export {}
+
 // import { GamepadInputResult } from "@/Game/InputService/model/InputResult";
 // import ShipBullet from "../../GameObject/GameObjectFactory/ShipBullet";
 // import ShipPlayerObject from "../../GameObject/GameObjectFactory/ShipPlayerObject";

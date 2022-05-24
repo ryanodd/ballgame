@@ -2,25 +2,6 @@
 HIGH PRIORITY
 //////////////////
 
-- CONTROLS tutorial/reference
-	- dependent on character AND gamepad/keyboard
-	- customizable
-	- explain abilities - maybe even show them with mini-canvas or images
-	- list costs
-	- very closely tied to character select screen I think. Which isn't figured out.
-	- When to choose characters?
-		- (a) Before finding opponent
-		- (b) After finding opponent
-		- (c) one of the above AND during game - between goals?
-	- When to be able to customize controls?
-		- probably at main menu only
-	- Will controls be global? Or need to be set for each character?
-		- I can imagine some characters needing TWO directional inputs.
-		- For spaceship, keyboard directional input will be two buttons instead of gamepad stick?
-	- regardless, we still NEED a way to see controls in-game
-		- (a) single special keyboard key to see controls for all players?
-		- click/hover button in CharacterHud to show popover
-
 - DEPLOY
 	- Amplify
 	- point domain to it
@@ -60,9 +41,28 @@ MEDIUM PRIORITY
 - combine control stick inputs and keyboard WASD inputs more automatically
 
 - control config menu
-	- can maybe be extended to be a HUD tutorial display as well
+	- can maybe be extended to be a tutorial as well
 	- eventually should have specialized instructions for each bindable control for each character.
 	- localStorage??
+
+- CONTROLS tutorial/reference
+	- dependent on character AND gamepad/keyboard
+	- customizable
+	- explain abilities - maybe even show them with mini-canvas or images
+	- list costs
+	- very closely tied to character select screen I think. Which isn't figured out.
+	- When to choose characters?
+		- (a) Before finding opponent
+		- (b) After finding opponent
+		- (c) one of the above AND during game - between goals?
+	- When to be able to customize controls?
+		- probably at main menu only
+	- Will controls be global? Or need to be set for each character?
+		- I can imagine some characters needing TWO directional inputs.
+		- For spaceship, keyboard directional input will be two buttons instead of gamepad stick?
+	- regardless, we still NEED a way to see controls in-game
+		- (a) single special keyboard key to see controls for all players?
+		- click/hover button in CharacterHud to show popover
 
 - think about name
 	- tab title https://nextjs.org/docs/api-reference/next/head

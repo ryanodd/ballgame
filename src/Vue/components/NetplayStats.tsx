@@ -1,3 +1,5 @@
+export {}
+
 // <template>
 //   <div class="netplay-stats-wrapper">
 //     <card-box>
