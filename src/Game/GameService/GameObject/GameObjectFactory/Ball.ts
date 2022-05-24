@@ -1,5 +1,5 @@
 import { Collider, ColliderDesc, ColliderHandle, RigidBody, RigidBodyDesc, RigidBodyHandle } from "@dimforge/rapier2d";
-import { JSONObject } from "../../../../lib/netplayjs";
+import { JSONObject, JSONValue } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
 import { CollisionGroups } from "../CollisionGroups";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
@@ -50,7 +50,7 @@ export default class Ball extends GameObject {
     }
   }
 
-  serialize(): JSONObject {
+  serialize(): any {
     return {
       ...super.serialize(),
       id: this.id,

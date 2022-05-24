@@ -1,6 +1,6 @@
 import { urlToHttpOptions } from "url";
 import { store } from "../../../../pages/_app";
-import { JSONObject } from "../../../lib/netplayjs";
+import { JSONValue } from "../../../lib/netplayjs";
 import { SET_TEAM_DATA } from "../../../redux/actions";
 
 export interface TeamProps {
@@ -29,13 +29,13 @@ export class Team {
     this.updateScore()
   }
 
-  serialize(): JSONObject {
+  serialize(): any {
     return {
       score: this.score,
     }
   }
 
-  deserialize(value: JSONObject) {
+  deserialize(value: any) {
     this.score = value['score']
     this.updateScore()
   }

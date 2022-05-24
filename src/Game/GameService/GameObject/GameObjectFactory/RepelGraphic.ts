@@ -1,4 +1,4 @@
-import { JSONObject } from "../../../../lib/netplayjs";
+import { JSONValue } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps } from "../GameObject";
 
@@ -30,7 +30,7 @@ export class RepelGraphic extends GameObject {
     this.y = props.physics.y;
   }
 
-  serialize(): JSONObject {
+  serialize(): any {
     return {
       ...super.serialize(),
       id: this.id,

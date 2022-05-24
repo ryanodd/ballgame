@@ -1,7 +1,7 @@
 import { Scene } from "../../Scene/Scene";
 import GameObject, { GameObjectProps, BodyGameObject, GameObjectPhysicsProps, GameObjectPhysicsHandles, isPhysicsProps } from "../GameObject";
 import { Collider, ColliderDesc, ColliderHandle, RigidBodyDesc, RigidBodyHandle } from "@dimforge/rapier2d";
-import { JSONObject } from "../../../../lib/netplayjs";
+import { JSONValue } from "../../../../lib/netplayjs";
 import { Character } from "../../Player/Character";
 import { PulseCharacter } from "../../Player/PlayerTypes/PulseCharacter";
 import { CollisionGroups } from "../CollisionGroups";
@@ -53,7 +53,7 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
     }
   }
 
-  serialize(): JSONObject {
+  serialize(): any {
     return {
       ...super.serialize(),
       id: this.id,

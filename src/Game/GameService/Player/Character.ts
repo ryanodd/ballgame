@@ -1,4 +1,4 @@
-import { JSONObject } from "../../../lib/netplayjs";
+import { JSONObject, JSONValue } from "../../../lib/netplayjs";
 import { GamepadInputResult, KeyboardMouseInputResult } from "../../InputService/model/InputResult";
 import { MyInput } from "../netplayjs/MyInput";
 import { Scene } from "../Scene/Scene";
@@ -34,13 +34,13 @@ export abstract class Character {
   abstract tickMovement(input: GamepadInputResult | KeyboardMouseInputResult, frame: number): void
   abstract tickAbilities(input: GamepadInputResult | KeyboardMouseInputResult, frame: number): void
 
-  serialize(): JSONObject {
+  serialize(): any {
     return {
       resourceMeter: this.resourceMeter,
     }
   }
 
-  deserialize(value: JSONObject) {
+  deserialize(value: any) {
     this.resourceMeter = value['resourceMeter']
   }
 

@@ -1,7 +1,7 @@
 import { DefaultInput, DefaultInputReader } from "../../../lib/netplayjs";
 
 export class MyInput extends DefaultInput {
-  gamepads: Gamepad[] = []
+  gamepads: (Gamepad|null)[] = []
 }
 
 export class MyInputReader extends DefaultInputReader {

@@ -1,6 +1,6 @@
 import GameObject from "../GameObject/GameObject";
 import { ColliderHandle, EventQueue, World } from '@dimforge/rapier2d';
-import { JSONObject } from "../../../lib/netplayjs";
+import { JSONValue } from "../../../lib/netplayjs";
 import { Character } from "../Player/Character";
 import { Team } from "../Team/Team";
 import { Player } from "../Player/Player";
@@ -35,7 +35,7 @@ export class Scene {
     this.teams = props.teams;
   }
 
-  serialize(): JSONObject {
+  serialize(): any {
     return {
       worldSnapshot: this.world.takeSnapshot().toString(),
       gameObjects: this.gameObjects.map(gameObject => gameObject.serialize()),
@@ -43,13 +43,13 @@ export class Scene {
     }
   }
 
-  deserialize(value: JSONObject) {
+  deserialize(value: any) {
     const worldSnapshot = value['worldSnapshot']
     const splitSnapshot = worldSnapshot.split(',')
     const array = new Uint8Array(splitSnapshot)
     this.world = World.restoreSnapshot(array);
 
-    this.gameObjects = value['gameObjects'].map((gameObjectValue: JSONObject) => {
+    this.gameObjects = value['gameObjects'].map((gameObjectValue: any) => {
       return getGameObjectById(gameObjectValue['id']).deserialize(gameObjectValue, this)
     })
 

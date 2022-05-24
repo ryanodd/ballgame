@@ -1,10 +1,10 @@
-import { JSONObject, JSONObject } from "./json";
+import { JSONValue } from "./json";
 
-export function serialize(data: any): JSONObject {
-  return JSON.parse(JSON.stringify(data)) as JSONObject;
+export function serialize(data: any): JSONValue {
+  return JSON.parse(JSON.stringify(data)) as JSONValue;
 }
 
-export function deserialize(source: JSONObject, dest: Record<string, any>): void {
+export function deserialize(source: JSONValue, dest: Record<string, any>): void {
   // Deep copy hack.
   const copy = JSON.parse(JSON.stringify(source));
 

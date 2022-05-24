@@ -12,8 +12,8 @@ export class InputServiceImplementation {
   }
 
   getGamepadInput(input: MyInput, gamepadIndex: number, config: InputConfig): GamepadInputResult {
-    const gamepad: Gamepad = input.gamepads[gamepadIndex];
-    if (!gamepad) return gamepadNoInputResult;
+    const gamepad = input.gamepads[gamepadIndex];
+    if (gamepad === null) return gamepadNoInputResult;
 
     const mapping = config.gamepadInputMapping;
     

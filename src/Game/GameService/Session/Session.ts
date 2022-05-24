@@ -10,7 +10,7 @@ import { createScene1 } from "../Scene/SceneFactory/Scene1";
 import { EventQueue, World } from "@dimforge/rapier2d";
 import { MyInput } from "../netplayjs/MyInput";
 import { Player } from "../Player/Player";
-import { JSONObject } from "../../../lib/netplayjs";
+import { JSONValue } from "../../../lib/netplayjs";
 import { store } from "../../../../pages/_app";
 import { SET_GAME_DATA, SET_UI_DATA } from "../../../redux/actions";
 
@@ -56,7 +56,7 @@ export class Session {
     })
   }
 
-  serialize(): JSONObject {
+  serialize(): any {
     return {
       frame: this.frame,
       scene: this.scene.serialize(),
@@ -64,7 +64,7 @@ export class Session {
     };
   }
 
-  deserialize(value: JSONObject): void {
+  deserialize(value: any): void {
     this.frame = value['frame']
     this.scene.deserialize(value['scene'])
 

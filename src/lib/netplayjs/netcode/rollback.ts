@@ -3,7 +3,7 @@ import { get, shift, clone } from "../utils";
 
 import { DEV } from "../debugging";
 import { assert } from "chai";
-import { JSONObject } from "../json";
+import { JSONValue } from "../json";
 
 class RollbackHistory<TInput extends NetplayInput<TInput>> {
   /**
@@ -14,7 +14,7 @@ class RollbackHistory<TInput extends NetplayInput<TInput>> {
   /**
    * The serialized state of the game at this frame.
    */
-  state: JSONObject;
+  state: any;
 
   /**
    * These inputs represent the set of inputs that produced this state
@@ -25,7 +25,7 @@ class RollbackHistory<TInput extends NetplayInput<TInput>> {
 
   constructor(
     frame: number,
-    state: JSONObject,
+    state: any,
     inputs: Map<NetplayPlayer, { input: TInput; isPrediction: boolean }>
   ) {
     this.frame = frame;
@@ -77,7 +77,7 @@ export class RollbackNetcode<
    */
   isHost: boolean;
 
-  onStateSync(frame: number, state: JSONObject) {
+  onStateSync(frame: number, state: any) {
     DEV && assert.isFalse(this.isHost, "Only clients recieve state syncs.");
 
     // Cleanup states that we don't need anymore because we have the definitive
@@ -87,7 +87,7 @@ export class RollbackNetcode<
     while (this.history.length > 1) {
       DEV && assert.isTrue(this.history[0].allInputsSynced());
       if (this.history[0].frame < frame) {
-        if (this.history[0].state.ended) {
+        if (this.history[0].state?.ended) {
           console.warn('client rollback ending!')
           this.ended = true
         }
@@ -216,7 +216,7 @@ export class RollbackNetcode<
   }
 
   broadcastInput: (frame: number, input: TInput) => void;
-  broadcastState?: (frame: number, state: JSONObject) => void;
+  broadcastState?: (frame: number, state: JSONValue) => void;
 
   pingMeasure: any;
   timestep: number;
@@ -238,7 +238,7 @@ export class RollbackNetcode<
     timestep: number,
     pollInput: () => TInput,
     broadcastInput: (frame: number, input: TInput) => void,
-    broadcastState?: (frame: number, state: JSONObject) => void
+    broadcastState?: (frame: number, state: JSONValue) => void
   ) {
     this.isHost = isHost;
     this.state = initialState;

@@ -1,6 +1,6 @@
 import { Collider, RigidBody } from "@dimforge/rapier2d";
 import { store } from "../../../../../pages/_app";
-import { JSONObject } from "../../../../lib/netplayjs";
+import { JSONValue } from "../../../../lib/netplayjs";
 import { SET_CHARACTER_DATA } from "../../../../redux/actions";
 import { normalize } from "../../../../utils/math";
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
@@ -104,7 +104,7 @@ export class PulseCharacter extends Character {
     })
   }
 
-  serialize(): JSONObject {
+  serialize(): any {
     return {
       ...super.serialize(),
       mostRecentAttractFrame: this.mostRecentAttractFrame,

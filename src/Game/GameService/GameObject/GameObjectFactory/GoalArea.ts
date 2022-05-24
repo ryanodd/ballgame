@@ -1,5 +1,5 @@
 import { ActiveEvents, ColliderDesc, ColliderHandle, World } from "@dimforge/rapier2d";
-import { JSONObject } from "../../../../lib/netplayjs";
+import { JSONValue } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
 import { CollisionGroups } from "../CollisionGroups";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
@@ -48,7 +48,7 @@ export default class GoalArea extends GameObject { // extend something general?
     }
   }
 
-  serialize(): JSONObject {
+  serialize(): any {
     return {
       ...super.serialize(),
       id: this.id,

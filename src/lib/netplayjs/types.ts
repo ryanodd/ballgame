@@ -1,5 +1,5 @@
 import * as autoserialize from "./autoserialize";
-import { JSONObject } from "./json";
+import { JSONValue } from "./json";
 
 export abstract class NetplayState<TInput extends NetplayInput<TInput>> {
   abstract tick(playerInputs: Map<NetplayPlayer, TInput>, frame: number): void;
@@ -7,15 +7,15 @@ export abstract class NetplayState<TInput extends NetplayInput<TInput>> {
   /**
    * By default, use the auto serializer.
    */
-  serialize(): JSONObject {
+  serialize(): JSONValue {
     return autoserialize.serialize(this);
   }
 
   /**
    * By default, use the auto deserializer.
    */
-  deserialize(value: JSONObject): void {
-    autoserialize.deserialize(value as JSONObject, this);
+  deserialize(value: JSONValue): void {
+    autoserialize.deserialize(value as JSONValue, this);
   }
 }
 
@@ -31,15 +31,15 @@ export abstract class NetplayInput<TInput extends NetplayInput<TInput>> {
   /**
    * By default, use the auto serializer.
    */
-  serialize(): JSONObject {
+  serialize(): JSONValue {
     return autoserialize.serialize(this);
   }
 
   /**
    * By default, use the auto deserializer.
    */
-  deserialize(value: JSONObject): void {
-    autoserialize.deserialize(value as JSONObject, this);
+  deserialize(value: JSONValue): void {
+    autoserialize.deserialize(value as JSONValue, this);
   }
 }
 

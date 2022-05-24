@@ -15,7 +15,7 @@ export class DefaultInput extends NetplayInput<DefaultInput> {
 export class DefaultInputReader {
   canvas: HTMLCanvasElement;
 
-  PRESSED_KEYS = {};
+  PRESSED_KEYS: Record<string, boolean> = {};
 
   mousePosition: { x: number; y: number } | null = null;
   mouseDelta: { x: number; y: number } | null = null;

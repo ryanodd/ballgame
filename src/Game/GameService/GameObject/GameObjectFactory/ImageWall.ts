@@ -1,5 +1,5 @@
 import { ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
-import { JSONObject } from "../../../../lib/netplayjs";
+import { JSONValue } from "../../../../lib/netplayjs";
 // import { GRASS_IMAGE } from "../../../AssetService/assetService";
 import { Scene } from "../../Scene/Scene";
 import { CollisionGroups } from "../CollisionGroups";
@@ -45,7 +45,7 @@ export default class ImageWall extends GameObject { // extend something general?
     }
   }
 
-  serialize(): JSONObject {
+  serialize(): any {
     return {
       ...super.serialize(),
       id: this.id,

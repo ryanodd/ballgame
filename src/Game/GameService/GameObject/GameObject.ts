@@ -1,5 +1,5 @@
 import { ColliderHandle, RigidBodyHandle } from "@dimforge/rapier2d";
-import { JSONObject } from "../../../lib/netplayjs";
+import { JSONValue } from "../../../lib/netplayjs";
 import { Scene } from "../Scene/Scene";
 
 export const isPhysicsProps = (physics: GameObjectPhysicsProps | GameObjectPhysicsHandles): physics is GameObjectPhysicsProps => {
@@ -34,7 +34,7 @@ export default abstract class GameObject {
   abstract spawnFrame: number;
   markedForDeletion: boolean = false;
 
-  serialize(): JSONObject  {
+  serialize(): any  {
     return {
       colliderHandle: this.colliderHandle,
       rigidBodyHandle: this.rigidBodyHandle,
