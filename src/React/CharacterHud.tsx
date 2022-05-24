@@ -1,10 +1,6 @@
-import { Button, Card, Input, message, Radio, Space, Typography } from "antd"
-import { useCallback } from "react"
-import { useDispatch, useSelector, useStore } from "react-redux"
-import styled from "styled-components"
-import { SingleClientGame } from "../Game/GameService/SingleClientGame"
-import { SET_CURRENT_GAME, SET_UI_DATA } from "../redux/actions"
-import { AppState } from "../redux/reducer"
+import { message, Typography } from "antd"
+import { useCallback, useEffect, useState } from "react"
+import styled, { keyframes } from "styled-components"
 import { useTypedSelector } from "../redux/typedHooks"
 import { ControlsSummary } from "./ControlsSummary"
 import { ResourceBadge } from "./ResourceBadge"
@@ -71,8 +67,9 @@ const ResourceBarFill = styled.div<{ percent: number, color: string }>`
 `
 
 const Divider = styled.div`
-  margin: 5px 10px;
+  margin: auto 10px;
   width: 1px;
+  height: calc(100% - 10px);
   background-color: rgba(0, 0, 0, 0.4);
 `
 
@@ -81,14 +78,40 @@ export type CharacterHudProps = {
 }
 
 export const CharacterHud = ({playerIndex}: CharacterHudProps) => {
-  console.log(playerIndex)
-  const { color, resourceMeter } = useTypedSelector((state) => ({
+  const {
+    color,
+    isHost,
+    mostRecentFailedAbilityFrame,
+    netplayPlayerIndex,
+    resourceMeter
+  } = useTypedSelector((state) => ({
     color: state.game.teams[state.game.characters[playerIndex].teamIndex].color,
+    isHost: state.netplay.isHost,
+    netplayPlayerIndex: state.game.characters[playerIndex].netplayPlayerIndex,
     resourceMeter: state.game.characters[playerIndex].resourceMeter,
+    mostRecentFailedAbilityFrame: state.game.characters[playerIndex].mostRecentFailedAbilityFrame,
   }))
-  const numberToDisplay = Math.round(resourceMeter)
 
+  const [ failedAbilityAnimationPlaying, setFailedAbilityAnimationPlaying ] = useState(false)
+
+  useEffect(() => {
+    if (mostRecentFailedAbilityFrame >= 0) {
+      setFailedAbilityAnimationPlaying(true)
+    }
+  }, [mostRecentFailedAbilityFrame])
+
+  const onFailedAbilityEnd = useCallback(() => {
+    setFailedAbilityAnimationPlaying(false)
+  }, [])
+  
+  const numberToDisplay = Math.round(resourceMeter)
   const resourceMeterPercent = numberToDisplay
+  
+  const isLocalPlayer = !((isHost && netplayPlayerIndex === 1) || (!isHost && netplayPlayerIndex === 0))
+
+  if (!isLocalPlayer) {
+    return null
+  }
 
   return (
     <CharacterHudWrapper>
@@ -98,8 +121,10 @@ export const CharacterHud = ({playerIndex}: CharacterHudProps) => {
             Player
           </Title>
         </TitleRow>
-        <ResourceRow>
-          <ResourceBadge number={numberToDisplay} />
+        <ResourceRow
+          onAnimationEnd={onFailedAbilityEnd}
+        >
+          <ResourceBadge color={color} number={numberToDisplay} animateFail={failedAbilityAnimationPlaying} />
           <ResourceBar>
             <ResourceBarFill percent={resourceMeterPercent} color={color}/>
           </ResourceBar>

@@ -10,9 +10,10 @@ import { RepelGraphic } from "../../GameObject/GameObjectFactory/RepelGraphic";
 import { Character, CharacterProps, INPUT_BUFFER_FRAMES, RESOURCE_GAIN_PER_FRAME } from "../Character";
 
 const ATTRACT_COOLDOWN = 0
-const ATTRACT_COST = 7 / 60
+const ATTRACT_COST = 9 / 60
 const REPEL_COOLDOWN = 40
-const REPEL_COST = 30
+const REPEL_COST = 25
+const FAILED_ABILITY_COOLDOWN = 60
 
 export interface PulseCharacterProps extends CharacterProps {
   DENSITY: number;
@@ -34,6 +35,7 @@ export class PulseCharacter extends Character {
   mostRecentAttractFrame: number;
   mostRecentRepelFrame: number;
   repelBufferedFrame: number;
+  mostRecentFailedAbilityFrame: number;
 
   constructor(props: PulseCharacterProps){
     super({player: props.player, scene: props.scene })
@@ -46,6 +48,7 @@ export class PulseCharacter extends Character {
     // this.attractBuffered = false; // continuous input, not needed?
     this.mostRecentRepelFrame = -REPEL_COOLDOWN
     this.repelBufferedFrame = -INPUT_BUFFER_FRAMES;
+    this.mostRecentFailedAbilityFrame = -FAILED_ABILITY_COOLDOWN;
 
     this.pulseObject = new PulseCharacterObject({
       scene: props.scene,
@@ -60,6 +63,21 @@ export class PulseCharacter extends Character {
       }
     });
     props.scene.addGameObject(this.pulseObject);
+
+    store.dispatch({
+      type: SET_CHARACTER_DATA,
+      payload: {
+        playerIndex: this.player.playerIndex,
+        characterData: {
+          playerIndex: this.player.playerIndex,
+          netplayPlayerIndex: this.player.netplayPlayerIndex,
+          teamIndex: this.player.teamIndex,
+          gamepadIndex: this.player.gamepadIndex,
+          inputConfig: this.player.inputConfig,
+          mostRecentFailedAbilityFrame: this.mostRecentFailedAbilityFrame,
+        }
+      }
+    })
   }
 
   tickMovement(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) { 
@@ -68,7 +86,11 @@ export class PulseCharacter extends Character {
 
   // Detect input, do stuff
   tickAbilities(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
-    this.resourceMeter = Math.min(this.resourceMeter + RESOURCE_GAIN_PER_FRAME, 100)
+    const FILL_TICK_RATE = 60
+    if (frame % FILL_TICK_RATE === FILL_TICK_RATE - 1) {
+      this.resourceMeter = Math.min(this.resourceMeter + (RESOURCE_GAIN_PER_FRAME*FILL_TICK_RATE), 100)
+    }
+
     this.handleRepel(input, frame);
     this.handleAttract(input, frame);
     store.dispatch({
@@ -76,8 +98,6 @@ export class PulseCharacter extends Character {
       payload: {
         playerIndex: this.player.playerIndex,
         characterData: {
-          playerIndex: this.player.playerIndex,
-          teamIndex: this.player.teamIndex,
           resourceMeter: this.resourceMeter,
         }
       }
@@ -134,8 +154,8 @@ export class PulseCharacter extends Character {
         const closeness = Math.max(0, (IMPULSE_DISTANCE - distance)/IMPULSE_DISTANCE) // 0 to 1
         const normalizedDiff = normalize({ x: xDiff, y: yDiff })
         const impulseVector = {
-          x: (-normalizedDiff.x * closeness * IMPULSE_MAGNITUDE),
-          y: (-normalizedDiff.y * closeness * IMPULSE_MAGNITUDE),
+          x: (-normalizedDiff.x * (0.25 + closeness/2) * IMPULSE_MAGNITUDE),
+          y: (-normalizedDiff.y * (0.25 + closeness/2) * IMPULSE_MAGNITUDE),
         }
         otherRigidBody.applyImpulse(impulseVector, true)
       }
@@ -143,10 +163,9 @@ export class PulseCharacter extends Character {
   }
   
   handleRepel(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
-    const canPerformRepel = (
-      (frame >= this.mostRecentRepelFrame + REPEL_COOLDOWN) &&
-      (this.resourceMeter >= REPEL_COST)
-    )
+    const hasCooledDown = (frame >= this.mostRecentRepelFrame + REPEL_COOLDOWN)
+    const hasEnoughResource = (this.resourceMeter >= REPEL_COST)
+    const canPerformRepel = hasCooledDown && hasEnoughResource
     const didInputRepel = (
       (isGamePadInputResult(input) && input.button2) ||
       (!isGamePadInputResult(input) && input.button2)
@@ -154,6 +173,21 @@ export class PulseCharacter extends Character {
 
     if (didInputRepel && !canPerformRepel) {
       this.repelBufferedFrame = frame
+      if (
+        hasCooledDown && !hasEnoughResource &&
+        (frame >= this.mostRecentFailedAbilityFrame + FAILED_ABILITY_COOLDOWN)
+      ) {
+        this.mostRecentFailedAbilityFrame = frame
+        store.dispatch({
+          type: SET_CHARACTER_DATA,
+          payload: {
+            playerIndex: this.player.playerIndex,
+            characterData: {
+              mostRecentFailedAbilityFrame: this.mostRecentFailedAbilityFrame,
+            }
+          } 
+        })
+      }
     }
 
     const isRepelBuffered = this.repelBufferedFrame + INPUT_BUFFER_FRAMES >= frame

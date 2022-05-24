@@ -116,10 +116,8 @@ export class Session {
 
   onGoalAgainst(teamIndex: number) {
     const otherTeamIndex = teamIndex === 0 ? 1 : 0
-    console.log('on goal against, about to call onGoal')
     this.teams[otherTeamIndex].onGoal();
     if (this.overtime) {
-      console.log('overtime you say? calling end()')
       this.end()
     } else {
       this.scene = createScene1({ teams: this.teams, players: this.players, session: this })

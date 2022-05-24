@@ -19,6 +19,25 @@ const CanvasElement = styled.canvas`
   height: 100%;
 `
 
+const CenterSection = styled.div`
+  height: 100%;
+  flex-grow: 0;
+`
+
+const LeftSection = styled.div`
+  height: 100%;
+  width: 0;
+  flex-grow: 1;
+  justify-content: center;
+`
+
+const RightSection = styled.div`
+  height: 100%;
+  width: 0;
+  flex-grow: 1;
+  justify-content: center;
+`
+
 export const GameCanvas = () => {
   const { teams } = useTypedSelector((state) => {
     return {
@@ -33,9 +52,15 @@ export const GameCanvas = () => {
         {
           teams !== [] && (
             <>
-              <TeamHud teamIndex={0} />
-              <ScoreBox />
-              <TeamHud teamIndex={1} />
+              <LeftSection>
+                <TeamHud teamIndex={0} />
+              </LeftSection>
+              <CenterSection>
+                <ScoreBox />
+              </CenterSection>
+              <RightSection>
+                <TeamHud teamIndex={1} />
+              </RightSection>
             </>
           )
         }

@@ -22,7 +22,7 @@ export class Player {
   characterType: CharacterType;
   netplayPlayerIndex: number | null; // client index
   gamepadIndex: number | null; // index in the browser's 'GamePad' interface
-  inputConfig: InputConfig | null;
+  inputConfig: InputConfig;
   character: Character | null = null;
 
   constructor(props: PlayerProps){
@@ -31,7 +31,7 @@ export class Player {
     this.characterType = props.characterType;
     this.netplayPlayerIndex = props.netplayPlayerIndex ?? null;
     this.gamepadIndex = props.gamepadIndex ?? null;
-    this.inputConfig = props.inputConfig ?? null;
+    this.inputConfig = props.inputConfig ?? defaultInputConfig;
   }
   
   tickMovement(input: MyInput, frame: number) {

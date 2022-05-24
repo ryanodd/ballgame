@@ -3,7 +3,7 @@ import { useCallback, useEffect } from "react"
 import { useSelector, useStore } from "react-redux"
 import styled from "styled-components"
 import { MyRollbackWrapper } from "../Game/GameService/netplayjs/myRollbackWrapper"
-import { SET_CURRENT_GAME } from "../redux/actions"
+import { SET_CURRENT_GAME, SET_NETPLAY_DATA } from "../redux/actions"
 import { AppState } from "../redux/reducer"
 import { useTypedDispatch, useTypedSelector } from "../redux/typedHooks"
 
@@ -44,6 +44,9 @@ export const NetplayMenu = () => {
     if (isMainMenuOpen) {
       const game = new MyRollbackWrapper(null)
       dispatch({type: SET_CURRENT_GAME, payload: game })
+      dispatch({type: SET_NETPLAY_DATA, payload: {
+        isHost: true,
+      } })
       game.start(store)
     }
   }, [isMainMenuOpen])

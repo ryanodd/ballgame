@@ -15,7 +15,7 @@ const TeamHudWrapper = styled.div`
 
   display: flex;
   align-items: stretch;
-  //justify-content: space-evenly;
+  justify-content: center;
 `
 
 export type TeamHudProps = {

@@ -32,11 +32,31 @@ const Divider = styled.div`
   background-color: rgba(0, 0, 0, 0.2);
 `
 
+const CostRow = styled.div``
+
+const getDisplayChar = (input: string) => {
+  if (input === 'ArrowLeft') return '\u2190'
+  if (input === 'ArrowUp') return '\u2191'
+  if (input === 'ArrowRight') return '\u2192'
+  if (input === 'ArrowDown') return '\u2193'
+  if (input === 'ArrowDown') return '\u2193'
+  if (input === ' ') return 'Space'
+  if (input.length === 1) return input.toUpperCase()
+  return input
+}
+
 export type ControlsSummaryProps = {
   playerIndex: number;
 }
 
 export const ControlsSummary = ({playerIndex}: ControlsSummaryProps) => {
+  const { character } = useTypedSelector((state) => ({
+    character: state.game.characters[playerIndex],
+  }))
+
+  const { gamepadIndex, inputConfig } = character
+
+  const isUsingKeyboardAndMouse = gamepadIndex === -1
 
   return (
     <ControlsSummaryWrapper>
@@ -46,10 +66,14 @@ export const ControlsSummary = ({playerIndex}: ControlsSummaryProps) => {
         </Title>
         <Divider />
         <Text style={{transform: 'translateY(3px)'}}>
-          W
+         {getDisplayChar(inputConfig.keyboardMouseInputMapping.buttonUpKey)}
         </Text>
         <Text>
-          A S D
+          {
+            getDisplayChar(inputConfig.keyboardMouseInputMapping.buttonLeftKey) + ' ' +
+            getDisplayChar(inputConfig.keyboardMouseInputMapping.buttonDownKey) + ' ' +
+            getDisplayChar(inputConfig.keyboardMouseInputMapping.buttonRightKey)
+          }
         </Text>
       </ControlBox>
       <ControlBox>
@@ -57,17 +81,17 @@ export const ControlsSummary = ({playerIndex}: ControlsSummaryProps) => {
           Attract
         </Title>
         <Divider />
-        <Text style={{fontSize: 24}}>
-          Q
+        <Text style={{fontSize: 20}}>
+          {getDisplayChar(inputConfig.keyboardMouseInputMapping.button1Key)}
         </Text>
       </ControlBox>
       <ControlBox>
-        <Title level={5} style={{margin: 0, padding: '2px 8px'  }}>
+        <Title level={5} style={{margin: 0, padding: '2px 8px'}}>
           Repel
         </Title>
         <Divider />
-        <Text style={{fontSize: 24}}>
-          H
+        <Text style={{fontSize: 20}}>
+          {getDisplayChar(inputConfig.keyboardMouseInputMapping.button2Key)}
         </Text>
       </ControlBox>
     </ControlsSummaryWrapper>

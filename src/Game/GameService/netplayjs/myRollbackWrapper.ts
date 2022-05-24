@@ -176,7 +176,6 @@ export class MyRollbackWrapper {
         conn.close()
         return
       }
-      console.log('im in here')
       if (data.type === "input") {
         const input = new DefaultInput();
         input.deserialize(data.input);

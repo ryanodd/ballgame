@@ -35,8 +35,8 @@ export class SingleClientGame {
           buttonRightKey: 'd',
           buttonDownKey: 's',
           buttonLeftKey: 'a',
-          button1Key: ' ',
-          button2Key: 'Shift',
+          button1Key: 'f',
+          button2Key: 'g',
         },
       }
     }),
@@ -44,6 +44,14 @@ export class SingleClientGame {
       playerIndex: 1,
       teamIndex: 1,
       characterType: CharacterType.Pulse,
+      inputConfig: {
+        ...defaultInputConfig,
+        keyboardMouseInputMapping: {
+          ...defaultInputConfig.keyboardMouseInputMapping,
+          button1Key: 'o',
+          button2Key: 'p',
+        },
+      }
     })
   ]
   session: Session = new Session({ players: this.players })

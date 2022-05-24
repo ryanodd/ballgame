@@ -1,13 +1,5 @@
-import { Button, Card, Input, message, Radio, Space, Typography } from "antd"
 import { ReactNode, useCallback, useEffect, useState } from "react"
-import { useDispatch, useSelector, useStore } from "react-redux"
 import styled from "styled-components"
-import { SingleClientGame } from "../Game/GameService/SingleClientGame"
-import { SET_CURRENT_GAME, SET_UI_DATA } from "../redux/actions"
-import { AppState } from "../redux/reducer"
-import { useTypedSelector } from "../redux/typedHooks"
-
-const { Text, Title } = Typography
 
 const CanvasOverlayContainer = styled.div<{heightPercent: string}>`
   position: absolute;
@@ -20,21 +12,21 @@ const CanvasOverlayContainer = styled.div<{heightPercent: string}>`
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: stretch;
 `
 
 const ChildWrapper = styled.div<{targetHeight: number}>`
+  position: absolute;
+  left: 50%;
+
+  width: calc(80px * 9 * (16/9));
   height: 75px;
   margin-top: 5px;
-  transform: scale(calc(${props => props.targetHeight}/75));
-  
-  position: relative;
+  transform: translateX(-50%) scale(calc(${props => props.targetHeight}/80));
+
   display: flex;
   align-items: stretch;
-  justify-content: center;
-  > :not(:last-child) {
-    margin-right: 10px;
-  }
+  justify-content: stretch;
 `
 
 // This is logically tied to scene1's 8/9 height
