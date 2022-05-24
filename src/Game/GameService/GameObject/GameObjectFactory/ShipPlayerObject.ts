@@ -1,3 +1,5 @@
+export {} 
+
 // import { LogService } from "@/Game/LogService/LogService";
 // import { b2Body, b2BodyDef, b2BodyType, b2CircleShape, b2Fixture, b2FixtureDef, b2PolygonShape, b2Transform, b2Vec2, b2World } from "@/lib/Box2D/Box2D";
 // import { CollisionType } from "../../CollisionListener/Collision";
