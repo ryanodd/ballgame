@@ -5,7 +5,7 @@ import { Scene } from "../Scene/Scene";
 import { Player } from "./Player";
 
 export const INPUT_BUFFER_FRAMES = 5
-export const RESOURCE_GAIN_PER_FRAME = 6 / 60
+export const RESOURCE_GAIN_PER_FRAME = 10 / 60
 
 export interface CharacterProps {
   player: Player;
@@ -16,20 +16,20 @@ export abstract class Character {
   resourceMeter: number;
   scene: Scene;
   player: Player;
-  
+
   // 101 for rounding issues. I want fractional costs like 1/3 which is 33.33
   // So we'll use 101 and round down for displaying.
   // This is a character-wide rule for now.
   RESOURCE_METER_MAXIMUM = 100;
   RESOURCE_METER_BEGIN = 40;
 
-  constructor(props: CharacterProps){
+  constructor(props: CharacterProps) {
     this.resourceMeter = this.RESOURCE_METER_BEGIN;
     this.scene = props.scene
     this.player = props.player
     props.player.setCharacter(this)
   }
-  
+
   // Detect input, do stuff
   abstract tickMovement(input: GamepadInputResult | KeyboardMouseInputResult, frame: number): void
   abstract tickAbilities(input: GamepadInputResult | KeyboardMouseInputResult, frame: number): void
@@ -44,7 +44,7 @@ export abstract class Character {
     this.resourceMeter = value['resourceMeter']
   }
 
-  setResourceMeter(value: number){
+  setResourceMeter(value: number) {
     const newValue = Math.min(value, this.RESOURCE_METER_MAXIMUM);
     this.resourceMeter = newValue;
   }

@@ -10,17 +10,19 @@ import { RepelGraphic } from "../../GameObject/GameObjectFactory/RepelGraphic";
 import { Character, CharacterProps, INPUT_BUFFER_FRAMES, RESOURCE_GAIN_PER_FRAME } from "../Character";
 
 const ATTRACT_COOLDOWN = 0
-const ATTRACT_COST = 9 / 60
+const ATTRACT_COST = 20 / 60
 const REPEL_COOLDOWN = 25
-const REPEL_COST = 25
+const REPEL_COST = 40
 const FAILED_ABILITY_COOLDOWN = 20
+
+const RESOURCE_FILL_TICK_RATE = 30
 
 export interface PulseCharacterProps extends CharacterProps {
   DENSITY: number;
   FRICTION: number;
   RESTITUTION: number;
   RADIUS: number;
-  
+
   x: number;
   y: number;
 }
@@ -37,8 +39,8 @@ export class PulseCharacter extends Character {
   repelBufferedFrame: number;
   mostRecentFailedAbilityFrame: number;
 
-  constructor(props: PulseCharacterProps){
-    super({player: props.player, scene: props.scene })
+  constructor(props: PulseCharacterProps) {
+    super({ player: props.player, scene: props.scene })
 
     this.DENSITY = props.DENSITY;
     this.FRICTION = props.FRICTION;
@@ -81,15 +83,14 @@ export class PulseCharacter extends Character {
     })
   }
 
-  tickMovement(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) { 
+  tickMovement(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
     this.handleMovement(input);
   }
 
   // Detect input, do stuff
   tickAbilities(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
-    const FILL_TICK_RATE = 60
-    if (frame % FILL_TICK_RATE === FILL_TICK_RATE - 1) {
-      this.resourceMeter = Math.min(this.resourceMeter + (RESOURCE_GAIN_PER_FRAME*FILL_TICK_RATE), 100)
+    if (frame % RESOURCE_FILL_TICK_RATE === RESOURCE_FILL_TICK_RATE - 1) {
+      this.resourceMeter = Math.min(this.resourceMeter + (RESOURCE_GAIN_PER_FRAME * RESOURCE_FILL_TICK_RATE), 100)
     }
 
     this.handleRepel(input, frame);
@@ -152,8 +153,8 @@ export class PulseCharacter extends Character {
         const xDiff = otherCollider.translation().x - myCollider.translation().x
         const yDiff = otherCollider.translation().y - myCollider.translation().y
         const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
-        const closeness = Math.max(0, (IMPULSE_DISTANCE - distance)/IMPULSE_DISTANCE) // 0 to 1
-        const closenessFactor = closeness === 0 ? 0 : (0.25 + closeness/2) // 0.25 to 0.75 (or just 0)
+        const closeness = Math.max(0, (IMPULSE_DISTANCE - distance) / IMPULSE_DISTANCE) // 0 to 1
+        const closenessFactor = closeness === 0 ? 0 : (0.25 + closeness / 2) // 0.25 to 0.75 (or just 0)
         const normalizedDiff = normalize({ x: xDiff, y: yDiff })
         const impulseVector = {
           x: (-normalizedDiff.x * closenessFactor * IMPULSE_MAGNITUDE),
@@ -163,7 +164,7 @@ export class PulseCharacter extends Character {
       }
     })
   }
-  
+
   handleRepel(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
     const hasCooledDown = (frame >= this.mostRecentRepelFrame + REPEL_COOLDOWN)
     const hasEnoughResource = (this.resourceMeter >= REPEL_COST)
@@ -176,7 +177,8 @@ export class PulseCharacter extends Character {
     if (didInputRepel && !canPerformRepel) {
       this.repelBufferedFrame = frame
       if (
-        hasCooledDown && !hasEnoughResource &&
+        hasCooledDown &&
+        (this.resourceMeter < REPEL_COST + (RESOURCE_GAIN_PER_FRAME * 2 * RESOURCE_FILL_TICK_RATE)) && // some tolerance for the common case where someone mashes the button just before they have enough
         (frame >= this.mostRecentFailedAbilityFrame + FAILED_ABILITY_COOLDOWN)
       ) {
         this.mostRecentFailedAbilityFrame = frame
@@ -187,7 +189,7 @@ export class PulseCharacter extends Character {
             characterData: {
               mostRecentFailedAbilityFrame: this.mostRecentFailedAbilityFrame,
             }
-          } 
+          }
         })
       }
     }
@@ -222,7 +224,7 @@ export class PulseCharacter extends Character {
         const xDiff = otherCollider.translation().x - myCollider.translation().x
         const yDiff = otherCollider.translation().y - myCollider.translation().y
         const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
-        const closeness = Math.max(0, (IMPULSE_DISTANCE - distance)/IMPULSE_DISTANCE) // 0 to 1
+        const closeness = Math.max(0, (IMPULSE_DISTANCE - distance) / IMPULSE_DISTANCE) // 0 to 1
         const normalizedDiff = normalize({ x: xDiff, y: yDiff })
         const impulseVector = {
           x: (normalizedDiff.x * closeness * IMPULSE_MAGNITUDE),
@@ -233,7 +235,7 @@ export class PulseCharacter extends Character {
     })
   }
 
-  handleMovement(input: GamepadInputResult | KeyboardMouseInputResult){
+  handleMovement(input: GamepadInputResult | KeyboardMouseInputResult) {
 
     if (!this.pulseObject || this.pulseObject.colliderHandle === null || this.pulseObject.rigidBodyHandle === null) {
       return
@@ -252,11 +254,11 @@ export class PulseCharacter extends Character {
       if (input.buttonUp) yAxisInput += 1
       if (input.buttonDown) yAxisInput -= 1
       if (xAxisInput !== 0 && yAxisInput !== 0) {
-        xAxisInput *= Math.cos(Math.PI/4)
-        yAxisInput *= Math.sin(Math.PI/4)
+        xAxisInput *= Math.cos(Math.PI / 4)
+        yAxisInput *= Math.sin(Math.PI / 4)
       }
     }
-    
+
 
     const ACCELERATION_CONSTANT_X = 4.5;
     const ACCELERATION_CONSTANT_Y = 4.5;
@@ -278,7 +280,7 @@ export class PulseCharacter extends Character {
     const impulseX = rigidBody.mass() * xInputForce; //disregard time factor. < ??what does this mean?
     const impulseY = rigidBody.mass() * yInputForce;
     const impulse = { x: impulseX, y: impulseY };
-    
+
     rigidBody.applyImpulse(impulse, true)
 
     // // Example of slow turning I think?
