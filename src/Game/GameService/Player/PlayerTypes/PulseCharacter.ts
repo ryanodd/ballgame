@@ -11,9 +11,9 @@ import { Character, CharacterProps, INPUT_BUFFER_FRAMES, RESOURCE_GAIN_PER_FRAME
 
 const ATTRACT_COOLDOWN = 0
 const ATTRACT_COST = 9 / 60
-const REPEL_COOLDOWN = 40
+const REPEL_COOLDOWN = 25
 const REPEL_COST = 25
-const FAILED_ABILITY_COOLDOWN = 60
+const FAILED_ABILITY_COOLDOWN = 20
 
 export interface PulseCharacterProps extends CharacterProps {
   DENSITY: number;
@@ -74,6 +74,7 @@ export class PulseCharacter extends Character {
           teamIndex: this.player.teamIndex,
           gamepadIndex: this.player.gamepadIndex,
           inputConfig: this.player.inputConfig,
+          resourceMeter: this.resourceMeter,
           mostRecentFailedAbilityFrame: this.mostRecentFailedAbilityFrame,
         }
       }
@@ -144,7 +145,7 @@ export class PulseCharacter extends Character {
     this.scene.gameObjects.forEach(gameObject => {
       if (isBallObject(gameObject)) {
         const IMPULSE_DISTANCE = 2.5
-        const IMPULSE_MAGNITUDE = 0.1
+        const IMPULSE_MAGNITUDE = 0.06
         const otherCollider = this.scene.world.getCollider(gameObject.colliderHandle)
         const otherRigidBody = this.scene.world.getRigidBody(gameObject.rigidBodyHandle)
         const myCollider = this.scene.world.getCollider(this.pulseObject.colliderHandle)
@@ -152,10 +153,11 @@ export class PulseCharacter extends Character {
         const yDiff = otherCollider.translation().y - myCollider.translation().y
         const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
         const closeness = Math.max(0, (IMPULSE_DISTANCE - distance)/IMPULSE_DISTANCE) // 0 to 1
+        const closenessFactor = closeness === 0 ? 0 : (0.25 + closeness/2) // 0.25 to 0.75 (or just 0)
         const normalizedDiff = normalize({ x: xDiff, y: yDiff })
         const impulseVector = {
-          x: (-normalizedDiff.x * (0.25 + closeness/2) * IMPULSE_MAGNITUDE),
-          y: (-normalizedDiff.y * (0.25 + closeness/2) * IMPULSE_MAGNITUDE),
+          x: (-normalizedDiff.x * closenessFactor * IMPULSE_MAGNITUDE),
+          y: (-normalizedDiff.y * closenessFactor * IMPULSE_MAGNITUDE),
         }
         otherRigidBody.applyImpulse(impulseVector, true)
       }

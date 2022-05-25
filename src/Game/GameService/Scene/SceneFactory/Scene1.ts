@@ -60,6 +60,7 @@ export function createScene1(props: Scene1Props): Scene {
     }
   })
 
+
   // Need to declare separately to give handle for collision tracking purposes.
   const ball = new Ball({
     scene: returnScene,

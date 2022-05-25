@@ -1,8 +1,14 @@
-import { Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
+import RAPIER, { Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
 import { JSONValue } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
 import { CollisionGroups } from "../CollisionGroups";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
+
+export interface WallVariationProps {
+  distance: number;
+  speed: number;
+  direction: 'up' | 'right' | 'down' | 'left';
+}
 
 export interface WallPhysicsProps extends GameObjectPhysicsProps {
   w: number;
@@ -14,9 +20,9 @@ export interface WallPhysicsHandles extends GameObjectPhysicsHandles {
   colliderHandle: ColliderHandle;
 }
 
-
 export interface WallProps extends GameObjectProps {
   physics: WallPhysicsProps | WallPhysicsHandles;
+  variation?: WallVariationProps
 }
 
 export const WALL_OBJ_ID = 'Wall'
@@ -31,10 +37,12 @@ export default class Wall extends GameObject { // extend something general?
   spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: null = null;
+  variation: WallVariationProps | null;
   
   constructor(props: WallProps) {
     super();
     this.scene = props.scene;
+    this.variation = props.variation ?? null
     this.spawnFrame = props.spawnFrame ?? 0;
 
     if (isPhysicsProps(props.physics)) {
@@ -45,10 +53,11 @@ export default class Wall extends GameObject { // extend something general?
     }
   }
 
-  serialize(): JSONValue {
+  serialize(): any {
     return {
       ...super.serialize(),
       id: this.id,
+      variation: this.variation,
     }
   };
 
@@ -56,6 +65,7 @@ export default class Wall extends GameObject { // extend something general?
     return new Wall({
       scene,
       spawnFrame: value['spawnFrame'],
+      variation: value['variation'],
       physics: {
         colliderHandle: value['colliderHandle'],
         rigidBodyHandle: null,
@@ -72,7 +82,33 @@ export default class Wall extends GameObject { // extend something general?
     return returnColliderHandle;
   }
 
-  // No tick
+  tick(frame: number) {
+    if (this.variation !== null) {
+      const time = 600 / this.variation.speed
+      const distancePerFrame = this.variation.distance / time
+      const frameChunk = Math.floor((frame - 1) / time)
+      console.log(frameChunk)
+      const lengthModifier = ((frameChunk % 2) === 0) ? distancePerFrame : -distancePerFrame;
+  
+      const collider = this.scene.world.getCollider(this.colliderHandle)
+      const { x: halfX, y: halfY } = collider.halfExtents()
+      const { x: xPosition, y: yPosition} = collider.translation();
+
+      if (this.variation.direction === 'up') {
+        collider.setShape(new RAPIER.Cuboid(halfX, halfY + (lengthModifier / 2)))
+        collider.setTranslation({x: xPosition, y: yPosition + (lengthModifier / 2)})
+      } else if (this.variation.direction === 'right') {
+        collider.setShape(new RAPIER.Cuboid(halfX + (lengthModifier / 2), halfY))
+        collider.setTranslation({x: xPosition + (lengthModifier / 2), y: yPosition})
+      } else if (this.variation.direction === 'down') {
+        collider.setShape(new RAPIER.Cuboid(halfX, halfY - (lengthModifier / 2)))
+        collider.setTranslation({x: xPosition, y: yPosition - (lengthModifier / 2)})
+      } else if (this.variation.direction === 'left') {
+        collider.setShape(new RAPIER.Cuboid(halfX - (lengthModifier / 2), halfY))
+        collider.setTranslation({x: xPosition - (lengthModifier / 2), y: yPosition})
+      }
+    }
+  }
 
   render(c: CanvasRenderingContext2D ){
     const collider = this.scene.world.getCollider(this.colliderHandle)

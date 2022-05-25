@@ -4,7 +4,7 @@ import { MyInput } from "../netplayjs/MyInput";
 import { Scene } from "../Scene/Scene";
 import { Player } from "./Player";
 
-export const INPUT_BUFFER_FRAMES = 10
+export const INPUT_BUFFER_FRAMES = 5
 export const RESOURCE_GAIN_PER_FRAME = 6 / 60
 
 export interface CharacterProps {

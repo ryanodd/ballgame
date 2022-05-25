@@ -50,7 +50,7 @@ export const GameCanvas = () => {
       <CanvasElement id="game-canvas"/>
       <CanvasOverlay>
         {
-          teams !== [] && (
+          teams.length !== 0 && (
             <>
               <LeftSection>
                 <TeamHud teamIndex={0} />
