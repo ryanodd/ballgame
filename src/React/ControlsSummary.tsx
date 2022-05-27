@@ -42,7 +42,7 @@ const CostBadge = styled.div`
   background-color: var(--resource-badge-bg);
   height: 20px;
   border-radius: 8px;
-  padding: 0 4px;
+  padding: 0 5px;
 `;
 
 // Mostly for special key names that take too much width

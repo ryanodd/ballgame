@@ -48,14 +48,15 @@ export const ScoreBox = () => {
     : {};
   return (
     <ScoreBoxWrapper>
-      <Title level={2} style={{ margin: 0 }}>
+      <Title level={1} style={{ margin: 0 }}>
         {teams[0] && teams[1] && `${teams[0]?.score} - ${teams[1]?.score}`}
       </Title>
       {framesRemaining !== null && (
         <Text
           style={{
-            fontSize: 22,
+            fontSize: 28,
             margin: 0,
+            letterSpacing: 1,
             ...timerStyles,
           }}
         >
@@ -65,7 +66,13 @@ export const ScoreBox = () => {
         </Text>
       )}
       {overtime === true && (
-        <Text style={{ fontSize: 22, fontWeight: 700, margin: 0 }}>
+        <Text
+          style={{
+            fontSize: 21,
+            fontWeight: 700,
+            margin: 0,
+          }}
+        >
           {"NEXT GOAL WINS"}
         </Text>
       )}

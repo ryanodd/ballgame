@@ -26,7 +26,7 @@ export class Scene {
   readonly players: Player[]; // can't add/remove/reorder
   readonly teams: Team[]; // Can't add/remove/reorder
 
-  constructor(props: SceneProps){
+  constructor(props: SceneProps) {
     this.world = props.world;
     this.unitWidth = props.unitWidth;
     this.unitHeight = props.unitHeight;
@@ -74,6 +74,8 @@ export class Scene {
   }
 
   render(c: CanvasRenderingContext2D, frame: number) {
+
+    c.save()
     // Set rendering size to actual pixel size (to render at the best possible resolution)
     const canvasElementWidth = c.canvas.getBoundingClientRect().width
     const canvasElementHeight = c.canvas.getBoundingClientRect().height
@@ -91,9 +93,11 @@ export class Scene {
 
     this.renderBackground(c)
     this.renderGameObjects(c, frame)
+
+    c.restore()
   }
 
-  addGameObject(newObject: GameObject){
+  addGameObject(newObject: GameObject) {
     this.gameObjects.push(newObject);
   }
 
@@ -111,9 +115,9 @@ export class Scene {
       }
     }
   }
-  
+
   private renderGameObjects(c: CanvasRenderingContext2D, frame: number) {
-    this.gameObjects.forEach(gameObject => {      
+    this.gameObjects.forEach(gameObject => {
       gameObject.render(c, frame)
     })
   }
@@ -121,5 +125,38 @@ export class Scene {
   private renderBackground(c: CanvasRenderingContext2D) {
     c.fillStyle = 'rgb(255, 255, 255)';
     c.fillRect(0, 0, c.canvas.width, c.canvas.height);
+
+    // this.renderGrid(c)
+  }
+
+  private renderGrid(c: CanvasRenderingContext2D) {
+    const options = {
+      width: 16,
+      height: 9,
+      cols: 16,
+      rows: 9,
+    }
+
+    c.save()
+    c.lineWidth = 0.001;
+
+    c.beginPath();
+    c.strokeStyle = "black";
+
+    let offsetX = Math.floor(options.width / options.cols);
+    let offsetY = Math.floor(options.height / options.rows);
+
+    for (let x = offsetX; x < options.width; x += offsetX) {
+      c.moveTo(x, 0);
+      c.lineTo(x, options.height);
+    }
+
+    for (let y = offsetY; y < options.height; y += offsetY) {
+      c.moveTo(0, y);
+      c.lineTo(options.width, y);
+    }
+
+    c.stroke();
+    c.restore();
   }
 }

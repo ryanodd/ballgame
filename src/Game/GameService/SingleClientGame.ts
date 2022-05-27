@@ -13,7 +13,7 @@ import { Team } from './Team/Team';
 
 export class SingleClientGame {
   static timestep = 1000 / 60;
-  frame = 1;
+  frame = 0;
 
   canvas = document.getElementById('game-canvas') as HTMLCanvasElement
   inputReader = new MyInputReader(
@@ -26,6 +26,7 @@ export class SingleClientGame {
     new Player({
       playerIndex: 0,
       teamIndex: 0,
+      //gamepadIndex: 0,
       characterType: CharacterType.Pulse,
       inputConfig: {
         ...defaultInputConfig,
@@ -67,7 +68,7 @@ export class SingleClientGame {
   draw(canvas: HTMLCanvasElement) {
     const c = canvas.getContext('2d')
     if (c !== null) {
-      this.session.scene.render(c, this.frame)
+      this.session.render(c)
     }
   }
 
@@ -77,11 +78,15 @@ export class SingleClientGame {
         player.tickMovement(this.inputReader.getInput(), this.frame)
       })
       this.players.forEach(player => {
-      player.tickAbilities(this.inputReader.getInput(), this.frame)
+        player.tickAbilities(this.inputReader.getInput(), this.frame)
       })
       this.session.tick(this.frame)
-      this.frame++
+      
+      if (this.frame === 0) {
+        requestAnimationFrame(animate);
+      }
 
+      this.frame++
       if (this.session.ended) {
         clearInterval(intervalHandle)
       }
@@ -92,6 +97,5 @@ export class SingleClientGame {
       requestAnimationFrame(animate)
     };
     const intervalHandle = setInterval(tick, SingleClientGame.timestep)
-    requestAnimationFrame(animate);
   }
 }

@@ -13,6 +13,9 @@ import { Player } from "../Player/Player";
 import { JSONValue } from "../../../lib/netplayjs";
 import { store } from "../../../../pages/_app";
 import { SET_GAME_DATA, SET_UI_DATA } from "../../../redux/actions";
+import { createScene2 } from "../Scene/SceneFactory/Scene2";
+import { createScene3 } from "../Scene/SceneFactory/Scene3";
+import { createScene4 } from "../Scene/SceneFactory/Scene4";
 
 // This class is meant to be the first class in common between single-client and multi-client games.
 // - In single-client, SingleClientGame is in charge of its own Session.
@@ -22,7 +25,7 @@ export interface SessionProps {
 }
 
 export class Session {
-  frame = 1
+  frame = 0
   //                        FPS  Sec  Min
   endFrame: number | null = 60 * 60 * 1.5
   ended: boolean = false
@@ -33,7 +36,7 @@ export class Session {
   // If 'Character's ever need to persist state across scene resets, lift them to this class
   players: Player[] // copy of parent. They share a reference. Don't reassign the array itself
 
-  constructor(props: SessionProps){
+  constructor(props: SessionProps) {
     this.teams = [
       new Team({
         teamIndex: 0,
@@ -94,7 +97,7 @@ export class Session {
       })
 
       // Check for last frame
-      if (frame >= this.endFrame){
+      if (frame >= this.endFrame) {
         if (this.teams[0].score !== this.teams[1].score) {
           this.end()
         } else {
@@ -108,7 +111,7 @@ export class Session {
             }
           })
         }
-        
+
       }
     }
     this.scene.tick(frame)
@@ -120,7 +123,17 @@ export class Session {
     if (this.overtime) {
       this.end()
     } else {
-      this.scene = createScene1({ teams: this.teams, players: this.players, session: this })
+      const possibleScenes = [
+        createScene1,
+        createScene2,
+        createScene3,
+        createScene4
+      ]
+      this.scene = possibleScenes[Math.floor(Math.random() * possibleScenes.length)]({
+        teams: this.teams,
+        players: this.players,
+        session: this,
+      })
     }
   }
 

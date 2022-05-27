@@ -18,8 +18,8 @@ export interface GameObjectPhysicsHandles {
 
 export interface GameObjectProps {
   physics?: GameObjectPhysicsProps | GameObjectPhysicsHandles;
+  spawnFrame?: number // intended only to be used during deserializing construction
   scene: Scene;
-  spawnFrame?: number;
 }
 
 export interface BodyGameObject extends GameObject {
@@ -28,11 +28,16 @@ export interface BodyGameObject extends GameObject {
 
 export default abstract class GameObject {
   abstract id: string;
-  abstract scene: Scene;
+  scene: Scene;
+  spawnFrame: number;
   abstract colliderHandle: ColliderHandle | null;
   abstract rigidBodyHandle: RigidBodyHandle | null;
-  abstract spawnFrame: number;
   markedForDeletion: boolean = false;
+
+  constructor(props: GameObjectProps) {
+    this.scene = props.scene
+    this.spawnFrame = props.spawnFrame ?? props.scene.session.frame
+  }
 
   serialize(): any  {
     return {

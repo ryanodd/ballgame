@@ -30,16 +30,12 @@ export const isPulseCharacterObject = (o: GameObject): o is PulseCharacterObject
 
 export default class PulseCharacterObject extends GameObject implements BodyGameObject { // extend something general?
   id = PULSE_OBJ_ID
-  scene: Scene;
-  spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: RigidBodyHandle;
   playerIndex: number;
-  
-  constructor(props: PulseCharacterObjectProps){
-    super();
-    this.scene = props.scene;
-    this.spawnFrame = props.spawnFrame ?? 0;
+
+  constructor(props: PulseCharacterObjectProps) {
+    super(props);
     this.playerIndex = props.playerIndex
 
     if (isPhysicsProps(props.physics)) {
@@ -73,61 +69,62 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
     })
   }
 
-  createColliderAndRigidBody(props: PulseCharacterObjectPhysicsProps){
+  createColliderAndRigidBody(props: PulseCharacterObjectPhysicsProps) {
     const rigidBodyDesc = RigidBodyDesc.dynamic();
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 
     // Create a cuboid collider attached to the dynamic rigidBody.
     const colliderDesc = ColliderDesc.ball(props.r)
-      .setTranslation(props.x + props.r, props.y + props.r)
+      .setTranslation(props.x, props.y)
       .setDensity(props.density)
       .setFriction(props.friction)
       .setRestitution(props.restitution)
       .setCollisionGroups(CollisionGroups.GHOST_CHARACTERS)
     const collider = this.scene.world.createCollider(colliderDesc, rigidBody.handle);
-    
+
     return { collider, rigidBody };
   }
 
-  render(c: CanvasRenderingContext2D, frame: number){
+  render(c: CanvasRenderingContext2D, frame: number) {
     const collider = this.scene.world.getCollider(this.colliderHandle)
-    const { x: xPosition, y: yPosition} = collider.translation(); 
+    const { x: xPosition, y: yPosition } = collider.translation();
     const radius = collider.radius()
 
     const character = this.scene.characters[this.playerIndex] as PulseCharacter
     const mostRecentAttractFrame = character.mostRecentAttractFrame
 
-    // ATTRACT ANIMATION
-    if (frame <= mostRecentAttractFrame + 1) {
+    c.save()
+
+    if (frame <= mostRecentAttractFrame) {
       const ATTRACT_RADIUS = 2.5
       const ANIMATION_PERIOD = 16
       const animationFrame = frame % ANIMATION_PERIOD
       const progress = animationFrame / ANIMATION_PERIOD
       c.beginPath();
-  
+
       const TRANSLATION = 0.5 // adjust based on radius.... 7r = 1.37t, 2.5r = .5t
-  
+
       c.arc(xPosition, yPosition, ATTRACT_RADIUS, 0, Math.PI * 2, true); // Outer circle
       const gradient = c.createRadialGradient(
         xPosition,
         yPosition,
-        TRANSLATION-((progress)*TRANSLATION),
-  
+        TRANSLATION - ((progress) * TRANSLATION),
+
         xPosition,
         yPosition,
-        ATTRACT_RADIUS-((progress)*TRANSLATION),
+        ATTRACT_RADIUS - ((progress) * TRANSLATION),
       );
       const color = '114, 180, 207'
       const opacityDelta = 0.4 // must be < 0.5
-      const opacityModifier = progress*opacityDelta
+      const opacityModifier = progress * opacityDelta
       gradient.addColorStop(0, `rgba(${color}, 0)`);
-      gradient.addColorStop(0.125, `rgba(${color}, ${opacityDelta-opacityModifier})`);
+      gradient.addColorStop(0.125, `rgba(${color}, ${opacityDelta - opacityModifier})`);
       gradient.addColorStop(0.25, `rgba(${color}, 0)`);
-      gradient.addColorStop(0.375, `rgba(${color}, ${2*opacityDelta-opacityModifier})`);
+      gradient.addColorStop(0.375, `rgba(${color}, ${2 * opacityDelta - opacityModifier})`);
       gradient.addColorStop(0.5, `rgba(${color}, 0)`);
-      gradient.addColorStop(0.625, `rgba(${color}, ${opacityDelta+opacityModifier})`);
+      gradient.addColorStop(0.625, `rgba(${color}, ${opacityDelta + opacityModifier})`);
       gradient.addColorStop(0.75, `rgba(${color}, 0)`);
-      gradient.addColorStop(0.875, `rgba(${color}, ${0+opacityModifier})`);
+      gradient.addColorStop(0.875, `rgba(${color}, ${0 + opacityModifier})`);
       gradient.addColorStop(1, `rgba(${color}, 0)`);
       c.fillStyle = gradient;
       c.fill();
@@ -138,5 +135,6 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
     c.arc(xPosition, yPosition, radius, 0, Math.PI * 2, true); // Outer circle
     c.fillStyle = this.scene.teams[character.player.teamIndex].color;
     c.fill();
+    c.restore()
   }
 }

@@ -14,7 +14,7 @@ export const createCharacterForPlayer = (player: Player, scene: Scene, x: number
       scene: scene,
       x,
       y,
-      RADIUS: 0.240,
+      RADIUS: 0.25,
       DENSITY: 0.5,
       FRICTION: 0.5,
       RESTITUTION: 0.0,

@@ -32,7 +32,7 @@ export default class ImageWall extends GameObject { // extend something general?
   spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: null = null;
-  
+
   constructor(props: ImageWallProps) {
     super();
     this.scene = props.scene;
@@ -63,10 +63,10 @@ export default class ImageWall extends GameObject { // extend something general?
     })
   }
 
-  createCollider(props: ImageWallPhysicsProps){
+  createCollider(props: ImageWallPhysicsProps) {
     const groundColliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
       .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
-      .setRotation((props.rotation ?? 0)*Math.PI/180)
+      .setRotation((props.rotation ?? 0) * Math.PI / 180)
       .setCollisionGroups(CollisionGroups.WALLS)
     const returnColliderHandle = this.scene.world.createCollider(groundColliderDesc).handle;
     return returnColliderHandle;
@@ -74,12 +74,14 @@ export default class ImageWall extends GameObject { // extend something general?
 
   // No tick
 
-  render(c: CanvasRenderingContext2D ){
+  render(c: CanvasRenderingContext2D) {
     const collider = this.scene.world.getCollider(this.colliderHandle)
     const { x: halfX, y: halfY } = collider.halfExtents()
-    const { x: xPosition, y: yPosition} = collider.translation();
+    const { x: xPosition, y: yPosition } = collider.translation();
     const rotation = collider.rotation()
 
+    c.save()
     // c.drawImage(GRASS_IMAGE, xPosition, yPosition, halfX*2, halfY*2);
+    c.restore()
   }
 }

@@ -194,7 +194,7 @@ export class PulseCharacter extends Character {
       }
     }
 
-    const isRepelBuffered = this.repelBufferedFrame + INPUT_BUFFER_FRAMES >= frame
+    const isRepelBuffered = this.repelBufferedFrame + INPUT_BUFFER_FRAMES > frame
 
     if ((didInputRepel || isRepelBuffered) && canPerformRepel) {
       this.doRepel(frame)

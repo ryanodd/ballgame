@@ -26,8 +26,6 @@ export const isGoalAreaObject = (o: GameObject): o is GoalArea => {
 }
 export default class GoalArea extends GameObject { // extend something general?
   id = GOAL_AREA_OBJ_ID;
-  scene: Scene;
-  spawnFrame: number;
 
   colliderHandle: ColliderHandle;
   rigidBodyHandle: null = null;
@@ -35,9 +33,7 @@ export default class GoalArea extends GameObject { // extend something general?
   teamIndex: number;
 
   constructor(props: GoalAreaProps) {
-    super();
-    this.scene = props.scene;
-    this.spawnFrame = props.spawnFrame ?? 0;
+    super(props);
     this.teamIndex = props.teamIndex;
 
     if (isPhysicsProps(props.physics)) {
@@ -68,10 +64,10 @@ export default class GoalArea extends GameObject { // extend something general?
     })
   }
 
-  createCollider(props: GoalAreaPhysicsProps){
+  createCollider(props: GoalAreaPhysicsProps) {
     const groundColliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
       .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
-      .setRotation((props.rotation ?? 0)*Math.PI/180)
+      .setRotation((props.rotation ?? 0) * Math.PI / 180)
       .setActiveEvents(ActiveEvents.COLLISION_EVENTS)
       .setCollisionGroups(CollisionGroups.WALLS)
 
@@ -91,20 +87,22 @@ export default class GoalArea extends GameObject { // extend something general?
 
   // No tick
 
-  render(c: CanvasRenderingContext2D ){
+  render(c: CanvasRenderingContext2D) {
     const collider = this.scene.world.getCollider(this.colliderHandle)
     const { x: halfX, y: halfY } = collider.halfExtents()
-    const { x: xPosition, y: yPosition} = collider.translation();
+    const { x: xPosition, y: yPosition } = collider.translation();
     const rotation = collider.rotation()
 
     const color = this.scene.teams[this.teamIndex].color;
 
+    c.save()
     c.beginPath()
     c.fillStyle = color;
-    c.fillRect( xPosition - halfX, yPosition - halfY, halfX*2, halfY*2);
+    c.fillRect(xPosition - halfX, yPosition - halfY, halfX * 2, halfY * 2);
+    c.restore()
   }
 
-  handleCollision(oppositeColliderHandle: ColliderHandle, started: boolean){
+  handleCollision(oppositeColliderHandle: ColliderHandle, started: boolean) {
     const otherGameObject = this.scene.gameObjects.find((gameObject) => {
       return oppositeColliderHandle === gameObject.colliderHandle
     })

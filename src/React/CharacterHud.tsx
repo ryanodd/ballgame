@@ -159,7 +159,7 @@ export const CharacterHud = ({ playerIndex }: CharacterHudProps) => {
         </TitleRow>
         <ResourceRow onAnimationEnd={onFailedAbilityEnd}>
           <ResourceBadgeContainer animateFail={failedAbilityAnimationPlaying}>
-            <Title level={4} style={{ color, margin: "0 0 -2px -1px" }}>
+            <Title level={4} style={{ color, margin: "-1px 0 0 -1px" }}>
               {numberToDisplay}
             </Title>
           </ResourceBadgeContainer>

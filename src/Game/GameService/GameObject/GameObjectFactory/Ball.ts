@@ -29,15 +29,11 @@ export const isBallObject = (o: GameObject): o is Ball => {
 
 export default class Ball extends GameObject {
   id = BALL_OBJ_ID;
-  scene: Scene;
-  spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: RigidBodyHandle;
-  
-  constructor(props: BallProps){
-    super();
-    this.scene = props.scene;
-    this.spawnFrame = props.spawnFrame ?? 0;
+
+  constructor(props: BallProps) {
+    super(props);
 
     if (isPhysicsProps(props.physics)) {
       const { collider, rigidBody } = this.createColliderAndRigidBody(props.physics);
@@ -68,37 +64,39 @@ export default class Ball extends GameObject {
     })
   }
 
-  createColliderAndRigidBody(props: BallPhysicsProps){
-    const rigidBodyDesc = RigidBodyDesc.dynamic();
+  createColliderAndRigidBody(props: BallPhysicsProps) {
+    const rigidBodyDesc = RigidBodyDesc.dynamic()
+      .setCanSleep(false);
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 
     // Create a cuboid collider attached to the dynamic rigidBody.
     const colliderDesc = ColliderDesc.ball(props.r)
-      .setTranslation(props.x + props.r, props.y + props.r)
+      .setTranslation(props.x, props.y)
       .setDensity(props.density)
       .setFriction(props.friction)
       .setRestitution(props.restitution)
       .setCollisionGroups(CollisionGroups.BALL)
     const collider = this.scene.world.createCollider(colliderDesc, rigidBody.handle);
-    
+
     return { collider, rigidBody };
   }
 
   // No tick
 
-  render(c: CanvasRenderingContext2D ){
+  render(c: CanvasRenderingContext2D) {
     const collider = this.scene.world.getCollider(this.colliderHandle)
-    const { x: xPosition, y: yPosition} = collider.translation(); 
+    const { x: xPosition, y: yPosition } = collider.translation();
     const radius = collider.radius()
     const rotation = collider.rotation()
-    
+
+    c.save()
     c.beginPath();
     c.arc(xPosition, yPosition, radius, 0, Math.PI * 2, true);
 
     const gradient = c.createRadialGradient(
-      xPosition+(Math.cos(rotation)*(radius/3)),
-      yPosition+(Math.sin(rotation)*(radius/3)),
-      radius/7,
+      xPosition + (Math.cos(rotation) * (radius / 3)),
+      yPosition + (Math.sin(rotation) * (radius / 3)),
+      radius / 7,
 
       xPosition,
       yPosition,
@@ -108,5 +106,6 @@ export default class Ball extends GameObject {
     gradient.addColorStop(1, 'rgb(255, 51, 68)');
     c.fillStyle = gradient;
     c.fill();
+    c.restore()
   }
 }

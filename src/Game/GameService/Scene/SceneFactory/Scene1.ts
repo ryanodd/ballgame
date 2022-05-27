@@ -36,7 +36,7 @@ export interface Scene1Props {
 export function createScene1(props: Scene1Props): Scene {
   const gravity = { x: 0.0, y: 0.0 };
   const world = new World(gravity)
-  
+
   const returnScene: Scene = new Scene({
     world: world,
     unitWidth: SCENE_WIDTH,
@@ -46,17 +46,13 @@ export function createScene1(props: Scene1Props): Scene {
     players: props.players,
   });
 
-  let team1Count = 0
-  let team2Count = 0
   props.players.forEach((player) => {
     // todo get config 4 tha chararacter
     if (player.teamIndex === 0) {
-      const character = createCharacterForPlayer(player, returnScene, 2.8, 3.9 + (2 * team1Count))
-      team1Count++
+      const character = createCharacterForPlayer(player, returnScene, 3, 4)
     }
     if (player.teamIndex === 1) {
-      const character = createCharacterForPlayer(player, returnScene, 12.8, 3.9 + (2 * team2Count))
-      team2Count++
+      const character = createCharacterForPlayer(player, returnScene, 13, 4)
     }
   })
 
@@ -65,8 +61,8 @@ export function createScene1(props: Scene1Props): Scene {
   const ball = new Ball({
     scene: returnScene,
     physics: {
-      x: 7.45,
-      y: 3.65,
+      x: 8,
+      y: 4,
       r: 0.50,
       density: 0.8,
       friction: 0.6,

@@ -33,17 +33,13 @@ export const isWallObject = (o: GameObject): o is Wall => {
 // I think I want to use corner positioning to make wall layout math easier
 export default class Wall extends GameObject { // extend something general?
   id = WALL_OBJ_ID;
-  scene: Scene;
-  spawnFrame: number;
   colliderHandle: ColliderHandle;
   rigidBodyHandle: null = null;
   variation: WallVariationProps | null;
-  
+
   constructor(props: WallProps) {
-    super();
-    this.scene = props.scene;
+    super(props);
     this.variation = props.variation ?? null
-    this.spawnFrame = props.spawnFrame ?? 0;
 
     if (isPhysicsProps(props.physics)) {
       this.colliderHandle = this.createCollider(props.physics);
@@ -73,10 +69,10 @@ export default class Wall extends GameObject { // extend something general?
     })
   }
 
-  createCollider(props: WallPhysicsProps){
+  createCollider(props: WallPhysicsProps) {
     const groundColliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
       .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
-      .setRotation((props.rotation ?? 0)*Math.PI/180)
+      .setRotation((props.rotation ?? 0) * Math.PI / 180)
       .setCollisionGroups(CollisionGroups.WALLS)
     const returnColliderHandle = this.scene.world.createCollider(groundColliderDesc).handle;
     return returnColliderHandle;
@@ -86,38 +82,39 @@ export default class Wall extends GameObject { // extend something general?
     if (this.variation !== null) {
       const time = 600 / this.variation.speed
       const distancePerFrame = this.variation.distance / time
-      const frameChunk = Math.floor((frame - 1) / time)
-      console.log(frameChunk)
+      const frameChunk = Math.floor((frame - this.spawnFrame) / time)
       const lengthModifier = ((frameChunk % 2) === 0) ? distancePerFrame : -distancePerFrame;
-  
+
       const collider = this.scene.world.getCollider(this.colliderHandle)
       const { x: halfX, y: halfY } = collider.halfExtents()
-      const { x: xPosition, y: yPosition} = collider.translation();
+      const { x: xPosition, y: yPosition } = collider.translation();
 
       if (this.variation.direction === 'up') {
-        collider.setShape(new RAPIER.Cuboid(halfX, halfY + (lengthModifier / 2)))
-        collider.setTranslation({x: xPosition, y: yPosition + (lengthModifier / 2)})
+        collider.setShape(new RAPIER.Cuboid(halfX, Math.max(0, halfY + (lengthModifier / 2))))
+        collider.setTranslation({ x: xPosition, y: yPosition + (lengthModifier / 2) })
       } else if (this.variation.direction === 'right') {
-        collider.setShape(new RAPIER.Cuboid(halfX + (lengthModifier / 2), halfY))
-        collider.setTranslation({x: xPosition + (lengthModifier / 2), y: yPosition})
+        collider.setShape(new RAPIER.Cuboid(Math.max(0, halfX + (lengthModifier / 2)), halfY))
+        collider.setTranslation({ x: xPosition + (lengthModifier / 2), y: yPosition })
       } else if (this.variation.direction === 'down') {
-        collider.setShape(new RAPIER.Cuboid(halfX, halfY - (lengthModifier / 2)))
-        collider.setTranslation({x: xPosition, y: yPosition - (lengthModifier / 2)})
+        collider.setShape(new RAPIER.Cuboid(halfX, Math.max(0, halfY + (lengthModifier / 2))))
+        collider.setTranslation({ x: xPosition, y: yPosition - (lengthModifier / 2) })
       } else if (this.variation.direction === 'left') {
-        collider.setShape(new RAPIER.Cuboid(halfX - (lengthModifier / 2), halfY))
-        collider.setTranslation({x: xPosition - (lengthModifier / 2), y: yPosition})
+        collider.setShape(new RAPIER.Cuboid(Math.max(0, halfX + (lengthModifier / 2)), halfY))
+        collider.setTranslation({ x: xPosition - (lengthModifier / 2), y: yPosition })
       }
     }
   }
 
-  render(c: CanvasRenderingContext2D ){
+  render(c: CanvasRenderingContext2D) {
     const collider = this.scene.world.getCollider(this.colliderHandle)
     const { x: halfX, y: halfY } = collider.halfExtents()
-    const { x: xPosition, y: yPosition} = collider.translation();
+    const { x: xPosition, y: yPosition } = collider.translation();
     const rotation = collider.rotation()
 
+    c.save()
     c.beginPath()
     c.fillStyle = 'rgb(60, 60, 60)';
-    c.fillRect( xPosition - halfX, yPosition - halfY, halfX*2, halfY*2);
+    c.fillRect(xPosition - halfX, yPosition - halfY, halfX * 2, halfY * 2);
+    c.restore()
   }
 }
