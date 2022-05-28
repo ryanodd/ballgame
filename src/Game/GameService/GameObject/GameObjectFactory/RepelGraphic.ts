@@ -1,3 +1,4 @@
+import { ColliderHandle, RigidBodyHandle } from "@dimforge/rapier2d";
 import { JSONValue } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps } from "../GameObject";
@@ -13,8 +14,8 @@ export const isWallObject = (o: GameObject): o is RepelGraphic => {
 
 export class RepelGraphic extends GameObject {
   id = REPEL_GRAPHIC_OBJ_ID;
-  colliderHandle: null = null;
-  rigidBodyHandle: null = null;
+  colliderHandles: ColliderHandle[] = [];
+  rigidBodyHandles: RigidBodyHandle[] = [];
   x: number;
   y: number;
   lifespanFrames = 13

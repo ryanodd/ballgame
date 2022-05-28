@@ -1,4 +1,4 @@
-import RAPIER, { Collider, ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
+import RAPIER, { Collider, ColliderDesc, ColliderHandle, RigidBodyHandle } from "@dimforge/rapier2d";
 import { JSONValue } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
 import { CollisionGroups } from "../CollisionGroups";
@@ -17,7 +17,7 @@ export interface WallPhysicsProps extends GameObjectPhysicsProps {
 }
 
 export interface WallPhysicsHandles extends GameObjectPhysicsHandles {
-  colliderHandle: ColliderHandle;
+  colliderHandles: ColliderHandle[];
 }
 
 export interface WallProps extends GameObjectProps {
@@ -33,8 +33,8 @@ export const isWallObject = (o: GameObject): o is Wall => {
 // I think I want to use corner positioning to make wall layout math easier
 export default class Wall extends GameObject { // extend something general?
   id = WALL_OBJ_ID;
-  colliderHandle: ColliderHandle;
-  rigidBodyHandle: null = null;
+  colliderHandles: ColliderHandle[];
+  rigidBodyHandles: RigidBodyHandle[] = [];
   variation: WallVariationProps | null;
 
   constructor(props: WallProps) {
@@ -42,10 +42,10 @@ export default class Wall extends GameObject { // extend something general?
     this.variation = props.variation ?? null
 
     if (isPhysicsProps(props.physics)) {
-      this.colliderHandle = this.createCollider(props.physics);
+      this.colliderHandles = [this.createCollider(props.physics).handle];
     }
     else {
-      this.colliderHandle = props.physics.colliderHandle
+      this.colliderHandles = props.physics.colliderHandles
     }
   }
 
@@ -63,8 +63,8 @@ export default class Wall extends GameObject { // extend something general?
       spawnFrame: value['spawnFrame'],
       variation: value['variation'],
       physics: {
-        colliderHandle: value['colliderHandle'],
-        rigidBodyHandle: null,
+        colliderHandles: value['colliderHandles'],
+        rigidBodyHandles: [],
       },
     })
   }
@@ -74,8 +74,8 @@ export default class Wall extends GameObject { // extend something general?
       .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
       .setRotation((props.rotation ?? 0) * Math.PI / 180)
       .setCollisionGroups(CollisionGroups.WALLS)
-    const returnColliderHandle = this.scene.world.createCollider(groundColliderDesc).handle;
-    return returnColliderHandle;
+    const collider = this.scene.world.createCollider(groundColliderDesc);
+    return collider;
   }
 
   tick(frame: number) {
@@ -85,7 +85,7 @@ export default class Wall extends GameObject { // extend something general?
       const frameChunk = Math.floor((frame - this.spawnFrame) / time)
       const lengthModifier = ((frameChunk % 2) === 0) ? distancePerFrame : -distancePerFrame;
 
-      const collider = this.scene.world.getCollider(this.colliderHandle)
+      const collider = this.scene.world.getCollider(this.colliderHandles[0])
       const { x: halfX, y: halfY } = collider.halfExtents()
       const { x: xPosition, y: yPosition } = collider.translation();
 
@@ -106,7 +106,7 @@ export default class Wall extends GameObject { // extend something general?
   }
 
   render(c: CanvasRenderingContext2D) {
-    const collider = this.scene.world.getCollider(this.colliderHandle)
+    const collider = this.scene.world.getCollider(this.colliderHandles[0])
     const { x: halfX, y: halfY } = collider.halfExtents()
     const { x: xPosition, y: yPosition } = collider.translation();
     const rotation = collider.rotation()

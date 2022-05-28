@@ -12,8 +12,8 @@ export interface GameObjectPhysicsProps {
 }
 
 export interface GameObjectPhysicsHandles {
-  colliderHandle: ColliderHandle | null;
-  rigidBodyHandle: RigidBodyHandle | null;
+  colliderHandles: ColliderHandle[];
+  rigidBodyHandles: RigidBodyHandle[];
 }
 
 export interface GameObjectProps {
@@ -23,15 +23,15 @@ export interface GameObjectProps {
 }
 
 export interface BodyGameObject extends GameObject {
-  rigidBodyHandle: RigidBodyHandle
+  rigidBodyHandles: RigidBodyHandle[]
 }
 
 export default abstract class GameObject {
   abstract id: string;
   scene: Scene;
   spawnFrame: number;
-  abstract colliderHandle: ColliderHandle | null;
-  abstract rigidBodyHandle: RigidBodyHandle | null;
+  abstract colliderHandles: ColliderHandle[];
+  abstract rigidBodyHandles: RigidBodyHandle[];
   markedForDeletion: boolean = false;
 
   constructor(props: GameObjectProps) {
@@ -41,8 +41,8 @@ export default abstract class GameObject {
 
   serialize(): any  {
     return {
-      colliderHandle: this.colliderHandle,
-      rigidBodyHandle: this.rigidBodyHandle,
+      colliderHandles: this.colliderHandles,
+      rigidBodyHandles: this.rigidBodyHandles,
       spawnFrame: this.spawnFrame,
       markedForDeletion: this.markedForDeletion,
     }

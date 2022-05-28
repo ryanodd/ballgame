@@ -1,4 +1,4 @@
-import { ActiveEvents, ColliderDesc, ColliderHandle, World } from "@dimforge/rapier2d";
+import { ActiveEvents, ColliderDesc, ColliderHandle, RigidBodyHandle, World } from "@dimforge/rapier2d";
 import { JSONValue } from "../../../../lib/netplayjs";
 import { Scene } from "../../Scene/Scene";
 import { CollisionGroups } from "../CollisionGroups";
@@ -12,7 +12,7 @@ export interface GoalAreaPhysicsProps extends GameObjectPhysicsProps {
 }
 
 export interface GoalAreaPhysicsHandles extends GameObjectPhysicsHandles {
-  colliderHandle: ColliderHandle;
+  colliderHandles: ColliderHandle[];
 }
 
 export interface GoalAreaProps extends GameObjectProps {
@@ -27,8 +27,8 @@ export const isGoalAreaObject = (o: GameObject): o is GoalArea => {
 export default class GoalArea extends GameObject { // extend something general?
   id = GOAL_AREA_OBJ_ID;
 
-  colliderHandle: ColliderHandle;
-  rigidBodyHandle: null = null;
+  colliderHandles: ColliderHandle[];
+  rigidBodyHandles: RigidBodyHandle[] = [];
 
   teamIndex: number;
 
@@ -37,10 +37,10 @@ export default class GoalArea extends GameObject { // extend something general?
     this.teamIndex = props.teamIndex;
 
     if (isPhysicsProps(props.physics)) {
-      this.colliderHandle = this.createCollider(props.physics);
+      this.colliderHandles = [this.createCollider(props.physics)];
     }
     else {
-      this.colliderHandle = props.physics.colliderHandle
+      this.colliderHandles = props.physics.colliderHandles
     }
   }
 
@@ -57,8 +57,8 @@ export default class GoalArea extends GameObject { // extend something general?
       scene,
       spawnFrame: value['spawnFrame'],
       physics: {
-        colliderHandle: value['colliderHandle'],
-        rigidBodyHandle: null,
+        colliderHandles: value['colliderHandles'],
+        rigidBodyHandles: [],
       },
       teamIndex: value['teamIndex'],
     })
@@ -88,7 +88,7 @@ export default class GoalArea extends GameObject { // extend something general?
   // No tick
 
   render(c: CanvasRenderingContext2D) {
-    const collider = this.scene.world.getCollider(this.colliderHandle)
+    const collider = this.scene.world.getCollider(this.colliderHandles[0])
     const { x: halfX, y: halfY } = collider.halfExtents()
     const { x: xPosition, y: yPosition } = collider.translation();
     const rotation = collider.rotation()
@@ -104,7 +104,7 @@ export default class GoalArea extends GameObject { // extend something general?
 
   handleCollision(oppositeColliderHandle: ColliderHandle, started: boolean) {
     const otherGameObject = this.scene.gameObjects.find((gameObject) => {
-      return oppositeColliderHandle === gameObject.colliderHandle
+      return gameObject.colliderHandles.includes(oppositeColliderHandle)
     })
     if (started && otherGameObject && isBallObject(otherGameObject)) {
       this.scene.session.onGoalAgainst(this.teamIndex)

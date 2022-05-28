@@ -1,4 +1,4 @@
-import { ColliderDesc, ColliderHandle } from "@dimforge/rapier2d";
+import { ColliderDesc, ColliderHandle, RigidBody, RigidBodyHandle } from "@dimforge/rapier2d";
 import { JSONValue } from "../../../../lib/netplayjs";
 // import { GRASS_IMAGE } from "../../../AssetService/assetService";
 import { Scene } from "../../Scene/Scene";
@@ -12,7 +12,7 @@ export interface ImageWallPhysicsProps extends GameObjectPhysicsProps {
 }
 
 export interface ImageWallPhysicsHandles extends GameObjectPhysicsHandles {
-  colliderHandle: ColliderHandle;
+  colliderHandles: ColliderHandle[];
 }
 
 
@@ -28,20 +28,16 @@ export const isImageWallObject = (o: GameObject): o is ImageWall => {
 // I think I want to use corner positioning to make wall layout math easier
 export default class ImageWall extends GameObject { // extend something general?
   id = IMAGE_WALL_OBJ_ID;
-  scene: Scene;
-  spawnFrame: number;
-  colliderHandle: ColliderHandle;
-  rigidBodyHandle: null = null;
+  colliderHandles: ColliderHandle[];
+  rigidBodyHandles: RigidBodyHandle[] = [];
 
   constructor(props: ImageWallProps) {
-    super();
-    this.scene = props.scene;
-    this.spawnFrame = props.spawnFrame ?? 0;
+    super(props);
     if (isPhysicsProps(props.physics)) {
-      this.colliderHandle = this.createCollider(props.physics);
+      this.colliderHandles = [this.createCollider(props.physics)];
     }
     else {
-      this.colliderHandle = props.physics.colliderHandle
+      this.colliderHandles = props.physics.colliderHandles
     }
   }
 
@@ -57,8 +53,8 @@ export default class ImageWall extends GameObject { // extend something general?
       scene,
       spawnFrame: value['spawnFrame'],
       physics: {
-        colliderHandle: value['colliderHandle'],
-        rigidBodyHandle: null,
+        colliderHandles: value['colliderHandles'],
+        rigidBodyHandles: [],
       },
     })
   }
@@ -75,7 +71,7 @@ export default class ImageWall extends GameObject { // extend something general?
   // No tick
 
   render(c: CanvasRenderingContext2D) {
-    const collider = this.scene.world.getCollider(this.colliderHandle)
+    const collider = this.scene.world.getCollider(this.colliderHandles[0])
     const { x: halfX, y: halfY } = collider.halfExtents()
     const { x: xPosition, y: yPosition } = collider.translation();
     const rotation = collider.rotation()

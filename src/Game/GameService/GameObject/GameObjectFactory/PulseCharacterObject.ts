@@ -14,8 +14,8 @@ export interface PulseCharacterObjectPhysicsProps extends GameObjectPhysicsProps
 }
 
 export interface PulseCharacterObjectPhysicsHandles extends GameObjectPhysicsHandles {
-  colliderHandle: ColliderHandle;
-  rigidBodyHandle: RigidBodyHandle;
+  colliderHandles: ColliderHandle[];
+  rigidBodyHandles: RigidBodyHandle[];
 }
 
 export interface PulseCharacterObjectProps extends GameObjectProps {
@@ -30,8 +30,8 @@ export const isPulseCharacterObject = (o: GameObject): o is PulseCharacterObject
 
 export default class PulseCharacterObject extends GameObject implements BodyGameObject { // extend something general?
   id = PULSE_OBJ_ID
-  colliderHandle: ColliderHandle;
-  rigidBodyHandle: RigidBodyHandle;
+  colliderHandles: ColliderHandle[];
+  rigidBodyHandles: RigidBodyHandle[];
   playerIndex: number;
 
   constructor(props: PulseCharacterObjectProps) {
@@ -40,12 +40,12 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
 
     if (isPhysicsProps(props.physics)) {
       const { collider, rigidBody } = this.createColliderAndRigidBody(props.physics);
-      this.colliderHandle = collider.handle
-      this.rigidBodyHandle = rigidBody.handle
+      this.colliderHandles = [collider.handle]
+      this.rigidBodyHandles = [rigidBody.handle]
     }
     else {
-      this.colliderHandle = props.physics.colliderHandle
-      this.rigidBodyHandle = props.physics.rigidBodyHandle
+      this.colliderHandles = props.physics.colliderHandles
+      this.rigidBodyHandles = props.physics.rigidBodyHandles
     }
   }
 
@@ -62,8 +62,8 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
       scene,
       spawnFrame: value['spawnFrame'],
       physics: {
-        colliderHandle: value['colliderHandle'],
-        rigidBodyHandle: value['rigidBodyHandle'],
+        colliderHandles: value['colliderHandles'],
+        rigidBodyHandles: value['rigidBodyHandles'],
       },
       playerIndex: value['playerIndex'],
     })
@@ -86,7 +86,8 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
   }
 
   render(c: CanvasRenderingContext2D, frame: number) {
-    const collider = this.scene.world.getCollider(this.colliderHandle)
+    console.log(this.colliderHandles)
+    const collider = this.scene.world.getCollider(this.colliderHandles[0])
     const { x: xPosition, y: yPosition } = collider.translation();
     const radius = collider.radius()
 

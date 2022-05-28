@@ -12,8 +12,8 @@ export interface BallPhysicsProps extends GameObjectPhysicsProps {
 }
 
 export interface BallPhysicsHandles extends GameObjectPhysicsHandles {
-  colliderHandle: ColliderHandle;
-  rigidBodyHandle: RigidBodyHandle;
+  colliderHandles: ColliderHandle[];
+  rigidBodyHandles: RigidBodyHandle[];
 }
 
 
@@ -29,20 +29,20 @@ export const isBallObject = (o: GameObject): o is Ball => {
 
 export default class Ball extends GameObject {
   id = BALL_OBJ_ID;
-  colliderHandle: ColliderHandle;
-  rigidBodyHandle: RigidBodyHandle;
+  colliderHandles: ColliderHandle[];
+  rigidBodyHandles: RigidBodyHandle[];
 
   constructor(props: BallProps) {
     super(props);
 
     if (isPhysicsProps(props.physics)) {
       const { collider, rigidBody } = this.createColliderAndRigidBody(props.physics);
-      this.colliderHandle = collider.handle
-      this.rigidBodyHandle = rigidBody.handle
+      this.colliderHandles = [collider.handle]
+      this.rigidBodyHandles = [rigidBody.handle]
     }
     else {
-      this.colliderHandle = props.physics.colliderHandle
-      this.rigidBodyHandle = props.physics.rigidBodyHandle
+      this.colliderHandles = props.physics.colliderHandles
+      this.rigidBodyHandles = props.physics.rigidBodyHandles
     }
   }
 
@@ -58,8 +58,8 @@ export default class Ball extends GameObject {
       scene,
       spawnFrame: value['spawnFrame'],
       physics: {
-        colliderHandle: value['colliderHandle'],
-        rigidBodyHandle: value['rigidBodyHandle'],
+        colliderHandles: value['colliderHandles'],
+        rigidBodyHandles: value['rigidBodyHandles'],
       }
     })
   }
@@ -84,7 +84,7 @@ export default class Ball extends GameObject {
   // No tick
 
   render(c: CanvasRenderingContext2D) {
-    const collider = this.scene.world.getCollider(this.colliderHandle)
+    const collider = this.scene.world.getCollider(this.colliderHandles[0])
     const { x: xPosition, y: yPosition } = collider.translation();
     const radius = collider.radius()
     const rotation = collider.rotation()
@@ -93,6 +93,7 @@ export default class Ball extends GameObject {
     c.beginPath();
     c.arc(xPosition, yPosition, radius, 0, Math.PI * 2, true);
 
+    // TODO maybe try c.rotate(rotation) to avoid the COSing
     const gradient = c.createRadialGradient(
       xPosition + (Math.cos(rotation) * (radius / 3)),
       yPosition + (Math.sin(rotation) * (radius / 3)),

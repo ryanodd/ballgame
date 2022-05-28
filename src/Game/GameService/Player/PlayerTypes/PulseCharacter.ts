@@ -147,9 +147,9 @@ export class PulseCharacter extends Character {
       if (isBallObject(gameObject)) {
         const IMPULSE_DISTANCE = 2.5
         const IMPULSE_MAGNITUDE = 0.06
-        const otherCollider = this.scene.world.getCollider(gameObject.colliderHandle)
-        const otherRigidBody = this.scene.world.getRigidBody(gameObject.rigidBodyHandle)
-        const myCollider = this.scene.world.getCollider(this.pulseObject.colliderHandle)
+        const otherCollider = this.scene.world.getCollider(gameObject.colliderHandles[0]) // careful with these. Assuming 1 collider. Where is a gameObject's 'center of gravity'?
+        const otherRigidBody = this.scene.world.getRigidBody(gameObject.rigidBodyHandles[0]) // careful with these
+        const myCollider = this.scene.world.getCollider(this.pulseObject.colliderHandles[0])
         const xDiff = otherCollider.translation().x - myCollider.translation().x
         const yDiff = otherCollider.translation().y - myCollider.translation().y
         const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
@@ -204,7 +204,7 @@ export class PulseCharacter extends Character {
   doRepel(frame: number) {
     this.mostRecentRepelFrame = frame
     this.resourceMeter -= REPEL_COST
-    const myCollider = this.scene?.world.getCollider(this.pulseObject?.colliderHandle) as Collider
+    const myCollider = this.scene?.world.getCollider(this.pulseObject.colliderHandles[0]) as Collider
 
     this.scene.addGameObject(new RepelGraphic({
       scene: this.scene,
@@ -219,8 +219,8 @@ export class PulseCharacter extends Character {
       if (isBallObject(gameObject)) {
         const IMPULSE_DISTANCE = 4
         const IMPULSE_MAGNITUDE = 7
-        const otherCollider = this.scene.world.getCollider(gameObject.colliderHandle) as Collider
-        const otherRigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandle) as RigidBody
+        const otherCollider = this.scene.world.getCollider(gameObject.colliderHandles[0]) // careful with these
+        const otherRigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandles[0]) // careful with these
         const xDiff = otherCollider.translation().x - myCollider.translation().x
         const yDiff = otherCollider.translation().y - myCollider.translation().y
         const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2))
@@ -236,10 +236,6 @@ export class PulseCharacter extends Character {
   }
 
   handleMovement(input: GamepadInputResult | KeyboardMouseInputResult) {
-
-    if (!this.pulseObject || this.pulseObject.colliderHandle === null || this.pulseObject.rigidBodyHandle === null) {
-      return
-    }
 
     let xAxisInput = 0
     let yAxisInput = 0
@@ -264,7 +260,7 @@ export class PulseCharacter extends Character {
     const ACCELERATION_CONSTANT_Y = 4.5;
 
     //const collider = this.scene?.world.getCollider(this.pulseObject.colliderHandle)
-    const rigidBody = this.scene?.world.getRigidBody(this.pulseObject.rigidBodyHandle) as RigidBody
+    const rigidBody = this.scene?.world.getRigidBody(this.pulseObject.rigidBodyHandles[0]) as RigidBody
     const velocity = rigidBody?.linvel()
 
     let xInputForce = xAxisInput * ACCELERATION_CONSTANT_X;
