@@ -106,6 +106,7 @@ export class Scene {
   }
 
   handleCollision(colliderHandle1: ColliderHandle, colliderHandle2: ColliderHandle, started: boolean) {
+    console.log('here')
     for (const gameObj of this.gameObjects) {
       if (gameObj.colliderHandles.includes(colliderHandle1)) {
         gameObj.handleCollision(colliderHandle2, started)

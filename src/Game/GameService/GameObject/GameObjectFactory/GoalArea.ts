@@ -71,16 +71,6 @@ export default class GoalArea extends GameObject { // extend something general?
       .setActiveEvents(ActiveEvents.COLLISION_EVENTS)
       .setCollisionGroups(CollisionGroups.WALLS)
 
-    // // Sensor: no collisions triggered, only collision detection
-    // fixDef.isSensor = true;
-
-    // bodyDef.type = b2BodyType.b2_staticBody;
-    // const userData: BodyUserData = {
-    //   gameObject: this,
-    //   collisionType: CollisionType.GOAL,
-    // }
-    // bodyDef.userData = userData;
-
     const returnColliderHandle = this.scene.world.createCollider(groundColliderDesc).handle;
     return returnColliderHandle;
   }

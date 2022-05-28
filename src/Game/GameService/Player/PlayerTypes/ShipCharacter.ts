@@ -2,13 +2,14 @@ import { store } from "../../../../../pages/_app";
 import { SET_CHARACTER_DATA } from "../../../../redux/actions";
 import { normalize } from "../../../../utils/math";
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
+import ShipBullet from "../../GameObject/GameObjectFactory/ShipBullet";
 import ShipCharacterObject from "../../GameObject/GameObjectFactory/ShipCharacterObject";
-import { Character, CharacterProps, RESOURCE_GAIN_PER_FRAME } from "../Character";
+import { Character, CharacterProps, INPUT_BUFFER_FRAMES, RESOURCE_GAIN_PER_FRAME } from "../Character";
 
 // const ATTRACT_COOLDOWN = 0
 // const ATTRACT_COST = 20 / 60
-// const REPEL_COOLDOWN = 25
-// const REPEL_COST = 40
+const BULLET_COOLDOWN = 4
+const BULLET_COST = 3
 const FAILED_ABILITY_COOLDOWN = 20
 
 const RESOURCE_FILL_TICK_RATE = 30
@@ -39,6 +40,7 @@ export class ShipCharacter extends Character {
 
   shipObject: ShipCharacterObject;
   mostRecentFailedAbilityFrame: number;
+  mostRecentBulletFrame: number;
 
   constructor(props: ShipCharacterProps) {
     super({ player: props.player, scene: props.scene })
@@ -53,8 +55,7 @@ export class ShipCharacter extends Character {
 
     // this.mostRecentAttractFrame = -1
     // // this.attractBuffered = false; // continuous input, not needed?
-    // this.mostRecentRepelFrame = -REPEL_COOLDOWN
-    // this.repelBufferedFrame = -INPUT_BUFFER_FRAMES;
+    this.mostRecentBulletFrame = -BULLET_COOLDOWN
     this.mostRecentFailedAbilityFrame = -FAILED_ABILITY_COOLDOWN;
 
     this.shipObject = new ShipCharacterObject({
@@ -103,6 +104,8 @@ export class ShipCharacter extends Character {
 
     // this.handleRepel(input, frame);
     // this.handleAttract(input, frame);
+    this.handleBullet(input, frame)
+
     store.dispatch({
       type: SET_CHARACTER_DATA,
       payload: {
@@ -122,6 +125,56 @@ export class ShipCharacter extends Character {
 
   deserialize(value: any): void {
     super.deserialize(value)
+  }
+
+  handleBullet(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
+    const hasCooledDown = (frame >= this.mostRecentBulletFrame + BULLET_COOLDOWN)
+    const hasEnoughResource = (this.resourceMeter >= BULLET_COST)
+    const canPerformRepel = hasCooledDown && hasEnoughResource
+    const didInputBullet = (
+      (isGamePadInputResult(input) && input.button1) ||
+      (!isGamePadInputResult(input) && input.button1)
+    )
+
+    // if (didInputRepel && !canPerformRepel) {
+    //   if (
+    //     hasCooledDown &&
+    //     (this.resourceMeter < BULLET_COST + (RESOURCE_GAIN_PER_FRAME * 2 * RESOURCE_FILL_TICK_RATE)) && // some tolerance for the common case where someone mashes the button just before they have enough
+    //     (frame >= this.mostRecentFailedAbilityFrame + FAILED_ABILITY_COOLDOWN)
+    //   ) {
+    //     this.mostRecentFailedAbilityFrame = frame
+    //     store.dispatch({
+    //       type: SET_CHARACTER_DATA,
+    //       payload: {
+    //         playerIndex: this.player.playerIndex,
+    //         characterData: {
+    //           mostRecentFailedAbilityFrame: this.mostRecentFailedAbilityFrame,
+    //         }
+    //       }
+    //     })
+    //   }
+    // }
+
+    if ((didInputBullet) && canPerformRepel) {
+      this.doBullet(frame)
+    }
+  }
+
+  doBullet(frame: number) {
+    this.mostRecentBulletFrame = frame
+    this.resourceMeter -= BULLET_COST
+    const myCollider = this.scene?.world.getCollider(this.shipObject.colliderHandles[0])
+    const rotation = myCollider.rotation()
+
+    this.scene.addGameObject(new ShipBullet({
+      scene: this.scene,
+      spawnFrame: frame,
+      physics: {
+        x: myCollider.translation().x,
+        y: myCollider.translation().y,
+        rotation: rotation
+      }
+    }))
   }
 
   handleMovement(input: GamepadInputResult | KeyboardMouseInputResult) {
@@ -156,7 +209,8 @@ export class ShipCharacter extends Character {
     thrustFactor *= ACCELERATION_CONSTANT
     const thrustImpulse = {
       x: (thrustFactor * -Math.sin(rotation)) - (velocity.x/1000),
-      y: thrustFactor * Math.cos(rotation) - (velocity.y/1000)}  
+      y: thrustFactor * Math.cos(rotation) - (velocity.y/1000)
+    }  
     rigidBody.applyImpulse(thrustImpulse, true)
   }
 }

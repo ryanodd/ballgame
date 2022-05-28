@@ -29,7 +29,7 @@ export const GameEndMenu = () => {
     <GameEndMenuWrapper>
       <Card style={{overflowX: 'auto', overflowY: 'hidden'}}>
         <Title level={2}>
-          {`${winningTeamName} wins!`}
+          {`${winningTeamName} wins`}
         </Title>
         <Space direction="vertical" size="small">
           <Text>
