@@ -5,11 +5,11 @@ import { JSONValue } from "../../../../lib/netplayjs";
 import { Character } from "../../Player/Character";
 import { ShipCharacter } from "../../Player/PlayerTypes/ShipCharacter";
 import { CollisionGroups } from "../CollisionGroups";
-import { produceWithPatches } from "immer";
 
 export interface ShipCharacterObjectPhysicsProps extends GameObjectPhysicsProps {
   halfWidth: number;
   halfLength: number;
+  noseWidth: number;
   tailLength: number;
 
   density: number;
@@ -79,25 +79,27 @@ export default class ShipCharacterObject extends GameObject implements BodyGameO
 
     const points1 = new Float32Array([
       0, props.halfLength,
+      -props.noseWidth, props.halfLength,
       -props.halfWidth, -props.halfLength,
       0, -(props.halfLength - props.tailLength),
     ])
 
     const points2 = new Float32Array([
       0, props.halfLength,
+      props.noseWidth, props.halfLength,
       props.halfWidth, -props.halfLength,
       0, -(props.halfLength - props.tailLength),
     ])
 
     // Create a cuboid collider attached to the dynamic rigidBody.
-    const colliderDesc1 = (ColliderDesc.roundConvexHull(points1, 0.1) as ColliderDesc)
+    const colliderDesc1 = (ColliderDesc.convexHull(points1) as ColliderDesc)
       .setTranslation(props.x, props.y)
       .setDensity(props.density)
       .setFriction(props.friction)
       .setRestitution(props.restitution)
       .setCollisionGroups(CollisionGroups.SOLID_CHARACTERS)
 
-    const colliderDesc2 = (ColliderDesc.roundConvexHull(points2, 0.1) as ColliderDesc)
+    const colliderDesc2 = (ColliderDesc.convexHull(points2) as ColliderDesc)
       .setTranslation(props.x, props.y)
       .setDensity(props.density)
       .setFriction(props.friction)
@@ -127,16 +129,25 @@ export default class ShipCharacterObject extends GameObject implements BodyGameO
     c.rotate(rotation)
     c.translate(-xPosition, -yPosition)
 
-    c.moveTo(xPosition, yPosition)
-    c.beginPath()
-    for (let x = 0; x < listOfVertices1.length; x += 2) {
-      c.lineTo(xPosition + listOfVertices1[x], yPosition + listOfVertices1[x+1])
-    }
-    for (let x = 0; x < listOfVertices2.length; x += 2) {
-      c.lineTo(xPosition + listOfVertices2[x], yPosition + listOfVertices2[x+1])
-    }
     c.fillStyle = this.scene.teams[character.player.teamIndex].color;
+
+    c.beginPath()
+    c.moveTo(xPosition, yPosition)
+    const points = [
+      {x: listOfVertices1[0], y: listOfVertices1[1]},
+      {x: listOfVertices1[2], y: listOfVertices1[3]},
+      {x: listOfVertices1[4], y: listOfVertices1[5]},
+      {x: listOfVertices1[6], y: listOfVertices1[7]},
+      {x: listOfVertices2[0], y: listOfVertices2[1]},
+      {x: listOfVertices2[2], y: listOfVertices2[3]},
+      {x: listOfVertices2[4], y: listOfVertices2[5]},
+    ]
+    for (let i = 0; i < points.length; i ++) {
+      c.lineTo(xPosition + points[i].x, yPosition + points[i].y)
+    }
+
     c.fill()
+
     c.restore()
   }
 }

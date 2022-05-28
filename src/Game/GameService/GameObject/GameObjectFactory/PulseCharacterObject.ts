@@ -86,7 +86,6 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
   }
 
   render(c: CanvasRenderingContext2D, frame: number) {
-    console.log(this.colliderHandles)
     const collider = this.scene.world.getCollider(this.colliderHandles[0])
     const { x: xPosition, y: yPosition } = collider.translation();
     const radius = collider.radius()

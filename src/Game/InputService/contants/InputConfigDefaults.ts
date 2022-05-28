@@ -26,6 +26,9 @@ const defaultKeyboardMouseInputMapping: KeyboardMouseInputMapping = {
   buttonRightKey: "ArrowRight",
   buttonDownKey: "ArrowDown",
   buttonLeftKey: "ArrowLeft",
+
+  buttonRotateLeftKey: "ArrowLeft",
+  buttonRotateRightKey: "ArrowRight",
 }
 
 export const defaultInputConfig: InputConfig = {

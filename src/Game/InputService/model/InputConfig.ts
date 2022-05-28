@@ -24,6 +24,9 @@ export interface KeyboardMouseInputMapping {
   buttonRightKey: string;
   buttonDownKey: string;
   buttonLeftKey: string;
+
+  buttonRotateLeftKey: string;
+  buttonRotateRightKey: string;
 }
 
 export interface InputConfig {

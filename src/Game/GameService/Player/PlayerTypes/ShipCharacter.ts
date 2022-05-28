@@ -1,5 +1,6 @@
 import { store } from "../../../../../pages/_app";
 import { SET_CHARACTER_DATA } from "../../../../redux/actions";
+import { normalize } from "../../../../utils/math";
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
 import ShipCharacterObject from "../../GameObject/GameObjectFactory/ShipCharacterObject";
 import { Character, CharacterProps, RESOURCE_GAIN_PER_FRAME } from "../Character";
@@ -19,6 +20,7 @@ export interface ShipCharacterProps extends CharacterProps {
 
   HALF_WIDTH: number;
   HALF_LENGTH: number;
+  NOSE_WIDTH: number;
   TAIL_LENGTH: number;
 
   x: number;
@@ -32,6 +34,7 @@ export class ShipCharacter extends Character {
 
   HALF_WIDTH: number;
   HALF_LENGTH: number;
+  NOSE_WIDTH: number;
   TAIL_LENGTH: number;
 
   shipObject: ShipCharacterObject;
@@ -45,6 +48,7 @@ export class ShipCharacter extends Character {
     this.RESTITUTION = props.RESTITUTION;
     this.HALF_WIDTH = props.HALF_WIDTH;
     this.HALF_LENGTH = props.HALF_LENGTH;
+    this.NOSE_WIDTH = props.NOSE_WIDTH;
     this.TAIL_LENGTH = props.TAIL_LENGTH;
 
     // this.mostRecentAttractFrame = -1
@@ -61,6 +65,7 @@ export class ShipCharacter extends Character {
         y: props.y,
         halfWidth: props.HALF_WIDTH,
         halfLength: props.HALF_LENGTH,
+        noseWidth: props.NOSE_WIDTH,
         tailLength: props.TAIL_LENGTH,
         density: this.DENSITY,
         friction: this.FRICTION,
@@ -121,16 +126,37 @@ export class ShipCharacter extends Character {
 
   handleMovement(input: GamepadInputResult | KeyboardMouseInputResult) {
 
-    let xAxisInput = 0
-    let yAxisInput = 0
+    const ROTATION_SPEED = Math.PI / 250 // is this being related to pi even a thing
+
+    let rotationLeftForce = 0
+    let rotationRightForce = 0
+
+    const rigidBody = this.scene.world.getRigidBody(this.shipObject.rigidBodyHandles[0])
+    const velocity = rigidBody.linvel()
+    const angularVelocity = rigidBody.angvel()
+    const rotation = rigidBody.rotation()
 
     if (isGamePadInputResult(input)) {
-      xAxisInput = input.leftStickXAxis;
-      yAxisInput = input.leftStickYAxis;
+      // rotationLeftForce = input.leftStickXAxis;
+      // rotationRightForce = input.leftStickYAxis;
+    }
+    else {
+      rotationLeftForce = input.buttonRotateLeft ? ROTATION_SPEED : 0;
+      rotationRightForce = input.buttonRotateRight ? ROTATION_SPEED : 0;
     }
 
+    let angularForce = rotationLeftForce - rotationRightForce
+    angularForce -= (angularVelocity / 400) // How does this work... If the subtraction isn't enough it spirals, but if the subtraction is low enough it doesn't matter what we subtract
 
-    const ACCELERATION_CONSTANT_X = 4.5;
-    const ACCELERATION_CONSTANT_Y = 4.5;
+    rigidBody.applyTorqueImpulse(angularForce, true)
+
+    const ACCELERATION_CONSTANT = 0.013
+
+    let thrustFactor = isGamePadInputResult(input) ? input.rightTriggerAxis : (input.buttonUp ? 1 : 0)
+    thrustFactor *= ACCELERATION_CONSTANT
+    const thrustImpulse = {
+      x: (thrustFactor * -Math.sin(rotation)) - (velocity.x/1000),
+      y: thrustFactor * Math.cos(rotation) - (velocity.y/1000)}  
+    rigidBody.applyImpulse(thrustImpulse, true)
   }
 }

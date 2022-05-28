@@ -53,7 +53,9 @@ export class InputServiceImplementation {
       buttonUp: !!input.pressed[mapping.buttonUpKey],
       buttonRight: !!input.pressed[mapping.buttonRightKey],
       buttonDown: !!input.pressed[mapping.buttonDownKey],
-      buttonLeft: !!input.pressed[mapping.buttonLeftKey]
+      buttonLeft: !!input.pressed[mapping.buttonLeftKey],
+      buttonRotateLeft: !!input.pressed[mapping.buttonRotateLeftKey],
+      buttonRotateRight: !!input.pressed[mapping.buttonRotateRightKey],
     }
 
     return detectedInput

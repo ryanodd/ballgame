@@ -14,6 +14,9 @@ export interface GamepadInputResult {
   rightStickXAxis: number; 
   rightStickYAxis: number;
 
+  // buttonRotateLeft: boolean;
+  // buttonRotateRight: boolean;
+
   // Support button style trigger?
   leftTriggerAxis: number;
   rightTriggerAxis: number;
@@ -29,6 +32,9 @@ export interface KeyboardMouseInputResult {
   buttonRight: boolean;
   buttonDown: boolean;
   buttonLeft: boolean;
+
+  buttonRotateLeft: boolean;
+  buttonRotateRight: boolean;
 
   //mouseXAxis: number;
   //mouseYAxis: number; 
