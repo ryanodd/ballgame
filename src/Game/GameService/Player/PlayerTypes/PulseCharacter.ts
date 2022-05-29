@@ -8,11 +8,12 @@ import { isBallObject } from "../../GameObject/GameObjectFactory/Ball";
 import PulseCharacterObject from "../../GameObject/GameObjectFactory/PulseCharacterObject";
 import { RepelGraphic } from "../../GameObject/GameObjectFactory/RepelGraphic";
 import { Character, CharacterProps, INPUT_BUFFER_FRAMES, RESOURCE_GAIN_PER_FRAME } from "../Character";
+import { CharacterType } from "../CharacterType";
 
 const ATTRACT_COOLDOWN = 0
 const ATTRACT_COST = 20 / 60
 const REPEL_COOLDOWN = 25
-const REPEL_COST = 40
+const REPEL_COST = 25
 const FAILED_ABILITY_COOLDOWN = 20
 
 const RESOURCE_FILL_TICK_RATE = 30
@@ -28,6 +29,8 @@ export interface PulseCharacterProps extends CharacterProps {
 }
 
 export class PulseCharacter extends Character {
+  characterType: CharacterType = CharacterType.Pulse;
+
   DENSITY: number;
   FRICTION: number;
   RESTITUTION: number;
@@ -71,6 +74,7 @@ export class PulseCharacter extends Character {
       payload: {
         playerIndex: this.player.playerIndex,
         characterData: {
+          characterType: this.characterType,
           playerIndex: this.player.playerIndex,
           netplayPlayerIndex: this.player.netplayPlayerIndex,
           teamIndex: this.player.teamIndex,
@@ -217,8 +221,8 @@ export class PulseCharacter extends Character {
 
     this.scene?.gameObjects.forEach(gameObject => {
       if (isBallObject(gameObject)) {
-        const IMPULSE_DISTANCE = 4
-        const IMPULSE_MAGNITUDE = 4
+        const IMPULSE_DISTANCE = 3
+        const IMPULSE_MAGNITUDE = 3
         const otherCollider = this.scene.world.getCollider(gameObject.colliderHandles[0]) // careful with these
         const otherRigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandles[0]) // careful with these
         const xDiff = otherCollider.translation().x - myCollider.translation().x
@@ -256,8 +260,8 @@ export class PulseCharacter extends Character {
     }
 
 
-    const ACCELERATION_CONSTANT_X = 2;
-    const ACCELERATION_CONSTANT_Y = 2;
+    const ACCELERATION_CONSTANT_X = 2.6;
+    const ACCELERATION_CONSTANT_Y = 2.6;
 
     //const collider = this.scene?.world.getCollider(this.pulseObject.colliderHandle)
     const rigidBody = this.scene?.world.getRigidBody(this.pulseObject.rigidBodyHandles[0]) as RigidBody

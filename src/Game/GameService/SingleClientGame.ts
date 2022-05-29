@@ -55,7 +55,7 @@ export class SingleClientGame {
       }
     })
   ]
-  session: Session = new Session({ players: this.players })
+  session: Session = new Session({ players: this.players, sessionSeed: Math.random().toString() })
 
   serialize(): any {
     return this.session.serialize()

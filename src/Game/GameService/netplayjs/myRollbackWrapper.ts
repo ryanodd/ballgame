@@ -27,7 +27,7 @@ export class MyRollbackWrapper {
 
   rollbackNetcode?: RollbackNetcode<MyGame, DefaultInput>;
 
-  pingIntervalHandle: ReturnType<typeof setInterval> | null = null// because we need to clear it
+  pingIntervalHandle: ReturnType<typeof setInterval> | null = null// because we need to clear the interval on destruction
 
   isChannelOrdered(channel: RTCDataChannel) {
     return channel.ordered;
@@ -133,7 +133,7 @@ export class MyRollbackWrapper {
             console.error(err)
           });
 
-          this.startHost(players, conn, store);
+          this.startHost(players, conn, id, store);
         });
       }
     });
@@ -149,10 +149,10 @@ export class MyRollbackWrapper {
     return initialInputs;
   }
 
-  startHost(players: Array<NetplayPlayer>, conn: DataConnection, store: Store) {
+  startHost(players: Array<NetplayPlayer>, conn: DataConnection, hostRoomCode: string, store: Store) {
     console.info("Starting a rollback host.");
 
-    this.game = new MyGame(store);
+    this.game = new MyGame(hostRoomCode, store);
 
     this.rollbackNetcode = new RollbackNetcode(
       true,
@@ -208,7 +208,7 @@ export class MyRollbackWrapper {
   startClient(players: Array<NetplayPlayer>, conn: DataConnection, store: Store) {
     console.info("Starting a rollback client.");
 
-    this.game = new MyGame(store);
+    this.game = new MyGame(this.roomCode ?? '', store);
     this.rollbackNetcode = new RollbackNetcode(
       false,
       this.game!,

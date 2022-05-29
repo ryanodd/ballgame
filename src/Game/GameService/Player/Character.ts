@@ -2,6 +2,7 @@ import { JSONObject, JSONValue } from "../../../lib/netplayjs";
 import { GamepadInputResult, KeyboardMouseInputResult } from "../../InputService/model/InputResult";
 import { MyInput } from "../netplayjs/MyInput";
 import { Scene } from "../Scene/Scene";
+import { CharacterType } from "./CharacterType";
 import { Player } from "./Player";
 
 export const INPUT_BUFFER_FRAMES = 5
@@ -13,6 +14,7 @@ export interface CharacterProps {
 }
 
 export abstract class Character {
+  abstract characterType: CharacterType;
   resourceMeter: number;
   scene: Scene;
   player: Player;

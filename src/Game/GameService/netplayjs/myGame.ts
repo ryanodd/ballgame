@@ -15,7 +15,7 @@ export class MyGame extends NetplayState<DefaultInput> {
   store: Store
   ended: boolean = false
 
-  constructor(store: Store) {
+  constructor(sessionSeed: string, store: Store) {
     super()
     this.players = [
       new Player({
@@ -41,7 +41,7 @@ export class MyGame extends NetplayState<DefaultInput> {
         // }
       })
     ]
-    this.session = new Session({ players: this.players })
+    this.session = new Session({ players: this.players, sessionSeed})
     this.store = store
   }
 

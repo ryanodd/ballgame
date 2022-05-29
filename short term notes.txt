@@ -1,10 +1,22 @@
+/////////////////
+RELEASE BLOCKERS
+/////////////////
+
+- random seedness during stage rotation
+
 //////////////////
 HIGH PRIORITY
 //////////////////
 
-- ship controls summary
+- ability to switch characters mid-match
 
-- small input delay
+- goal delay
+	- also, round-about-to-start countdown
+
+- display netplay stats (with polling intervals, perchance)
+	- try testing without polling intervals
+
+- small input delay (HARD!)
 	- https://github.com/rameshvarun/netplayjs/issues/27
 
 - bouncy red surfaces
@@ -19,19 +31,13 @@ HIGH PRIORITY
 - character 3: paddle thing
 	- either flexible sportsfriends paddle or rigid flat paddle/
 
-- ability to switch characters mid-match
-
-- goal delay
-	- also, round-about-to-start countdown
-
-- display netplay stats (with polling intervals, perchance)
-	- try testing without polling intervals
-
 - matchmaking server w/ rooms
 
 //////////////////
 MEDIUM PRIORITY
 //////////////////
+
+- Got feedback? Something broken? Email me 
 
 - replace all instances of 60 with an fps constant duhdoy
 

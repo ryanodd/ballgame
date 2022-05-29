@@ -2,6 +2,7 @@
 
 // Everything that exists identically for all clients
 
+import seedrandom from 'seedrandom'
 import GameObject from "../GameObject/GameObject";
 import { Team } from "../Team/Team";
 import { Scene } from "../Scene/Scene";
@@ -22,6 +23,7 @@ import { createScene4 } from "../Scene/SceneFactory/Scene4";
 // - In multi-client, each client's MyGame is charge of a Session.
 export interface SessionProps {
   players: Player[]
+  sessionSeed: string, 
 }
 
 export class Session {
@@ -30,6 +32,8 @@ export class Session {
   endFrame: number | null = 60 * 60 * 1.5
   ended: boolean = false
   overtime: boolean = false
+  readonly sessionSeed: string
+  randomSeed: string = '' // randomSeed = sessionSeed + frame #
 
   teams: Team[]
   scene: Scene;
@@ -49,6 +53,7 @@ export class Session {
     ]
     this.scene = createScene1({ teams: this.teams, players: props.players, session: this });
     this.players = props.players
+    this.sessionSeed = props.sessionSeed
 
     store.dispatch({
       type: SET_GAME_DATA,
@@ -85,6 +90,7 @@ export class Session {
     if (this.ended) {
       return
     }
+    this.randomSeed = this.sessionSeed + frame.toString()
     this.frame = frame
     if (this.endFrame !== null) {
 
@@ -129,7 +135,7 @@ export class Session {
         createScene3,
         createScene4
       ]
-      this.scene = possibleScenes[Math.floor(Math.random() * possibleScenes.length)]({
+      this.scene = possibleScenes[Math.floor(seedrandom(this.randomSeed).double() * possibleScenes.length)]({
         teams: this.teams,
         players: this.players,
         session: this,

@@ -5,6 +5,7 @@ import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } fr
 import ShipBullet from "../../GameObject/GameObjectFactory/ShipBullet";
 import ShipCharacterObject from "../../GameObject/GameObjectFactory/ShipCharacterObject";
 import { Character, CharacterProps, RESOURCE_GAIN_PER_FRAME } from "../Character";
+import { CharacterType } from "../CharacterType";
 
 const THRUST_COST = 8 / 60
 export const BULLET_COOLDOWN = 10
@@ -28,6 +29,8 @@ export interface ShipCharacterProps extends CharacterProps {
 }
 
 export class ShipCharacter extends Character {
+  characterType: CharacterType = CharacterType.Ship;
+
   DENSITY: number;
   FRICTION: number;
   RESTITUTION: number;
@@ -81,6 +84,7 @@ export class ShipCharacter extends Character {
       payload: {
         playerIndex: this.player.playerIndex,
         characterData: {
+          characterType: this.characterType,
           playerIndex: this.player.playerIndex,
           netplayPlayerIndex: this.player.netplayPlayerIndex,
           teamIndex: this.player.teamIndex,

@@ -1,5 +1,6 @@
 
 import { MyGame } from '../Game/GameService/netplayjs/myGame';
+import { CharacterType } from '../Game/GameService/Player/CharacterType';
 import { SingleClientGame } from '../Game/GameService/SingleClientGame';
 import { InputConfig } from '../Game/InputService/model/InputConfig';
 import { Action, SET_TEAM_DATA_PAYLOAD, SET_TEAM_DATA, SET_NETPLAY_DATA, SET_UI_DATA, SET_CURRENT_GAME, SET_GAME_DATA, SET_CHARACTER_DATA, SET_CHARACTER_DATA_PAYLOAD} from './actions'
@@ -24,6 +25,7 @@ export type AppState = {
     framesRemaining: number | null;
     overtime: boolean;
     characters: {
+      characterType: CharacterType;
       resourceMeter: number;
       playerIndex: number;
       netplayPlayerIndex: number;
