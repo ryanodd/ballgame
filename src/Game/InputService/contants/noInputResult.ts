@@ -25,4 +25,7 @@ export const keyboardMouseNoInputResult: KeyboardMouseInputResult = {
   buttonRight: false,
   buttonDown: false,
   buttonLeft: false,
+
+  buttonRotateLeft: false,
+  buttonRotateRight: false,
 }
