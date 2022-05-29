@@ -38,6 +38,8 @@ export class SingleClientGame {
           buttonLeftKey: 'a',
           button1Key: 'f',
           button2Key: 'g',
+          buttonRotateLeftKey: 'a',
+          buttonRotateRightKey: 'd',
         },
       }
     }),

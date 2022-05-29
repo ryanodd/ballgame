@@ -165,10 +165,10 @@ export const ControlsSummary = ({ playerIndex }: ControlsSummaryProps) => {
               <Divider />
               <Text style={singleButtonControlTextStyle}>
                 {
-                  getDisplayChar(inputConfig.keyboardMouseInputMapping.buttonLeftKey) +
+                  getDisplayChar(inputConfig.keyboardMouseInputMapping.buttonRotateLeftKey) +
                   " " +
                   getDisplayChar(
-                    inputConfig.keyboardMouseInputMapping.buttonRightKey
+                    inputConfig.keyboardMouseInputMapping.buttonRotateRightKey
                   )
                 }
               </Text>
