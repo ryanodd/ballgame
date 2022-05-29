@@ -51,7 +51,7 @@ export const ScoreBox = () => {
       <Title level={1} style={{ margin: 0 }}>
         {teams[0] && teams[1] && `${teams[0]?.score} - ${teams[1]?.score}`}
       </Title>
-      {framesRemaining !== null && (
+      {framesRemaining !== -1 && (
         <Text
           style={{
             fontSize: 28,

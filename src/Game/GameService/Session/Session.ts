@@ -18,6 +18,9 @@ import { createScene2 } from "../Scene/SceneFactory/Scene2";
 import { createScene3 } from "../Scene/SceneFactory/Scene3";
 import { createScene4 } from "../Scene/SceneFactory/Scene4";
 
+const COUNTDOWN_FRAMES = 180
+const POST_GOAL_FRAMES = 180
+
 // This class is meant to be the first class in common between single-client and multi-client games.
 // - In single-client, SingleClientGame is in charge of its own Session.
 // - In multi-client, each client's MyGame is charge of a Session.
@@ -29,9 +32,14 @@ export interface SessionProps {
 export class Session {
   frame = 0
   //                        FPS  Sec  Min
-  endFrame: number | null = 60 * 60 * 1.5
+  framesRemaining: number = 60 * 60 * 1.5
   ended: boolean = false
+
+  countdownFrames: number = COUNTDOWN_FRAMES
+  postGoalFrames: number = -1
+  scoringTeamIndex: number | null = null
   overtime: boolean = false
+  
   readonly sessionSeed: string
   randomSeed: string = '' // randomSeed = sessionSeed + frame #
 
@@ -59,7 +67,7 @@ export class Session {
       type: SET_GAME_DATA,
       payload: {
         overtime: false,
-        framesRemaining: this.endFrame,
+        framesRemaining: this.framesRemaining,
       }
     })
   }
@@ -67,6 +75,9 @@ export class Session {
   serialize(): any {
     return {
       frame: this.frame,
+      framesRemaining: this.framesRemaining,
+      countdownFrames: this.countdownFrames,
+      postGoalFrames: this.postGoalFrames,
       scene: this.scene.serialize(),
       teams: this.teams.map(team => team.serialize()),
     };
@@ -74,6 +85,9 @@ export class Session {
 
   deserialize(value: any): void {
     this.frame = value['frame']
+    this.framesRemaining = value['framesRemaining']
+    this.countdownFrames = value['countdownFrames']
+    this.postGoalFrames = value['postGoalFrames']
     this.scene.deserialize(value['scene'])
 
     // TODO this is a total hack job:
@@ -86,61 +100,86 @@ export class Session {
     }
   }
 
+  shouldTickPlayersThisFrame(): boolean {
+    return this.countdownFrames === -1
+  }
+
   tick(frame: number) {
     if (this.ended) {
       return
     }
     this.randomSeed = this.sessionSeed + frame.toString()
     this.frame = frame
-    if (this.endFrame !== null) {
 
-      // Send time remaining data to frontend
-      store.dispatch({
-        type: SET_GAME_DATA,
-        payload: {
-          framesRemaining: this.endFrame - frame
+    // we count down one of three timers: pre-game countdown, post-goal break, and in-game timer
+    // the frame timer being -1 signifies it's not active. 0 means it just ended
+    if (this.countdownFrames > 0) {
+      this.countdownFrames--
+      if (this.countdownFrames === 0) {
+        this.countdownFrames = -1
+      }
+    }
+    if (this.postGoalFrames > 0) {
+      this.postGoalFrames--
+      if (this.postGoalFrames === 0) {
+        this.postGoalFrames = -1
+        if (this.overtime) {
+          this.end()
+        } else {
+          this.scoringTeamIndex = null
+          const possibleScenes = [
+            createScene1,
+            createScene2,
+            createScene3,
+            createScene4
+          ]
+          this.scene = possibleScenes[Math.floor(seedrandom(this.randomSeed).double() * possibleScenes.length)]({
+            teams: this.teams,
+            players: this.players,
+            session: this,
+          })
+          this.countdownFrames = COUNTDOWN_FRAMES
         }
-      })
-
-      // Check for last frame
-      if (frame >= this.endFrame) {
+      }
+    }
+    if (this.countdownFrames === -1 && this.postGoalFrames === -1 && this.framesRemaining > 0) {
+      this.framesRemaining--
+      if (this.framesRemaining === 0) {
+        this.framesRemaining = -1
         if (this.teams[0].score !== this.teams[1].score) {
           this.end()
         } else {
-          this.endFrame = null
           this.overtime = true
           store.dispatch({
             type: SET_GAME_DATA,
             payload: {
-              framesRemaining: null,
+              framesRemaining: -1,
               overtime: true,
             }
           })
         }
-
       }
     }
+
+    // Tick the world regardless
     this.scene.tick(frame)
+
+    // Send time remaining data to frontend
+    store.dispatch({
+      type: SET_GAME_DATA,
+      payload: {
+        framesRemaining: this.framesRemaining,
+        countdownFrames: this.countdownFrames,
+        postGoalFrames: this.postGoalFrames,
+      }
+    })
   }
 
   onGoalAgainst(teamIndex: number) {
     const otherTeamIndex = teamIndex === 0 ? 1 : 0
     this.teams[otherTeamIndex].onGoal();
-    if (this.overtime) {
-      this.end()
-    } else {
-      const possibleScenes = [
-        createScene1,
-        createScene2,
-        createScene3,
-        createScene4
-      ]
-      this.scene = possibleScenes[Math.floor(seedrandom(this.randomSeed).double() * possibleScenes.length)]({
-        teams: this.teams,
-        players: this.players,
-        session: this,
-      })
-    }
+    this.scoringTeamIndex = otherTeamIndex
+    this.postGoalFrames = POST_GOAL_FRAMES
   }
 
   end() {

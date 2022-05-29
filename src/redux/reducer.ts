@@ -22,7 +22,10 @@ export type AppState = {
     stalling: boolean;
   };
   game: {
-    framesRemaining: number | null;
+    framesRemaining: number;
+    countdownFrames: number;
+    postGoalFrames: number;
+    scoringTeamIndex: number | null;
     overtime: boolean;
     characters: {
       characterType: CharacterType;
@@ -62,7 +65,10 @@ export const initialState: AppState = {
     stalling: false,
   },
   game: {
-    framesRemaining: null,
+    framesRemaining: -1,
+    countdownFrames: -1,
+    postGoalFrames: -1,
+    scoringTeamIndex: null,
     overtime: false,
     characters: [],
     teams: [],

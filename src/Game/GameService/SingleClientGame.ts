@@ -76,12 +76,14 @@ export class SingleClientGame {
 
   start() {
     const tick = () => {
-      this.players.forEach(player => {
-        player.tickMovement(this.inputReader.getInput(), this.frame)
-      })
-      this.players.forEach(player => {
-        player.tickAbilities(this.inputReader.getInput(), this.frame)
-      })
+      if (this.session.shouldTickPlayersThisFrame()) {
+        this.players.forEach(player => {
+          player.tickMovement(this.inputReader.getInput(), this.frame)
+        })
+        this.players.forEach(player => {
+          player.tickAbilities(this.inputReader.getInput(), this.frame)
+        })
+      }
       this.session.tick(this.frame)
       
       if (this.frame === 0) {

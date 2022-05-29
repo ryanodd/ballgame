@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { useTypedSelector } from "../redux/typedHooks";
+import { CanvasAnimationOverlay } from "./CanvasAnimationOverlay";
+import { CanvasHud } from "./CanvasHud";
 import { CanvasOverlay } from "./CanvasOverlay";
 import { ScoreBox } from "./ScoreBox";
 import { TeamHud } from "./TeamHud";
@@ -48,7 +50,7 @@ export const GameCanvas = () => {
   return (
     <CanvasContainer>
       <CanvasElement id="game-canvas"/>
-      <CanvasOverlay>
+      <CanvasHud>
         {
           teams.length !== 0 && (
             <>
@@ -65,6 +67,9 @@ export const GameCanvas = () => {
           )
         }
         
+      </CanvasHud>
+      <CanvasOverlay>
+        <CanvasAnimationOverlay />
       </CanvasOverlay>
     </CanvasContainer>
   )

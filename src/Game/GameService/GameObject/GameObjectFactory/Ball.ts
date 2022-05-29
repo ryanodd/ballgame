@@ -103,8 +103,17 @@ export default class Ball extends GameObject {
       yPosition,
       radius
     );
-    gradient.addColorStop(0, 'rgb(255, 110, 124)');
-    gradient.addColorStop(1, 'rgb(255, 51, 68)');
+
+    if (this.scene.session.scoringTeamIndex === null) {
+      gradient.addColorStop(0, 'rgb(255, 110, 124)');
+      gradient.addColorStop(1, 'rgb(255, 51, 68)');
+    } else {
+      const otherTeamIndex = (this.scene.session.scoringTeamIndex + 1) % 2 // assumes 2 teams
+      gradient.addColorStop(0, this.scene.session.teams[otherTeamIndex].color);
+      gradient.addColorStop(1, this.scene.session.teams[otherTeamIndex].color);
+    }
+
+    
     c.fillStyle = gradient;
     c.fill();
     c.restore()

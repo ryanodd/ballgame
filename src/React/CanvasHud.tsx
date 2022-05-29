@@ -1,10 +1,10 @@
 import { ReactNode, useCallback, useEffect, useState } from "react"
 import styled from "styled-components"
 
-const CanvasOverlayContainer = styled.div<{heightPercent: string}>`
+const CanvasHudContainer = styled.div<{heightPercent: string}>`
   position: absolute;
-  bottom: 0;
-  top calc(100% - ${props => props.heightPercent}%);
+  top: 0;
+  bottom calc(100% - ${props => props.heightPercent}%);
 
   width: 100%;
   left: 50%;
@@ -13,17 +13,16 @@ const CanvasOverlayContainer = styled.div<{heightPercent: string}>`
   display: flex;
   align-items: center;
   justify-content: stretch;
-  
-  overflow: hidden; // not sure why this is needed...
 `
 
 const ChildWrapper = styled.div<{targetHeight: number}>`
   position: absolute;
   left: 50%;
 
-  width: calc(800px * (9/8) * (16/9));
-  height: 800px;
-  transform: translateX(-50%) scale(calc(${props => props.targetHeight}/800));
+  width: calc(80px * 9 * (16/9));
+  height: 75px;
+  margin-top: 5px;
+  transform: translateX(-50%) scale(calc(${props => props.targetHeight}/80));
 
   display: flex;
   align-items: stretch;
@@ -31,21 +30,20 @@ const ChildWrapper = styled.div<{targetHeight: number}>`
 `
 
 // This is logically tied to scene1's 8/9 height
-export const OVERLAY_PERCENT_HEIGHT = ((8 / 9) * 100).toFixed(0)
+export const HUD_PERCENT_HEIGHT = ((1 / 9) * 100).toFixed(0)
 
 export type CanvasContainerProps = {
   children: ReactNode;
 }
 
-export const CanvasOverlay = ({children}: CanvasContainerProps) => {
+export const CanvasHud = ({children}: CanvasContainerProps) => {
   const [ targetHeight, setTargetHeight ] = useState(0)
 
   const onResize = useCallback(() => {
     setTimeout(() => {
-      const container = document.querySelector('#canvas-overlay-container')
+      const container = document.querySelector('#canvas-hud-container')
       if (container !== null) {
         setTargetHeight(container.getBoundingClientRect().height)
-        console.log(targetHeight)
       }
     }, 0) // Shhh... It works now
   }, [])
@@ -59,10 +57,10 @@ export const CanvasOverlay = ({children}: CanvasContainerProps) => {
   }, [])
 
   return (
-    <CanvasOverlayContainer id="canvas-overlay-container" heightPercent={OVERLAY_PERCENT_HEIGHT} >
-      <ChildWrapper id="canvas-overlay-content" targetHeight={targetHeight}>
+    <CanvasHudContainer id="canvas-hud-container" heightPercent={HUD_PERCENT_HEIGHT} >
+      <ChildWrapper id="canvas-hud-content" targetHeight={targetHeight}>
         {children}
       </ChildWrapper>
-    </CanvasOverlayContainer>
+    </CanvasHudContainer>
   )
 }

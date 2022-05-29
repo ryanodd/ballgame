@@ -4,7 +4,7 @@ HIGH PRIORITY
 
 - ability to switch characters mid-match
 
-- goal delay
+- after-goal delay
 	- also, round-about-to-start countdown
 
 - display netplay stats (with polling intervals, perchance)
@@ -13,17 +13,24 @@ HIGH PRIORITY
 - small input delay (HARD!)
 	- https://github.com/rameshvarun/netplayjs/issues/27
 
-- bouncy red surfaces
-
-- curved walls
-	- just jack up the border-radius on a hollow rectangle? is that possible?
-	- polylines or https://rapier.rs/docs/user_guides/javascript/colliders/#heightfields
-	- research: HTML canvas drawing methods for this
 
 - more stages
+	- bouncy red surfaces
+	- curved walls
+		- just jack up the border-radius on a hollow rectangle? is that possible?
+		- polylines or https://rapier.rs/docs/user_guides/javascript/colliders/#heightfields
+		- research: HTML canvas drawing methods for this
 
-- character 3: paddle thing
-	- either flexible sportsfriends paddle or rigid flat paddle/
+- more characters
+	- paddle thing
+		- flexible sportsfriends paddle
+		- maybe with the ability to 'stiffen up' ;) and grow longer omg that is vile but would make for good gameplay I swaer to god
+	- tank
+		- can lay mines
+		- & probably shoot? but then we probably want to differentitate its shot from the ship'screen
+		- what about a rotating cannon arm that is controllable with stick/rotation?
+	- car
+	- sticky
 
 - matchmaking server w/ rooms
 
