@@ -145,7 +145,7 @@ export class PulseCharacter extends Character {
 
     this.scene.gameObjects.forEach(gameObject => {
       if (isBallObject(gameObject)) {
-        const IMPULSE_DISTANCE = 2.5
+        const IMPULSE_DISTANCE = 1.5
         const IMPULSE_MAGNITUDE = 0.06
         const otherCollider = this.scene.world.getCollider(gameObject.colliderHandles[0]) // careful with these. Assuming 1 collider. Where is a gameObject's 'center of gravity'?
         const otherRigidBody = this.scene.world.getRigidBody(gameObject.rigidBodyHandles[0]) // careful with these
@@ -218,7 +218,7 @@ export class PulseCharacter extends Character {
     this.scene?.gameObjects.forEach(gameObject => {
       if (isBallObject(gameObject)) {
         const IMPULSE_DISTANCE = 4
-        const IMPULSE_MAGNITUDE = 7
+        const IMPULSE_MAGNITUDE = 4
         const otherCollider = this.scene.world.getCollider(gameObject.colliderHandles[0]) // careful with these
         const otherRigidBody = this.scene?.world.getRigidBody(gameObject.rigidBodyHandles[0]) // careful with these
         const xDiff = otherCollider.translation().x - myCollider.translation().x
@@ -256,8 +256,8 @@ export class PulseCharacter extends Character {
     }
 
 
-    const ACCELERATION_CONSTANT_X = 4.5;
-    const ACCELERATION_CONSTANT_Y = 4.5;
+    const ACCELERATION_CONSTANT_X = 2;
+    const ACCELERATION_CONSTANT_Y = 2;
 
     //const collider = this.scene?.world.getCollider(this.pulseObject.colliderHandle)
     const rigidBody = this.scene?.world.getRigidBody(this.pulseObject.rigidBodyHandles[0]) as RigidBody

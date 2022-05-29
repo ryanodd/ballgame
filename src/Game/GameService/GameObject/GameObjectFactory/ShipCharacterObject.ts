@@ -129,6 +129,23 @@ export default class ShipCharacterObject extends GameObject implements BodyGameO
     c.rotate(rotation)
     c.translate(-xPosition, -yPosition)
 
+
+    if (character.mostRecentThrustFrame === frame) {
+      c.beginPath()
+      c.fillStyle = 'rgba(255, 84, 59, 0.75)'
+
+      const THRUST_TRIANGLE_HALF_WIDTH = 0.14
+      const THRUST_TRIANGLE_LENGTH = 0.5
+
+      c.lineTo(xPosition-THRUST_TRIANGLE_HALF_WIDTH, yPosition)
+      c.lineTo(xPosition+THRUST_TRIANGLE_HALF_WIDTH, yPosition)
+      c.lineTo(xPosition, yPosition-THRUST_TRIANGLE_LENGTH)
+      c.fill()
+      c.beginPath()
+      c.fill()
+    }
+
+
     c.fillStyle = this.scene.teams[character.player.teamIndex].color;
 
     c.beginPath()

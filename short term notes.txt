@@ -2,67 +2,49 @@
 HIGH PRIORITY
 //////////////////
 
-- DEPLOY
-	- Amplify
-	- point domain to it
+- ship controls summary
 
-//////////////////
-MEDIUM PRIORITY
-//////////////////
+- small input delay
+	- https://github.com/rameshvarun/netplayjs/issues/27
 
-- event when someone tries to do an ability but can't
-
-- replace all instances of 60 with an fps constant duhdoy
-
-- REFACTOR
-	- character abilities can be more standardized.
-		- mostRecentUse 
-		- cooldowns
-		- bufferable
-		- resource meter
-		- serialization
-
-- game end first-to-x ui & implementation
-
-- goal animation
-
-- crunchy animations:
-	- contacts should probably glow (lighting on walls & objects) & spark (particle effects)
-	- screen shake?
-
-- display netplay stats (with polling intervals, perchance)
-	- try testing without polling intervals
+- bouncy red surfaces
 
 - curved walls
 	- just jack up the border-radius on a hollow rectangle? is that possible?
 	- polylines or https://rapier.rs/docs/user_guides/javascript/colliders/#heightfields
 	- research: HTML canvas drawing methods for this
 
-- combine control stick inputs and keyboard WASD inputs more automatically
+- more stages
+
+- character 3: paddle thing
+	- either flexible sportsfriends paddle or rigid flat paddle/
+
+- ability to switch characters mid-match
+
+- goal delay
+	- also, round-about-to-start countdown
+
+- display netplay stats (with polling intervals, perchance)
+	- try testing without polling intervals
+
+- matchmaking server w/ rooms
+
+//////////////////
+MEDIUM PRIORITY
+//////////////////
+
+- replace all instances of 60 with an fps constant duhdoy
+
+- crunchy animations:
+	- contacts should probably glow (lighting on walls & objects) & spark (particle effects)
+	- screen shake?
+
+- combine control stick inputs and keyboard WASD inputs more automatically?
 
 - control config menu
 	- can maybe be extended to be a tutorial as well
 	- eventually should have specialized instructions for each bindable control for each character.
 	- localStorage??
-
-- CONTROLS tutorial/reference
-	- dependent on character AND gamepad/keyboard
-	- customizable
-	- explain abilities - maybe even show them with mini-canvas or images
-	- list costs
-	- very closely tied to character select screen I think. Which isn't figured out.
-	- When to choose characters?
-		- (a) Before finding opponent
-		- (b) After finding opponent
-		- (c) one of the above AND during game - between goals?
-	- When to be able to customize controls?
-		- probably at main menu only
-	- Will controls be global? Or need to be set for each character?
-		- I can imagine some characters needing TWO directional inputs.
-		- For spaceship, keyboard directional input will be two buttons instead of gamepad stick?
-	- regardless, we still NEED a way to see controls in-game
-		- (a) single special keyboard key to see controls for all players?
-		- click/hover button in CharacterHud to show popover
 
 - think about name
 	- tab title https://nextjs.org/docs/api-reference/next/head
@@ -83,19 +65,14 @@ MEDIUM PRIORITY
 LOW PRIORITY
 //////////////////
 
-- matchmaking server w/ rooms
-- think about: character,stage,cpu select
-	- COULD I INCORPORATE PHYSICS TWEAKING IN HERE SOMEHOW
-- multiplayer hash as myGame param
-	- requires some refactoring.
-	- would allow joining game differently (via pause menu)
+- game end first-to-x ui & implementation
+
 - convert to simpler configged inputs BEFORE input serialization
 	- no reason to at the moment? How costly is it.
 	- is there actually any advantage?
 		- yeah cuz rn we need both clients to know each others' input config & apply it after deserialization
 			- that's whack.
-- small input delay
-	- https://github.com/rameshvarun/netplayjs/issues/27
+
 - research: how bad is p2p.
 	- is it exploitable in any way? Does the host have an advantage?
 		- theoretically. But it would be hard to do in a subtle way

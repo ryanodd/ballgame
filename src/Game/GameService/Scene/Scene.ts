@@ -67,9 +67,33 @@ export class Scene {
     this.gameObjects.forEach((gameObject) => {
       gameObject.tick(frame)
     })
-    this.gameObjects = this.gameObjects.filter((gameObject) => {
+
+
+    const gameObjectsAfterDeletion = []
+    this.gameObjects.forEach(gameObject => {
+      if (!gameObject.markedForDeletion) {
+
+      }
+      
+    })
+
+
+    const copyOfGameObjects = this.gameObjects // so we can remove them from the list THEN remove them from the world. Cuz drawing happens async and depends on colliders
+    this.gameObjects = this.gameObjects.filter(gameObject => {
       return !gameObject.markedForDeletion
     })
+    copyOfGameObjects.forEach(gameObject => {
+      if (gameObject.markedForDeletion) {
+        gameObject.colliderHandles.forEach((colliderHandle) => {
+          console.warn(colliderHandle)
+          this.world.removeCollider(this.world.getCollider(colliderHandle), true)
+        })
+        gameObject.rigidBodyHandles.forEach((rigidBodyHandle) => {
+          this.world.removeRigidBody(this.world.getRigidBody(rigidBodyHandle))
+        })
+      }
+    })
+
 
   }
 
@@ -106,7 +130,6 @@ export class Scene {
   }
 
   handleCollision(colliderHandle1: ColliderHandle, colliderHandle2: ColliderHandle, started: boolean) {
-    console.log('here')
     for (const gameObj of this.gameObjects) {
       if (gameObj.colliderHandles.includes(colliderHandle1)) {
         gameObj.handleCollision(colliderHandle2, started)

@@ -96,13 +96,13 @@ export default class PulseCharacterObject extends GameObject implements BodyGame
     c.save()
 
     if (frame <= mostRecentAttractFrame) {
-      const ATTRACT_RADIUS = 2.5
+      const ATTRACT_RADIUS = 1.5
       const ANIMATION_PERIOD = 16
       const animationFrame = frame % ANIMATION_PERIOD
       const progress = animationFrame / ANIMATION_PERIOD
       c.beginPath();
 
-      const TRANSLATION = 0.5 // adjust based on radius.... 7r = 1.37t, 2.5r = .5t
+      const TRANSLATION = 0.28 // adjust based on radius.... 7r = 1.37t, 2.5r = .5t
 
       c.arc(xPosition, yPosition, ATTRACT_RADIUS, 0, Math.PI * 2, true); // Outer circle
       const gradient = c.createRadialGradient(

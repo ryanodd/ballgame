@@ -13,8 +13,9 @@
 // The corresponding packed bit mask is 0x000D0004.
 
 export enum CollisionGroups {
-  WALLS = 0x0001000F,
-  BALL = 0x00020007,
+  WALLS = 0x0001001F,
+  BALL = 0x00020017,
   SOLID_CHARACTERS = 0x00040007,
   GHOST_CHARACTERS = 0x00080001,
+  SHIP_BULLET = 0x00100003,
 }

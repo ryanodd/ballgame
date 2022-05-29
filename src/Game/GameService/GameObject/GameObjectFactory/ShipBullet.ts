@@ -1,4 +1,5 @@
-import { ActiveEvents, ColliderDesc, ColliderHandle, RigidBody, RigidBodyDesc, RigidBodyHandle } from "@dimforge/rapier2d";
+import { ActiveEvents, ColliderDesc, ColliderHandle, RigidBody, RigidBodyDesc, RigidBodyHandle, Vector, Vector2 } from "@dimforge/rapier2d";
+import { normalize } from "../../../../utils/math";
 import { Scene } from "../../Scene/Scene";
 import { CollisionGroups } from "../CollisionGroups";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
@@ -7,12 +8,14 @@ import { isBallObject } from "./Ball";
 export interface ShipBulletPhysicsProps extends GameObjectPhysicsProps {
   // w: number;
   // h: number;
-  rotation: number;
+  radius: number;
+  initialVeloicty: Vector2
 }
 
 export interface ShipBulletPhysicsHandles extends GameObjectPhysicsHandles {
   colliderHandles: ColliderHandle[];
   rigidBodyHandles: RigidBodyHandle[];
+  collidedFrame: number;
 }
 
 
@@ -30,6 +33,7 @@ export default class ShipBullet extends GameObject { // extend something general
   id = SHIP_BULLET_OBJ_ID;
   colliderHandles: ColliderHandle[];
   rigidBodyHandles: RigidBodyHandle[] = [];
+  collidedFrame: number;
 
   constructor(props: ShipBulletProps) {
     super(props);
@@ -37,9 +41,11 @@ export default class ShipBullet extends GameObject { // extend something general
       const { collider, rigidBody } = this.createColliderAndRigidBody(props.physics)
       this.colliderHandles = [collider.handle];
       this.rigidBodyHandles = [rigidBody.handle]
+      this.collidedFrame = -2
     }
     else {
       this.colliderHandles = props.physics.colliderHandles
+      this.collidedFrame = props.physics.collidedFrame
     }
   }
 
@@ -47,6 +53,7 @@ export default class ShipBullet extends GameObject { // extend something general
     return {
       ...super.serialize(),
       id: this.id,
+      collidedFrame: this.collidedFrame,
     }
   };
 
@@ -57,6 +64,7 @@ export default class ShipBullet extends GameObject { // extend something general
       physics: {
         colliderHandles: value['colliderHandles'],
         rigidBodyHandles: value['rigidBodyHandles'],
+        collidedFrame: value['collidedFrame'],
       },
     })
   }
@@ -66,34 +74,30 @@ export default class ShipBullet extends GameObject { // extend something general
       .setCanSleep(false);
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 
-    const RADIUS = 0.07
-    const DISTANCE_FROM_SHIP_CENTER = 0.5
-    const shipNoseTranslation = {
-      x: -Math.sin(props.rotation) * DISTANCE_FROM_SHIP_CENTER,
-      y: Math.cos(props.rotation) * DISTANCE_FROM_SHIP_CENTER,
-    }
-    console.log(shipNoseTranslation)
-
-    const groundColliderDesc = ColliderDesc.ball(RADIUS)
-      .setTranslation(props.x + shipNoseTranslation.x, props.y + shipNoseTranslation.y)
-      // .setSensor(true)
+    const groundColliderDesc = ColliderDesc.ball(props.radius)
+      .setTranslation(props.x, props.y)
+      .setDensity(3.0)
       .setActiveEvents(ActiveEvents.COLLISION_EVENTS)
-      //.setCollisionGroups(CollisionGroups.WALLS)
+      .setCollisionGroups(CollisionGroups.SHIP_BULLET)
+    
     const collider = this.scene.world.createCollider(groundColliderDesc, rigidBody.handle);
 
-    const SPEED = 10
-    rigidBody.setLinvel({ x: shipNoseTranslation.x*SPEED, y: shipNoseTranslation.y*SPEED}, true)
+    // todo add ship's velocity
+    rigidBody.setLinvel(props.initialVeloicty, true)
     return { collider, rigidBody };
   }
 
-  // No tick
+  tick(frame: number) {
+    if (this.collidedFrame >= 0 && this.collidedFrame < frame) {
+      this.markedForDeletion = true
+    }
+  }
 
   handleCollision(oppositeColliderHandle: ColliderHandle, started: boolean) {
-    const otherGameObject = this.scene.gameObjects.find((gameObject) => {
-      return gameObject.colliderHandles.includes(oppositeColliderHandle)
-    })
-    if (started && otherGameObject) {
-      this.markedForDeletion = true
+    if (started) {
+      if (this.collidedFrame < 0) {
+        this.collidedFrame = this.scene.session.frame
+      }
     }
   }
 
