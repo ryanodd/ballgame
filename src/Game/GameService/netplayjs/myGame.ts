@@ -21,13 +21,13 @@ export class MyGame extends NetplayState<DefaultInput> {
       new Player({
         playerIndex: 0,
         netplayPlayerIndex: 0, // host
-        characterType: CharacterType.Pulse,
+        characterType: CharacterType.Ship,
         teamIndex: 0,
       }),
       new Player({
         playerIndex: 1,
         netplayPlayerIndex: 1, // client
-        characterType: CharacterType.Ship,
+        characterType: CharacterType.Pulse,
         teamIndex: 1,
         // inputConfig: {
         //   ...defaultInputConfig,

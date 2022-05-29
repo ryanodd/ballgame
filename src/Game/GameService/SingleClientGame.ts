@@ -27,7 +27,7 @@ export class SingleClientGame {
       playerIndex: 0,
       teamIndex: 0,
       //gamepadIndex: 0,
-      characterType: CharacterType.Pulse,
+      characterType: CharacterType.Ship,
       inputConfig: {
         ...defaultInputConfig,
         keyboardMouseInputMapping: {
@@ -44,7 +44,7 @@ export class SingleClientGame {
     new Player({
       playerIndex: 1,
       teamIndex: 1,
-      characterType: CharacterType.Ship,
+      characterType: CharacterType.Pulse,
       inputConfig: {
         ...defaultInputConfig,
         keyboardMouseInputMapping: {
