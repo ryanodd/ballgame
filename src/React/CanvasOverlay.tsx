@@ -45,7 +45,6 @@ export const CanvasOverlay = ({children}: CanvasContainerProps) => {
       const container = document.querySelector('#canvas-overlay-container')
       if (container !== null) {
         setTargetHeight(container.getBoundingClientRect().height)
-        console.log(targetHeight)
       }
     }, 0) // Shhh... It works now
   }, [])

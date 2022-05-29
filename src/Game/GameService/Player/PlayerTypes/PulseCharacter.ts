@@ -260,8 +260,8 @@ export class PulseCharacter extends Character {
     }
 
 
-    const ACCELERATION_CONSTANT_X = 2.6;
-    const ACCELERATION_CONSTANT_Y = 2.6;
+    const ACCELERATION_CONSTANT_X = 2.7;
+    const ACCELERATION_CONSTANT_Y = 2.7;
 
     //const collider = this.scene?.world.getCollider(this.pulseObject.colliderHandle)
     const rigidBody = this.scene?.world.getRigidBody(this.pulseObject.rigidBodyHandles[0]) as RigidBody

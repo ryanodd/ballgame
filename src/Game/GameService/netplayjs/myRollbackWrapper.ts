@@ -7,7 +7,7 @@ import { RollbackNetcode } from '../../../lib/netplayjs/netcode/rollback';
 import Peer, { DataConnection } from 'peerjs';
 import { Store } from 'redux';
 import { MyGame } from './myGame';
-import { SET_NETPLAY_DATA, SET_UI_DATA } from '../../../redux/actions';
+import { SET_CURRENT_GAME, SET_NETPLAY_DATA, SET_UI_DATA } from '../../../redux/actions';
 
 const PING_INTERVAL = 100;
 
@@ -153,6 +153,7 @@ export class MyRollbackWrapper {
     console.info("Starting a rollback host.");
 
     this.game = new MyGame(hostRoomCode, store);
+    store.dispatch({ type: SET_CURRENT_GAME, payload: this.game });
 
     this.rollbackNetcode = new RollbackNetcode(
       true,
@@ -209,6 +210,7 @@ export class MyRollbackWrapper {
     console.info("Starting a rollback client.");
 
     this.game = new MyGame(this.roomCode ?? '', store);
+    store.dispatch({ type: SET_CURRENT_GAME, payload: this.game });
     this.rollbackNetcode = new RollbackNetcode(
       false,
       this.game!,

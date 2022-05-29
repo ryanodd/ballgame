@@ -3,10 +3,23 @@ import { MyGame } from '../Game/GameService/netplayjs/myGame';
 import { CharacterType } from '../Game/GameService/Player/CharacterType';
 import { SingleClientGame } from '../Game/GameService/SingleClientGame';
 import { InputConfig } from '../Game/InputService/model/InputConfig';
-import { Action, SET_TEAM_DATA_PAYLOAD, SET_TEAM_DATA, SET_NETPLAY_DATA, SET_UI_DATA, SET_CURRENT_GAME, SET_GAME_DATA, SET_CHARACTER_DATA, SET_CHARACTER_DATA_PAYLOAD} from './actions'
+import { Action, SET_TEAM_DATA_PAYLOAD, SET_TEAM_DATA, SET_NETPLAY_DATA, SET_UI_DATA, SET_CURRENT_GAME, SET_GAME_DATA, SET_CHARACTER_DATA, SET_CHARACTER_DATA_PAYLOAD, CLEAR_CLIENT_EVENTS, CLIENT_SWITCH_CHARACTERS} from './actions'
+
+export enum ClientEventType {
+  SWITCH_CHARACTER = 'SWITCH_CHARACTER'
+}
+
+export type SwitchCharacterEvent = {
+  eventType: ClientEventType
+  playerIndex: number
+  characterType: CharacterType
+}
+
+export type ClientEvent = SwitchCharacterEvent
 
 export type AppState = {
   gameClass: MyGame | SingleClientGame | null
+  clientEvents: ClientEvent[]
   netplay: {
     isHost: boolean;
     connectingToServer: boolean;
@@ -45,11 +58,13 @@ export type AppState = {
   ui: {
     isMainMenuOpen: boolean;
     isGameEndOpen: boolean;
+    characterSelectPopoverOpenPlayerIndex: number | null;
   }
 }
 
 export const initialState: AppState = {
   gameClass: null,
+  clientEvents: [],
   netplay: {
     isHost: false,
     connectingToServer: false,
@@ -76,6 +91,7 @@ export const initialState: AppState = {
   ui: {
     isMainMenuOpen: false,
     isGameEndOpen: false,
+    characterSelectPopoverOpenPlayerIndex: null,
   }
 }
 
@@ -105,6 +121,17 @@ export default function appReducer(state = initialState, action: Action): AppSta
     }
     case SET_UI_DATA: {
       return { ...state, ui: { ...state.ui, ...action.payload } }
+    }
+    case CLIENT_SWITCH_CHARACTERS: {
+      const newClientEvent: ClientEvent = {
+        eventType: ClientEventType.SWITCH_CHARACTER,
+        playerIndex: action.payload.playerIndex,
+        characterType: action.payload.characterType,
+      }
+      return { ...state, clientEvents: [ ...state.clientEvents, newClientEvent]}
+    }
+    case CLEAR_CLIENT_EVENTS: {
+      return { ...state, clientEvents: []}
     }
     default:
       return state

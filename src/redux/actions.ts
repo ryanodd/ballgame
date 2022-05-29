@@ -21,3 +21,7 @@ export type SET_CHARACTER_DATA_PAYLOAD = {
 }
 
 export const SET_UI_DATA = 'setUiData'
+
+export const CLIENT_SWITCH_CHARACTERS = 'clientSwitchCharacters'
+
+export const CLEAR_CLIENT_EVENTS = 'clearClientEvents'

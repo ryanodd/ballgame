@@ -16,11 +16,24 @@ const CountdownAnimationContainer = styled.div`
 `
 
 const countdownNumberAnimation = keyframes`
-  
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
 `
 
 const CountdownNumber = styled.h1`
-  margin:0;
+  margin: 0;
+  font-size: 200px;
+  text-shadow: 2px 2px rgba(0, 0, 0, 0.2);
+  animation-name: ${countdownNumberAnimation};
+  animation-duration: 1s;
 `
 
 export const CanvasAnimationOverlay = () => {

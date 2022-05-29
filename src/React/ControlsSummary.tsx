@@ -205,7 +205,7 @@ export const ControlsSummary = ({ playerIndex }: ControlsSummaryProps) => {
                       color,
                     }}
                   >
-                    8
+                    15
                   </Text>
                 </CostBadge>
               </TitleRow>

@@ -1,10 +1,6 @@
-import { Button, Card, Input, message, Radio, Space, Typography } from "antd";
-import { useCallback } from "react";
-import { useDispatch, useSelector, useStore } from "react-redux";
-import styled from "styled-components";
-import { SingleClientGame } from "../Game/GameService/SingleClientGame";
-import { SET_CURRENT_GAME, SET_UI_DATA } from "../redux/actions";
-import { AppState } from "../redux/reducer";
+import { Typography } from "antd";
+import { useCallback, useEffect, useState } from "react";
+import styled, { css, keyframes } from "styled-components";
 import { useTypedSelector } from "../redux/typedHooks";
 
 const { Text, Title } = Typography;
@@ -23,14 +19,49 @@ const ScoreBoxWrapper = styled.div`
   justify-content: space-evenly;
 `;
 
+const scoreAnimation = keyframes`
+  0% {
+
+  }
+  10% {
+    transform: scale(1.4);
+    transform-origin: top center;
+  }
+  100% {
+    
+  }
+`
+
+const ScoreTextWrapper = styled.div<{animateScore: boolean}>`
+  ${(props) =>
+    props.animateScore &&
+    css`
+      animation-name: ${scoreAnimation};
+      animation-duration: 1s;
+    `
+  }
+`
+
 export const ScoreBox = () => {
-  const { framesRemaining, overtime, teams } = useTypedSelector((state) => {
+  const { framesRemaining, overtime, team1Score, team2Score } = useTypedSelector((state) => {
     return {
       framesRemaining: state.game.framesRemaining,
       overtime: state.game.overtime,
-      teams: state.game.teams,
+      team1Score: state.game.teams[0]?.score,
+      team2Score: state.game.teams[1]?.score,
     };
   });
+
+
+  const [scoreAnimationPlaying, setScoreAnimationPlaying] = useState(false);
+  useEffect(() => {
+    if (team1Score !== 0 || team2Score !== 0) {
+      setScoreAnimationPlaying(true)
+    }
+  }, [team1Score, team2Score])
+  const onScoreAnimationEnd = useCallback(() => {
+    setScoreAnimationPlaying(false);
+  }, []);
 
   let secondsRemaining = Math.ceil((framesRemaining ?? 0) / 60);
   const isFinalCountdown = secondsRemaining <= 10 && secondsRemaining > 0;
@@ -48,9 +79,16 @@ export const ScoreBox = () => {
     : {};
   return (
     <ScoreBoxWrapper>
-      <Title level={1} style={{ margin: 0 }}>
-        {teams[0] && teams[1] && `${teams[0]?.score} - ${teams[1]?.score}`}
-      </Title>
+      <ScoreTextWrapper
+          animateScore={scoreAnimationPlaying}
+          onAnimationEnd={onScoreAnimationEnd}
+        >
+        <Title level={1} style={{ margin: 0 }}>
+          { team1Score !== undefined && team2Score !== undefined &&
+            `${team1Score} - ${team2Score}`
+          }
+        </Title>
+      </ScoreTextWrapper>
       {framesRemaining !== -1 && (
         <Text
           style={{

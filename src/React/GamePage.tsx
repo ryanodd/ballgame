@@ -45,9 +45,8 @@ const GamePage = () => {
     dispatch({ type: SET_UI_DATA, payload: { isMainMenuOpen: isHost } });
 
     if (!isHost) {
-      const game = new MyRollbackWrapper(clientRoomCode);
-      dispatch({ type: SET_CURRENT_GAME, payload: game });
-      game.start(store);
+      const rollbackedGame = new MyRollbackWrapper(clientRoomCode);
+      rollbackedGame.start(store);
     }
   }, []);
 

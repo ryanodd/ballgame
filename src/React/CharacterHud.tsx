@@ -1,7 +1,9 @@
-import { message, Typography } from "antd";
+import { Button, message, Popover, Typography } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import styled, { css, keyframes } from "styled-components";
-import { useTypedSelector } from "../redux/typedHooks";
+import { SET_UI_DATA } from "../redux/actions";
+import { useTypedDispatch, useTypedSelector } from "../redux/typedHooks";
+import { CharacterSelect } from "./CharacterSelect";
 import { ControlsSummary } from "./ControlsSummary";
 
 const { Text, Title } = Typography;
@@ -29,7 +31,12 @@ const SummaryColumn = styled.div`
 const TitleRow = styled.div`
   width: 100%;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
+  
+  > :not(:last-child) {
+    margin-right: 4px !important;
+  }
 `;
 
 const ResourceRow = styled.div`
@@ -69,7 +76,8 @@ const ResourceBadgeContainer = styled.div<{ animateFail: boolean }>`
     css`
       animation-name: ${failedAbilityAnimation};
       animation-duration: 0.5s;
-    `}
+    `
+  }
 `;
 
 const ResourceBar = styled.div`
@@ -110,33 +118,44 @@ export type CharacterHudProps = {
 
 export const CharacterHud = ({ playerIndex }: CharacterHudProps) => {
   const {
+    characterSelectPopoverOpenPlayerIndex,
     color,
     isHost,
     mostRecentFailedAbilityFrame,
+    characterType,
     netplayPlayerIndex,
     resourceMeter,
   } = useTypedSelector((state) => ({
+    characterSelectPopoverOpenPlayerIndex: state.ui.characterSelectPopoverOpenPlayerIndex,
     color: state.game.teams[state.game.characters[playerIndex].teamIndex].color,
     isHost: state.netplay.isHost,
+    characterType: state.game.characters[playerIndex].characterType,
     netplayPlayerIndex: state.game.characters[playerIndex].netplayPlayerIndex,
     resourceMeter: state.game.characters[playerIndex].resourceMeter,
     mostRecentFailedAbilityFrame:
       state.game.characters[playerIndex].mostRecentFailedAbilityFrame,
   }));
+  const dispatch = useTypedDispatch()
+
+  const setCharacterSelectOpen = useCallback((isOpen: boolean) => {
+    dispatch({
+      type: SET_UI_DATA,
+      payload: {
+        characterSelectPopoverOpenPlayerIndex: isOpen ? playerIndex : null
+      },
+    })
+  }, [])
 
   const [failedAbilityAnimationPlaying, setFailedAbilityAnimationPlaying] =
     useState(false);
-
   useEffect(() => {
     if (mostRecentFailedAbilityFrame >= 0) {
       setFailedAbilityAnimationPlaying(true);
     }
   }, [mostRecentFailedAbilityFrame]);
-
   const onFailedAbilityEnd = useCallback(() => {
     setFailedAbilityAnimationPlaying(false);
   }, []);
-
   const numberToDisplay = Math.round(resourceMeter);
   const resourceMeterPercent = numberToDisplay;
 
@@ -144,7 +163,6 @@ export const CharacterHud = ({ playerIndex }: CharacterHudProps) => {
     (isHost && netplayPlayerIndex === 1) ||
     (!isHost && netplayPlayerIndex === 0)
   );
-
   if (!isLocalPlayer) {
     return null;
   }
@@ -154,8 +172,32 @@ export const CharacterHud = ({ playerIndex }: CharacterHudProps) => {
       <SummaryColumn>
         <TitleRow>
           <Title level={4} style={{ margin: "0 0 0 4px" }}>
-            Player
+            {characterType}
           </Title>
+          <Popover
+            visible={characterSelectPopoverOpenPlayerIndex === playerIndex}
+            placement="bottom"
+            onVisibleChange={(visible) => {
+              setCharacterSelectOpen(visible)
+            }}
+            trigger="click"
+            content={
+              <CharacterSelect playerIndex={playerIndex}/>
+            }
+            overlayInnerStyle={{
+              boxShadow: "0px 2px 8px 0px rgba(0, 0, 0, 0.5)"
+            }}
+          >
+            <Button
+              type="primary"
+              size="small"
+              style={{}
+
+              }
+            >
+              Change
+            </Button>
+          </Popover>
         </TitleRow>
         <ResourceRow onAnimationEnd={onFailedAbilityEnd}>
           <ResourceBadgeContainer animateFail={failedAbilityAnimationPlaying}>

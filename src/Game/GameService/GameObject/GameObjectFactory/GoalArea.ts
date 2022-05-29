@@ -93,6 +93,9 @@ export default class GoalArea extends GameObject { // extend something general?
   }
 
   handleCollision(oppositeColliderHandle: ColliderHandle, started: boolean) {
+    if (this.scene.session.postGoalFrames !== -1) {
+      return
+    }
     const otherGameObject = this.scene.gameObjects.find((gameObject) => {
       return gameObject.colliderHandles.includes(oppositeColliderHandle)
     })

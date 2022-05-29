@@ -42,12 +42,11 @@ export const NetplayMenu = () => {
   // TODO expose joining interface AND game starting interface, so we can do both separately from react 
   useEffect(() => {
     if (isMainMenuOpen) {
-      const game = new MyRollbackWrapper(null)
-      dispatch({type: SET_CURRENT_GAME, payload: game })
+      const rollbackedGame = new MyRollbackWrapper(null);
       dispatch({type: SET_NETPLAY_DATA, payload: {
         isHost: true,
       } })
-      game.start(store)
+      rollbackedGame.start(store)
     }
   }, [isMainMenuOpen])
 

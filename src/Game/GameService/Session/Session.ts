@@ -17,9 +17,10 @@ import { SET_GAME_DATA, SET_UI_DATA } from "../../../redux/actions";
 import { createScene2 } from "../Scene/SceneFactory/Scene2";
 import { createScene3 } from "../Scene/SceneFactory/Scene3";
 import { createScene4 } from "../Scene/SceneFactory/Scene4";
+import { ClientEvent, ClientEventType } from '../../../redux/reducer';
 
 const COUNTDOWN_FRAMES = 180
-const POST_GOAL_FRAMES = 180
+const POST_GOAL_FRAMES = 90
 
 // This class is meant to be the first class in common between single-client and multi-client games.
 // - In single-client, SingleClientGame is in charge of its own Session.
@@ -173,6 +174,12 @@ export class Session {
         postGoalFrames: this.postGoalFrames,
       }
     })
+  }
+
+  handleClientEvent(event: ClientEvent) {
+    if (event.eventType === ClientEventType.SWITCH_CHARACTER) {
+      this.players[event.playerIndex].characterType = event.characterType
+    }
   }
 
   onGoalAgainst(teamIndex: number) {

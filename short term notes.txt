@@ -2,11 +2,6 @@
 HIGH PRIORITY
 //////////////////
 
-- ability to switch characters mid-match
-
-- after-goal delay
-	- also, round-about-to-start countdown
-
 - display netplay stats (with polling intervals, perchance)
 	- try testing without polling intervals
 
@@ -42,6 +37,8 @@ MEDIUM PRIORITY
 
 - replace all instances of 60 with an fps constant duhdoy
 
+- ship gamepad controls
+
 - crunchy animations:
 	- contacts should probably glow (lighting on walls & objects) & spark (particle effects)
 	- screen shake?
@@ -50,6 +47,7 @@ MEDIUM PRIORITY
 
 - control config menu
 	- can maybe be extended to be a tutorial as well
+	- encourage gampepad
 	- eventually should have specialized instructions for each bindable control for each character.
 	- localStorage??
 

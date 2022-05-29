@@ -63,6 +63,9 @@ export class MyGame extends NetplayState<DefaultInput> {
     }
     if (this.session.shouldTickPlayersThisFrame()) {
       for (const [netplayPlayer, input] of playerInputs.entries()) {
+        input.clientEvents.forEach((clientEvent) => {
+          this.session.handleClientEvent(clientEvent)
+        })
         this.players.forEach(player => {
           if (netplayPlayer.getID() === player.netplayPlayerIndex) {
             player.tickMovement(input, frame)
