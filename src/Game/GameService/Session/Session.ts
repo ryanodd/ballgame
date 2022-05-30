@@ -20,7 +20,7 @@ import { createScene4 } from "../Scene/SceneFactory/Scene4";
 import { ClientEvent, ClientEventType } from '../../../redux/reducer';
 
 const COUNTDOWN_FRAMES = 180
-const POST_GOAL_FRAMES = 90
+const POST_GOAL_FRAMES = 140
 
 // This class is meant to be the first class in common between single-client and multi-client games.
 // - In single-client, SingleClientGame is in charge of its own Session.
