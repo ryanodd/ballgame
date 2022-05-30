@@ -95,19 +95,11 @@ export class PulseCharacter extends Character {
   tickAbilities(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
     if (frame % RESOURCE_FILL_TICK_RATE === RESOURCE_FILL_TICK_RATE - 1) {
       this.resourceMeter = Math.min(this.resourceMeter + (RESOURCE_GAIN_PER_FRAME * RESOURCE_FILL_TICK_RATE), 100)
+      this.adjustResourceMeter(RESOURCE_GAIN_PER_FRAME * RESOURCE_FILL_TICK_RATE)
     }
 
     this.handleRepel(input, frame);
     this.handleAttract(input, frame);
-    store.dispatch({
-      type: SET_CHARACTER_DATA,
-      payload: {
-        playerIndex: this.player.playerIndex,
-        characterData: {
-          resourceMeter: this.resourceMeter,
-        }
-      }
-    })
   }
 
   serialize(): any {
@@ -145,7 +137,7 @@ export class PulseCharacter extends Character {
 
   doAttract(frame: number) {
     this.mostRecentAttractFrame = frame
-    this.resourceMeter -= ATTRACT_COST
+    this.adjustResourceMeter(-ATTRACT_COST)
 
     this.scene.gameObjects.forEach(gameObject => {
       if (isBallObject(gameObject)) {
@@ -207,7 +199,7 @@ export class PulseCharacter extends Character {
 
   doRepel(frame: number) {
     this.mostRecentRepelFrame = frame
-    this.resourceMeter -= REPEL_COST
+    this.adjustResourceMeter(-REPEL_COST)
     const myCollider = this.scene?.world.getCollider(this.pulseObject.colliderHandles[0]) as Collider
 
     this.scene.addGameObject(new RepelGraphic({

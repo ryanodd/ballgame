@@ -3,6 +3,7 @@ import { useTypedSelector } from "../redux/typedHooks";
 import { CanvasAnimationOverlay } from "./CanvasAnimationOverlay";
 import { CanvasHud } from "./CanvasHud";
 import { CanvasOverlay } from "./CanvasOverlay";
+import { NetplayStats } from "./NetplayStats";
 import { ScoreBox } from "./ScoreBox";
 import { TeamHud } from "./TeamHud";
 

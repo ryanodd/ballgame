@@ -176,6 +176,7 @@ export const CharacterHud = ({ playerIndex }: CharacterHudProps) => {
           </Title>
           <Popover
             visible={characterSelectPopoverOpenPlayerIndex === playerIndex}
+            title="Change Character"
             placement="bottom"
             onVisibleChange={(visible) => {
               setCharacterSelectOpen(visible)

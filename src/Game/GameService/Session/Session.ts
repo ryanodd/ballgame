@@ -166,14 +166,16 @@ export class Session {
     this.scene.tick(frame)
 
     // Send time remaining data to frontend
-    store.dispatch({
-      type: SET_GAME_DATA,
-      payload: {
-        framesRemaining: this.framesRemaining,
-        countdownFrames: this.countdownFrames,
-        postGoalFrames: this.postGoalFrames,
-      }
-    })
+    if (frame % 10 === 0) {
+      store.dispatch({
+        type: SET_GAME_DATA,
+        payload: {
+          framesRemaining: this.framesRemaining,
+          countdownFrames: this.countdownFrames,
+          postGoalFrames: this.postGoalFrames,
+        }
+      })
+    }
   }
 
   handleClientEvent(event: ClientEvent) {

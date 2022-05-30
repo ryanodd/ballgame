@@ -1,4 +1,6 @@
+import { store } from "../../../../pages/_app";
 import { JSONObject, JSONValue } from "../../../lib/netplayjs";
+import { SET_CHARACTER_DATA } from "../../../redux/actions";
 import { GamepadInputResult, KeyboardMouseInputResult } from "../../InputService/model/InputResult";
 import { MyInput } from "../netplayjs/MyInput";
 import { Scene } from "../Scene/Scene";
@@ -46,8 +48,17 @@ export abstract class Character {
     this.resourceMeter = value['resourceMeter']
   }
 
-  setResourceMeter(value: number) {
-    const newValue = Math.min(value, this.RESOURCE_METER_MAXIMUM);
-    this.resourceMeter = newValue;
+  adjustResourceMeter(adjustmentValue: number) {
+    const newValue = Math.min(this.resourceMeter+adjustmentValue, this.RESOURCE_METER_MAXIMUM);
+    this.resourceMeter = Math.max(0, newValue);
+    store.dispatch({
+      type: SET_CHARACTER_DATA,
+      payload: {
+        playerIndex: this.player.playerIndex,
+        characterData: {
+          resourceMeter: this.resourceMeter,
+        }
+      }
+    })
   }
 }

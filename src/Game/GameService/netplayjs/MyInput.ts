@@ -31,7 +31,9 @@ export class MyInputReader extends DefaultInputReader {
     // ^ would their serialization cause any problems?
     input.gamepads = navigator.getGamepads()
     input.clientEvents = store.getState().clientEvents
-    store.dispatch({type: CLEAR_CLIENT_EVENTS, payload: {}})
+    if (input.clientEvents.length > 0) {
+      store.dispatch({type: CLEAR_CLIENT_EVENTS, payload: {}})
+    }
     return input;
   }
 }

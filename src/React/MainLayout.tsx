@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { SET_UI_DATA } from '../redux/actions';
 import { LocalPlayMenu } from './LocalPlayMenu';
 import { GameEndMenu } from './GameEndMenu';
+import { NetplayStats } from './NetplayStats';
 
 const MainLayoutContainer = styled.div`
   width: 100%;
@@ -68,11 +69,9 @@ export const MainLayout = () => {
       <AspectRatioLetterbox>
         <GameCanvas />
       </AspectRatioLetterbox>
-      {/* <score-box />
-      { shouldShowNetplayStats && (
+      { connectedToPeer && (
         <NetplayStats />
       )}
-      <netplay-stats v-if="this.shouldShowNetplayStats" /> */}
     </MainLayoutContainer>
   );
 }

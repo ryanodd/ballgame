@@ -104,23 +104,13 @@ export class ShipCharacter extends Character {
   // Detect input, do stuff
   tickAbilities(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
     if (frame % RESOURCE_FILL_TICK_RATE === RESOURCE_FILL_TICK_RATE - 1) {
-      this.resourceMeter = Math.min(this.resourceMeter + (RESOURCE_GAIN_PER_FRAME * RESOURCE_FILL_TICK_RATE), 100)
+      this.adjustResourceMeter(RESOURCE_GAIN_PER_FRAME * RESOURCE_FILL_TICK_RATE)
     }
 
     // this.handleRepel(input, frame);
     // this.handleAttract(input, frame);
     this.handleThrust(input, frame)
     this.handleBullet(input, frame)
-
-    store.dispatch({
-      type: SET_CHARACTER_DATA,
-      payload: {
-        playerIndex: this.player.playerIndex,
-        characterData: {
-          resourceMeter: this.resourceMeter,
-        }
-      }
-    })
   }
 
   serialize(): any {
@@ -155,7 +145,7 @@ export class ShipCharacter extends Character {
 
   doThrust(frame: number) {
     this.mostRecentThrustFrame = frame
-    this.resourceMeter -= THRUST_COST
+    this.adjustResourceMeter(-THRUST_COST)
 
     const rigidBody = this.scene.world.getRigidBody(this.shipObject.rigidBodyHandles[0])
     const velocity = rigidBody.linvel()
@@ -208,7 +198,7 @@ export class ShipCharacter extends Character {
 
   doBullet(frame: number) {
     this.mostRecentBulletFrame = frame
-    this.resourceMeter -= BULLET_COST
+    this.adjustResourceMeter(-BULLET_COST)
     const myCollider = this.scene.world.getCollider(this.shipObject.colliderHandles[0])
     const myRigidBody = this.scene.world.getRigidBody(this.shipObject.rigidBodyHandles[0])
     const rotation = myCollider.rotation()

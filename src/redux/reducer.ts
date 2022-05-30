@@ -29,7 +29,6 @@ export type AppState = {
     ping: string | null;
     pingStdDev: string | null;
     historyLength: number | null;
-    frame: number | null;
     largestFutureSize: number | null;
     predictedFrames: number | null;
     stalling: boolean;
@@ -74,7 +73,6 @@ export const initialState: AppState = {
     ping: null,
     pingStdDev: null,
     historyLength: null,
-    frame: null,
     largestFutureSize: null,
     predictedFrames: null,
     stalling: false,

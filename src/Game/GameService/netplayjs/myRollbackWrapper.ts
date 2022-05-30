@@ -277,21 +277,16 @@ export class MyRollbackWrapper {
       // Draw state to canvas.
       this.game!.draw(this.canvas);
 
-      // Update stats
-      // this.vueService.setNetplayPing(this.pingMeasure.average().toFixed(2))
-      // this.vueService.setNetplayPingStdDev(this.pingMeasure.stddev().toFixed(2))
-      // this.vueService.setNetplayHistoryLength(this.rollbackNetcode!.history.length)
-      // this.vueService.setNetplayFrame(this.rollbackNetcode!.currentFrame())
-      // this.vueService.setNetplayLargestFutureSize(this.rollbackNetcode!.largestFutureSize())
-      // this.vueService.setNetplayPredictedFrames(this.rollbackNetcode!.predictedFrames())
-      // this.vueService.setNetplayStalling(this.rollbackNetcode!.shouldStall())
-      store.dispatch({ type: SET_NETPLAY_DATA, payload: { ping: this.pingMeasure.average().toFixed(2) } })
-      store.dispatch({ type: SET_NETPLAY_DATA, payload: { pingStdDev: this.pingMeasure.stddev().toFixed(2) } })
-      store.dispatch({ type: SET_NETPLAY_DATA, payload: { historyLength: this.rollbackNetcode!.history.length } })
-      store.dispatch({ type: SET_NETPLAY_DATA, payload: { frame: this.rollbackNetcode!.currentFrame() } })
-      store.dispatch({ type: SET_NETPLAY_DATA, payload: { largestFutureSize: this.rollbackNetcode!.largestFutureSize() } })
-      store.dispatch({ type: SET_NETPLAY_DATA, payload: { predictedFrames: this.rollbackNetcode!.predictedFrames() } })
-      store.dispatch({ type: SET_NETPLAY_DATA, payload: { stalling: this.rollbackNetcode!.shouldStall() } })
+      if (this.rollbackNetcode!.currentFrame() % 10 === 0) {
+        store.dispatch({ type: SET_NETPLAY_DATA, payload: {
+          ping: this.pingMeasure.average().toFixed(0),
+          pingStdDev: this.pingMeasure.stddev().toFixed(0),
+          historyLength: this.rollbackNetcode!.history.length,
+          largestFutureSize: this.rollbackNetcode!.largestFutureSize(),
+          predictedFrames: this.rollbackNetcode!.predictedFrames(),
+          stalling: this.rollbackNetcode!.shouldStall(),
+        }})
+      }
 
       // Request another frame.
       requestAnimationFrame(animate);
