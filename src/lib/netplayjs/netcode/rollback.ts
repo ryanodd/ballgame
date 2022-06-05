@@ -59,6 +59,11 @@ export class RollbackNetcode<
   history: Array<RollbackHistory<TInput>>;
 
   /**
+   * A list of inputs acting as a buffer for input delay.
+   */
+  localPlayerInputBuffer: Array<TInput>;
+
+  /**
    * The max number of frames that we can predict ahead before we have to stall.
    */
   maxPredictedFrames: number;
@@ -236,13 +241,15 @@ export class RollbackNetcode<
     maxPredictedFrames: number,
     pingMeasure: any,
     timestep: number,
+    inputDelayFrames: number,
     pollInput: () => TInput,
     broadcastInput: (frame: number, input: TInput) => void,
-    broadcastState?: (frame: number, state: JSONValue) => void
+    broadcastState?: (frame: number, state: JSONValue) => void,
   ) {
     this.isHost = isHost;
     this.state = initialState;
     this.players = players;
+    this.localPlayerInputBuffer = [];
     this.maxPredictedFrames = maxPredictedFrames;
     this.broadcastInput = broadcastInput;
     this.pingMeasure = pingMeasure;
@@ -260,6 +267,9 @@ export class RollbackNetcode<
     const historyInputs = new Map();
     for (const [player, input] of initialInputs.entries()) {
       historyInputs.set(player, { input, isPrediction: false });
+      if (player.isLocalPlayer()) {
+        this.localPlayerInputBuffer = Array(inputDelayFrames).fill(input)
+      }
     }
     this.history = [
       new RollbackHistory(0, clone(this.state.serialize()), historyInputs),
@@ -306,26 +316,30 @@ export class RollbackNetcode<
 
     // Get the most recent state.
     const lastState = this.history[this.history.length - 1];
+    const frame: number = lastState.frame + 1
 
     // Construct the new map of inputs for this frame.
     const newInputs: Map<
       NetplayPlayer,
       { input: TInput; isPrediction: boolean }
     > = new Map();
+
     for (const [player, input] of lastState.inputs.entries()) {
       if (player.isLocalPlayer()) {
-        const localInput = this.pollInput();
+        const localInput = this.localPlayerInputBuffer[0]
+        this.localPlayerInputBuffer.push(this.pollInput())
+        this.localPlayerInputBuffer.shift()
 
         // Local player gets the local input.
         newInputs.set(player, { input: localInput, isPrediction: false });
         // Broadcast the input to the other players.
-        this.broadcastInput(lastState.frame + 1, localInput);
+        this.broadcastInput(frame, localInput);
       } else {
         if (get(this.future, player).length > 0) {
           // If we have already recieved the player's input (due to our)
           // simulation being behind, then use that input.
           const future = shift(get(this.future, player));
-          DEV && assert.equal(lastState.frame + 1, future.frame);
+          DEV && assert.equal(frame, future.frame);
           newInputs.set(player, {
             input: future.input,
             isPrediction: false,
@@ -346,7 +360,7 @@ export class RollbackNetcode<
     // Add a history entry into our rollback buffer.
     this.history.push(
       new RollbackHistory(
-        lastState.frame + 1,
+        frame,
         clone(this.state.serialize()),
         newInputs
       )

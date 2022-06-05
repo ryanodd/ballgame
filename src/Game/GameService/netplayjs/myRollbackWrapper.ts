@@ -70,11 +70,13 @@ export class MyRollbackWrapper {
   peer?: Peer;
   readonly roomCode: string | null;
 
+  // Sets up client/host depending on roomCode's existence.
+  // Once conneceted, calls startClient/startHost
   start(store: Store) {
     console.info("Creating a PeerJS instance.");
     store.dispatch({ type: SET_NETPLAY_DATA, payload: { connectingToServer: true } })
 
-    this.peer = new Peer();
+    this.peer = new Peer({debug: 3}); // "All"
     this.peer.on("error", (err) => {
       store.dispatch({ type: SET_NETPLAY_DATA, payload: { errorMessage: JSON.stringify(err) } })
       console.error(err);
@@ -154,6 +156,8 @@ export class MyRollbackWrapper {
 
     this.game = new MyGame(hostRoomCode, store);
     store.dispatch({ type: SET_CURRENT_GAME, payload: this.game });
+    const INPUT_DELAY_FRAMES = 2
+    store.dispatch({ type: SET_NETPLAY_DATA, payload: { delayFrames: INPUT_DELAY_FRAMES } })
 
     this.rollbackNetcode = new RollbackNetcode(
       true,
@@ -163,6 +167,7 @@ export class MyRollbackWrapper {
       10,
       this.pingMeasure,
       MyGame.timestep,
+      INPUT_DELAY_FRAMES,
       () => this.inputReader.getInput(),
       (frame, input) => {
         conn.send({ type: "input", frame: frame, input: input.serialize() });
@@ -211,6 +216,10 @@ export class MyRollbackWrapper {
 
     this.game = new MyGame(this.roomCode ?? '', store);
     store.dispatch({ type: SET_CURRENT_GAME, payload: this.game });
+
+    const INPUT_DELAY_FRAMES = 2
+    store.dispatch({ type: SET_NETPLAY_DATA, payload: { delayFrames: INPUT_DELAY_FRAMES } })
+
     this.rollbackNetcode = new RollbackNetcode(
       false,
       this.game!,
@@ -219,6 +228,7 @@ export class MyRollbackWrapper {
       10,
       this.pingMeasure,
       MyGame.timestep,
+      INPUT_DELAY_FRAMES,
       () => this.inputReader.getInput(),
       (frame, input) => {
         conn.send({ type: "input", frame: frame, input: input.serialize() });
@@ -261,7 +271,7 @@ export class MyRollbackWrapper {
     });
     conn.on("close", () => {
       // In this case the host ended the session without the client detecting a game end itself.
-      // We always hit this path for some reason.
+      // We always hit this path for some reason. I guess someone has to close it first?
       // TODO Pretty sure the client can properly detect end at state sync stages, not history clearing stages.
       if (!this.rollbackNetcode!.ended) {
         if (this.pingIntervalHandle) clearInterval(this.pingIntervalHandle)
@@ -277,6 +287,7 @@ export class MyRollbackWrapper {
       // Draw state to canvas.
       this.game!.draw(this.canvas);
 
+      // Send debug logs to redux
       if (this.rollbackNetcode!.currentFrame() % 10 === 0) {
         store.dispatch({ type: SET_NETPLAY_DATA, payload: {
           ping: this.pingMeasure.average().toFixed(0),

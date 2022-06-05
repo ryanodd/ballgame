@@ -2,12 +2,14 @@
 HIGH PRIORITY
 //////////////////
 
-- display netplay stats (with polling intervals, perchance)
-	- try testing without polling intervals
+- fps stats:
+	- how do? in netplay, we tick WAY MORE than fps
 
 - small input delay (HARD!)
 	- https://github.com/rameshvarun/netplayjs/issues/27
 
+
+- research why is there so much ping?
 
 - more stages
 	- bouncy red surfaces
@@ -32,6 +34,9 @@ HIGH PRIORITY
 //////////////////
 MEDIUM PRIORITY
 //////////////////
+
+- Currently, serialized packets is plain text of json, including numbers in string form wtf.
+	- 22kb/packet, could be much less
 
 - Got feedback? Something broken? Email me 
 

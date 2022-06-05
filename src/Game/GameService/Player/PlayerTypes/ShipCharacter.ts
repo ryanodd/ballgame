@@ -239,7 +239,7 @@ export class ShipCharacter extends Character {
   handleMovement(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
 
     const ROTATION_SPEED = Math.PI / 60 // is this being related to pi even a thing
-    const ROTATION_SPEED_DAMPING_FACTOR = 1/100
+    const ROTATION_SPEED_DAMPING_FACTOR = 1/70
 
     let rotationLeftForce = 0
     let rotationRightForce = 0

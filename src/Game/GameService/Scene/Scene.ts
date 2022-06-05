@@ -85,7 +85,6 @@ export class Scene {
     copyOfGameObjects.forEach(gameObject => {
       if (gameObject.markedForDeletion) {
         gameObject.colliderHandles.forEach((colliderHandle) => {
-          console.warn(colliderHandle)
           this.world.removeCollider(this.world.getCollider(colliderHandle), true)
         })
         gameObject.rigidBodyHandles.forEach((rigidBodyHandle) => {

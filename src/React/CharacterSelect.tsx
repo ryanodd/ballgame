@@ -24,7 +24,6 @@ export const CharacterSelect = ({playerIndex}: CharacterSelectProps) => {
       selectedCharacterType: state.gameClass?.players[playerIndex].characterType
     }
   })
-  console.log(gameClass)
   const dispatch = useTypedDispatch()
   const onChange = useCallback((e: RadioChangeEvent) => {
     

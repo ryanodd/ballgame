@@ -59,14 +59,6 @@ export class SingleClientGame {
   ]
   session: Session = new Session({ players: this.players, sessionSeed: Math.random().toString() })
 
-  serialize(): any {
-    return this.session.serialize()
-  }
-
-  deserialize(value: any): void {
-    this.session.deserialize(value)
-  }
-
   draw(canvas: HTMLCanvasElement) {
     const c = canvas.getContext('2d')
     if (c !== null) {

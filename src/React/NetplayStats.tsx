@@ -57,6 +57,10 @@ export const NetplayStats = () => {
               <td>{netplayStats.ping ? `${netplayStats.ping}ms +/- ${netplayStats.pingStdDev}ms` : null}</td>
             </tr>
             <tr>
+              <td>Input Delay Frames</td>
+              <td>{netplayStats.delayFrames}</td>
+            </tr>
+            <tr>
               <td>History Length</td>
               <td>{netplayStats.historyLength}</td>
             </tr>

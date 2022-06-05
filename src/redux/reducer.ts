@@ -32,6 +32,7 @@ export type AppState = {
     largestFutureSize: number | null;
     predictedFrames: number | null;
     stalling: boolean;
+    delayFrames: number;
   };
   game: {
     framesRemaining: number;
@@ -76,6 +77,7 @@ export const initialState: AppState = {
     largestFutureSize: null,
     predictedFrames: null,
     stalling: false,
+    delayFrames: 0,
   },
   game: {
     framesRemaining: -1,
