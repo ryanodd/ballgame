@@ -1,8 +1,8 @@
-import { MyInputReader } from './MyInput'
+import { MyInput, MyInputReader } from './MyInput'
 
 import { assert } from "chai";
 import EWMASD from '../../../lib/netplayjs/ewmasd';
-import { DefaultInput, NetplayPlayer } from '../../../lib/netplayjs';
+import { NetplayPlayer } from '../../../lib/netplayjs';
 import { RollbackNetcode } from '../../../lib/netplayjs/netcode/rollback';
 import Peer, { DataConnection } from 'peerjs';
 import { Store } from 'redux';
@@ -25,7 +25,7 @@ export class MyRollbackWrapper {
   // The actual instance of the input serializable game class 
   game?: MyGame;
 
-  rollbackNetcode?: RollbackNetcode<MyGame, DefaultInput>;
+  rollbackNetcode?: RollbackNetcode<MyGame, MyInput>;
 
   pingIntervalHandle: ReturnType<typeof setInterval> | null = null// because we need to clear the interval on destruction
 
@@ -58,11 +58,7 @@ export class MyRollbackWrapper {
     // Find canvas for game.
     this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement
 
-    this.inputReader = new MyInputReader(
-      this.canvas,
-      false,
-      {}
-    );
+    this.inputReader = new MyInputReader();
 
     this.roomCode = roomCode
   }
@@ -143,10 +139,10 @@ export class MyRollbackWrapper {
 
   getInitialInputs(
     players: Array<NetplayPlayer>
-  ): Map<NetplayPlayer, DefaultInput> {
-    const initialInputs: Map<NetplayPlayer, DefaultInput> = new Map();
+  ): Map<NetplayPlayer, MyInput> {
+    const initialInputs: Map<NetplayPlayer, MyInput> = new Map();
     for (const player of players) {
-      initialInputs.set(player, new DefaultInput());
+      initialInputs.set(player, new MyInput());
     }
     return initialInputs;
   }
@@ -183,7 +179,7 @@ export class MyRollbackWrapper {
         return
       }
       if (data.type === "input") {
-        const input = new DefaultInput();
+        const input = new MyInput();
         input.deserialize(data.input);
         this.rollbackNetcode!.onRemoteInput(data.frame, players![1], input);
       } else if (data.type == "ping-req") {
@@ -241,7 +237,7 @@ export class MyRollbackWrapper {
         return
       }
       if (data.type === "input") {
-        const input = new DefaultInput();
+        const input = new MyInput();
         input.deserialize(data.input);
         this.rollbackNetcode!.onRemoteInput(data.frame, players![0], input);
       } else if (data.type === "state") {

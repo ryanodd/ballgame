@@ -1,6 +1,7 @@
 import { DefaultInput } from "./defaultinput";
 import { NetplayPlayer, NetplayState } from "./types";
 import { TouchControl } from "./touchcontrols";
+import { MyInput } from "../../Game/GameService/netplayjs/MyInput";
 
 export type GameClass = {
   new (canvas: HTMLCanvasElement, players: Array<NetplayPlayer>): Game;
@@ -32,6 +33,6 @@ export type GameClass = {
   stateSyncPeriod?: number;
 };
 
-export abstract class Game extends NetplayState<DefaultInput> {
+export abstract class Game extends NetplayState<MyInput> {
   abstract draw(canvas: HTMLCanvasElement): void;
 }

@@ -16,11 +16,7 @@ export class SingleClientGame {
   frame = 0;
 
   canvas = document.getElementById('game-canvas') as HTMLCanvasElement
-  inputReader = new MyInputReader(
-    this.canvas,
-    false,
-    {}
-  );
+  inputReader = new MyInputReader();
 
   players: Player[] = [
     new Player({

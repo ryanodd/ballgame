@@ -11,9 +11,9 @@ import { Character, CharacterProps, INPUT_BUFFER_FRAMES, RESOURCE_GAIN_PER_FRAME
 import { CharacterType } from "../CharacterType";
 
 const ATTRACT_COOLDOWN = 0
-const ATTRACT_COST = 20 / 60
+const ATTRACT_COST = 25 / 60
 const REPEL_COOLDOWN = 25
-const REPEL_COST = 25
+const REPEL_COST = 40
 const FAILED_ABILITY_COOLDOWN = 20
 
 const RESOURCE_FILL_TICK_RATE = 30
@@ -94,7 +94,6 @@ export class PulseCharacter extends Character {
   // Detect input, do stuff
   tickAbilities(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
     if (frame % RESOURCE_FILL_TICK_RATE === RESOURCE_FILL_TICK_RATE - 1) {
-      this.resourceMeter = Math.min(this.resourceMeter + (RESOURCE_GAIN_PER_FRAME * RESOURCE_FILL_TICK_RATE), 100)
       this.adjustResourceMeter(RESOURCE_GAIN_PER_FRAME * RESOURCE_FILL_TICK_RATE)
     }
 

@@ -120,7 +120,7 @@ export const ControlsSummary = ({ playerIndex }: ControlsSummaryProps) => {
                       ...costBadgeTextStyle, color
                     }}
                   >
-                    20/sec
+                    25/sec
                   </Text>
                 </CostBadge>
               </TitleRow>
@@ -141,7 +141,7 @@ export const ControlsSummary = ({ playerIndex }: ControlsSummaryProps) => {
                       color,
                     }}
                   >
-                    25
+                    40
                   </Text>
                 </CostBadge>
               </TitleRow>

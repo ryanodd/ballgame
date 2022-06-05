@@ -15,8 +15,6 @@ import { JSONValue } from "../../../lib/netplayjs";
 import { store } from "../../../../pages/_app";
 import { SET_GAME_DATA, SET_UI_DATA } from "../../../redux/actions";
 import { createScene2 } from "../Scene/SceneFactory/Scene2";
-import { createScene3 } from "../Scene/SceneFactory/Scene3";
-import { createScene4 } from "../Scene/SceneFactory/Scene4";
 import { ClientEvent, ClientEventType } from '../../../redux/reducer';
 
 const COUNTDOWN_FRAMES = 180
@@ -60,7 +58,7 @@ export class Session {
         color: 'rgb(126, 226, 151)'
       }),
     ]
-    this.scene = createScene1({ teams: this.teams, players: props.players, session: this });
+    this.scene = createScene2({ teams: this.teams, players: props.players, session: this })
     this.players = props.players
     this.sessionSeed = props.sessionSeed
 
@@ -131,8 +129,6 @@ export class Session {
           const possibleScenes = [
             createScene1,
             createScene2,
-            createScene3,
-            createScene4
           ]
           this.scene = possibleScenes[Math.floor(seedrandom(this.randomSeed).double() * possibleScenes.length)]({
             teams: this.teams,

@@ -14,13 +14,17 @@ const SCENE_HEIGHT = 9;
 const UI_HEIGHT = 1; // UI section on top 1/9th of game screen
 const NON_UI_HEIGHT = SCENE_HEIGHT - UI_HEIGHT;
 
-const ARENA_WIDTH = 14.4; // Includes walls, but not net depth
-const ARENA_HEIGHT = 7.8;
-
-const ARENA_HORIZONTAL_PADDING = (SCENE_WIDTH - ARENA_WIDTH) / 2; // Doesn't include net depth
-const ARENA_VERTICAL_PADDING = (NON_UI_HEIGHT - ARENA_HEIGHT) / 2;
-
+const ARENA_HORIZONTAL_PADDING = 0.1;
+const ARENA_VERTICAL_PADDING = 0.1;
 const WALL_THICKNESS = 0.1;
+
+const ARENA_WIDTH_WITH_WALLS = SCENE_WIDTH - (2 * ARENA_HORIZONTAL_PADDING)
+const ARENA_HEIGHT_WITH_WALLS = NON_UI_HEIGHT - (2 * ARENA_VERTICAL_PADDING)
+
+const ARENA_WIDTH = ARENA_WIDTH_WITH_WALLS - (2 * WALL_THICKNESS)
+const ARENA_HEIGHT = ARENA_HEIGHT_WITH_WALLS - (2 * WALL_THICKNESS)
+
+const MOVING_WALL_GAP_HEIGHT = 2.5;
 
 export interface Scene2Props {
   teams: Team[];
@@ -69,7 +73,7 @@ export function createScene2(props: Scene2Props): Scene {
     physics: {
       x: ARENA_HORIZONTAL_PADDING,
       y: ARENA_VERTICAL_PADDING,
-      w: ARENA_WIDTH,
+      w: ARENA_WIDTH + (2 * WALL_THICKNESS),
       h: WALL_THICKNESS
     }
   }));
@@ -79,8 +83,8 @@ export function createScene2(props: Scene2Props): Scene {
     scene: returnScene,
     physics: {
       x: ARENA_HORIZONTAL_PADDING,
-      y: ARENA_VERTICAL_PADDING + ARENA_HEIGHT - WALL_THICKNESS,
-      w: ARENA_WIDTH,
+      y: ARENA_VERTICAL_PADDING + WALL_THICKNESS + ARENA_HEIGHT,
+      w: ARENA_WIDTH + (2 * WALL_THICKNESS),
       h: WALL_THICKNESS
     }
   }));
@@ -93,7 +97,7 @@ export function createScene2(props: Scene2Props): Scene {
       x: ARENA_HORIZONTAL_PADDING,
       y: ARENA_VERTICAL_PADDING + WALL_THICKNESS,
       w: WALL_THICKNESS,
-      h: ARENA_HEIGHT - (2 * WALL_THICKNESS),
+      h: ARENA_HEIGHT,
     },
   }));
 
@@ -101,12 +105,70 @@ export function createScene2(props: Scene2Props): Scene {
     scene: returnScene,
     teamIndex: 1,
     physics: {
-      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
+      x: ARENA_HORIZONTAL_PADDING + WALL_THICKNESS + ARENA_WIDTH,
       y: ARENA_VERTICAL_PADDING + WALL_THICKNESS,
       w: WALL_THICKNESS,
-      h: ARENA_HEIGHT - (2 * WALL_THICKNESS),
+      h: ARENA_HEIGHT,
     },
   }));
+
+  //Moving Walls
+  returnScene.addGameObject(new Wall({
+    scene: returnScene,
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING + WALL_THICKNESS,
+      y: ARENA_VERTICAL_PADDING + WALL_THICKNESS,
+      w: WALL_THICKNESS,
+      h: ARENA_HEIGHT - MOVING_WALL_GAP_HEIGHT,
+    },
+    variation: {
+      direction: 'up',
+      speed: 2.5,
+      distance: - (ARENA_HEIGHT - MOVING_WALL_GAP_HEIGHT),
+    }
+  }))
+  returnScene.addGameObject(new Wall({
+    scene: returnScene,
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING + WALL_THICKNESS,
+      y: ARENA_VERTICAL_PADDING + WALL_THICKNESS + ARENA_HEIGHT,
+      w: WALL_THICKNESS,
+      h: 0,
+    },
+    variation: {
+      direction: 'down',
+      speed: 2.5,
+      distance: (ARENA_HEIGHT - MOVING_WALL_GAP_HEIGHT),
+    }
+  }))
+  returnScene.addGameObject(new Wall({
+    scene: returnScene,
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH,
+      y: ARENA_VERTICAL_PADDING + WALL_THICKNESS,
+      w: WALL_THICKNESS,
+      h: 0,
+    },
+    variation: {
+      direction: 'up',
+      speed: 2.5,
+      distance: (ARENA_HEIGHT - MOVING_WALL_GAP_HEIGHT),
+    }
+  }))
+  returnScene.addGameObject(new Wall({
+    scene: returnScene,
+    physics: {
+      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH,
+      y: ARENA_VERTICAL_PADDING + WALL_THICKNESS + MOVING_WALL_GAP_HEIGHT,
+      w: WALL_THICKNESS,
+      h: ARENA_HEIGHT - MOVING_WALL_GAP_HEIGHT,
+    },
+    variation: {
+      direction: 'down',
+      speed: 2.5,
+      distance: - (ARENA_HEIGHT - MOVING_WALL_GAP_HEIGHT),
+    }
+  }))
 
   return returnScene;
 }

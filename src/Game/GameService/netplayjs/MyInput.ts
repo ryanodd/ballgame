@@ -1,20 +1,40 @@
 import { initScriptLoader } from "next/script";
 import { store } from "../../../../pages/_app";
-import { DefaultInput, DefaultInputReader } from "../../../lib/netplayjs";
+import { DefaultInput, DefaultInputReader, NetplayInput } from "../../../lib/netplayjs";
 import { CLEAR_CLIENT_EVENTS } from "../../../redux/actions";
 import { ClientEvent } from "../../../redux/reducer";
 
-export class MyInput extends DefaultInput {
+export class MyInput extends NetplayInput<MyInput> {
+  pressed: { [key: string]: boolean } = {};
   gamepads: (Gamepad|null)[] = []
   clientEvents: ClientEvent[] = []
 }
 
-export class MyInputReader extends DefaultInputReader {
+export class MyInputReader {
+
+  PRESSED_KEYS: Record<string, boolean> = {};
+
+  constructor() {
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        this.PRESSED_KEYS[event.key] = true;
+      },
+      false
+    );
+    document.addEventListener(
+      "keyup",
+      (event) => {
+        this.PRESSED_KEYS[event.key] = false;
+      },
+      false
+    );
+  }
 
   getInput(): MyInput {
     const input = new MyInput();
 
-    // Stolen from super
+    // Stolen from DeafultInputReader
     for (const key in this.PRESSED_KEYS) {
       if (this.PRESSED_KEYS[key]) input.pressed[key] = true;
     }

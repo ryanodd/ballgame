@@ -1,12 +1,12 @@
 import { Player } from '../Player/Player';
 import { MyInput } from './MyInput';
 import { Session } from '../Session/Session';
-import { DefaultInput, Game, JSONValue, NetplayPlayer, NetplayState, TouchControl } from '../../../lib/netplayjs';
+import {NetplayPlayer, NetplayState, TouchControl } from '../../../lib/netplayjs';
 import { Store } from 'redux';
 import { defaultInputConfig } from '../../InputService/contants/InputConfigDefaults';
 import { CharacterType } from '../Player/CharacterType';
 
-export class MyGame extends NetplayState<DefaultInput> {
+export class MyGame extends NetplayState<MyInput> {
   
   static timestep = 1000 / 60;
 
@@ -61,11 +61,12 @@ export class MyGame extends NetplayState<DefaultInput> {
     if (this.session.ended) {
       this.ended = true
     }
-    if (this.session.shouldTickPlayersThisFrame()) {
-      for (const [netplayPlayer, input] of playerInputs.entries()) {
-        input.clientEvents.forEach((clientEvent) => {
-          this.session.handleClientEvent(clientEvent)
-        })
+    for (const [netplayPlayer, input] of playerInputs.entries()) {
+      console.log(input)
+      input.clientEvents.forEach((clientEvent) => {
+        this.session.handleClientEvent(clientEvent)
+      })
+      if (this.session.shouldTickPlayersThisFrame()) {
         this.players.forEach(player => {
           if (netplayPlayer.getID() === player.netplayPlayerIndex) {
             player.tickMovement(input, frame)
