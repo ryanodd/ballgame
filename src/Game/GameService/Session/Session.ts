@@ -58,7 +58,7 @@ export class Session {
         color: 'rgb(126, 226, 151)'
       }),
     ]
-    this.scene = createScene2({ teams: this.teams, players: props.players, session: this })
+    this.scene = createScene1({ teams: this.teams, players: props.players, session: this })
     this.players = props.players
     this.sessionSeed = props.sessionSeed
 

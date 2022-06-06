@@ -13,7 +13,7 @@ import { CharacterType } from "../CharacterType";
 const ATTRACT_COOLDOWN = 0
 const ATTRACT_COST = 25 / 60
 const REPEL_COOLDOWN = 25
-const REPEL_COST = 40
+const REPEL_COST = 35
 const FAILED_ABILITY_COOLDOWN = 20
 
 const RESOURCE_FILL_TICK_RATE = 30

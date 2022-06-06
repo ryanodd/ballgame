@@ -2,14 +2,30 @@
 HIGH PRIORITY
 //////////////////
 
-- fps stats:
-	- how do? in netplay, we tick WAY MORE than fps
-
-- small input delay (HARD!)
-	- https://github.com/rameshvarun/netplayjs/issues/27
-
-
 - research why is there so much ping?
+	- netplayjs demos have similar ping spikes (only tested fps game!!! pls test simpler game)
+	- peerjs has bad routing?
+		- I see little talk of this online
+		- use our own peerjs signaling server for STUN/TURN stuff? Would this help in any way
+	- because packet size big?
+		- for the love of god send the world snapshot in binary form or something more compressed
+		- Currently, serialized packets is plain text of json, including numbers in string form wtf.
+			- 22kb/packet, could be much less
+		- Tried & failed to use TextEncoder/TextDecoder. It should work!!!! try on codesandbox
+	- because packet frequency so high?
+		- No evidence of this, but its a theory
+	- ! I think the ping spikes could be tied to performance
+		- try chrome performance tab
+		- Abilities, stages with more stuff
+		- react may be to blame
+
+- matchmaking server w/ rooms
+	- I think I want it obfuscated behind an automatic 'Find match' button
+		- automatically find games by testing ping with various opponents
+		- If no existing opponent hosts are suitble, become a host and wait in the queue for others to join
+		- probably be transparent about:
+			- '0 people currently looking for matches'
+			- 'Found opponent, but the ping was too high (200ms)'
 
 - more stages
 	- bouncy red surfaces
@@ -29,14 +45,12 @@ HIGH PRIORITY
 	- car
 	- sticky
 
-- matchmaking server w/ rooms
-
 //////////////////
 MEDIUM PRIORITY
 //////////////////
 
-- Currently, serialized packets is plain text of json, including numbers in string form wtf.
-	- 22kb/packet, could be much less
+- fps stats:
+	- how do? in netplay, we tick WAY MORE than fps
 
 - Got feedback? Something broken? Email me 
 
