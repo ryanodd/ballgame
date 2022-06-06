@@ -1,8 +1,10 @@
-import RAPIER, { Collider, ColliderDesc, ColliderHandle, RigidBodyHandle } from "@dimforge/rapier2d";
+import RAPIER, { ActiveEvents, Collider, ColliderDesc, ColliderHandle, RigidBodyHandle } from "@dimforge/rapier2d";
 import { JSONValue } from "../../../../lib/netplayjs";
+import { normalize } from "../../../../utils/math";
 import { Scene } from "../../Scene/Scene";
 import { CollisionGroups } from "../CollisionGroups";
 import GameObject, { GameObjectPhysicsHandles, GameObjectPhysicsProps, GameObjectProps, isPhysicsProps } from "../GameObject";
+import { isBallObject } from "./Ball";
 
 export interface WallVariationProps {
   distance: number;
@@ -22,6 +24,7 @@ export interface WallPhysicsHandles extends GameObjectPhysicsHandles {
 
 export interface WallProps extends GameObjectProps {
   physics: WallPhysicsProps | WallPhysicsHandles;
+  bouncy?: boolean;
   variation?: WallVariationProps
 }
 
@@ -35,10 +38,12 @@ export default class Wall extends GameObject { // extend something general?
   id = WALL_OBJ_ID;
   colliderHandles: ColliderHandle[];
   rigidBodyHandles: RigidBodyHandle[] = [];
+  bouncy: boolean;
   variation: WallVariationProps | null;
 
   constructor(props: WallProps) {
     super(props);
+    this.bouncy = props.bouncy ?? false
     this.variation = props.variation ?? null
 
     if (isPhysicsProps(props.physics)) {
@@ -70,11 +75,14 @@ export default class Wall extends GameObject { // extend something general?
   }
 
   createCollider(props: WallPhysicsProps) {
-    const groundColliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
+    let colliderDesc = ColliderDesc.cuboid(props.w / 2, props.h / 2)
       .setTranslation(props.x + (props.w / 2), props.y + (props.h / 2))
       .setRotation((props.rotation ?? 0) * Math.PI / 180)
       .setCollisionGroups(CollisionGroups.WALLS)
-    const collider = this.scene.world.createCollider(groundColliderDesc);
+    if (this.bouncy) {
+      colliderDesc = colliderDesc.setActiveEvents(ActiveEvents.COLLISION_EVENTS)
+    }
+    const collider = this.scene.world.createCollider(colliderDesc);
     return collider;
   }
 
@@ -105,6 +113,22 @@ export default class Wall extends GameObject { // extend something general?
     }
   }
 
+  handleCollision(oppositeColliderHandle: ColliderHandle, started: boolean) {
+    const otherGameObject = this.scene.gameObjects.find((gameObject) => {
+      return gameObject.colliderHandles.includes(oppositeColliderHandle)
+    })
+    if (!started && otherGameObject && isBallObject(otherGameObject)) {
+      console.log('collided!')
+      const otherRigidBody = this.scene.world.getRigidBody(otherGameObject.rigidBodyHandles[0])
+      const direction = normalize(otherRigidBody.linvel())
+      const ADDITIONAL_VELOCITY_FACTOR = 1.5
+      otherRigidBody.applyImpulse({
+        x: direction.x * ADDITIONAL_VELOCITY_FACTOR,
+        y: direction.y * ADDITIONAL_VELOCITY_FACTOR,
+      }, true)
+    }
+  }
+
   render(c: CanvasRenderingContext2D) {
     const collider = this.scene.world.getCollider(this.colliderHandles[0])
     const { x: halfX, y: halfY } = collider.halfExtents()
@@ -113,7 +137,12 @@ export default class Wall extends GameObject { // extend something general?
 
     c.save()
     c.beginPath()
-    c.fillStyle = 'rgb(60, 60, 60)';
+    
+    if (this.bouncy) {
+      c.fillStyle = 'rgb(255, 51, 68)';
+    } else {
+      c.fillStyle = 'rgb(60, 60, 60)';
+    }
     c.fillRect(xPosition - halfX, yPosition - halfY, halfX * 2, halfY * 2);
     c.restore()
   }
