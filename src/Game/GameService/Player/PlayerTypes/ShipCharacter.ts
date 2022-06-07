@@ -123,7 +123,7 @@ export class ShipCharacter extends Character {
   }
 
   deserialize(value: any): void {
-    super.deserialize(value),
+    super.deserialize(value)
     this.mostRecentBulletFrame = value['mostRecentBulletFrame']
     this.mostRecentThrustFrame = value['mostRecentThrustFrame']
   }
