@@ -100,7 +100,7 @@ export function createScene3(props: Scene3Props): Scene {
       x: ARENA_HORIZONTAL_PADDING,
       y: ARENA_VERTICAL_PADDING + WALL_THICKNESS,
       w: WALL_THICKNESS,
-      h: NON_NET_HEIGHT - WALL_THICKNESS,
+      h: NON_NET_HEIGHT - (2 * WALL_THICKNESS),
     },
     bouncy: true,
   }));
@@ -108,9 +108,9 @@ export function createScene3(props: Scene3Props): Scene {
     scene: returnScene,
     physics: {
       x: ARENA_HORIZONTAL_PADDING,
-      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
+      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT + WALL_THICKNESS,
       w: WALL_THICKNESS,
-      h: NON_NET_HEIGHT - WALL_THICKNESS,
+      h: NON_NET_HEIGHT - (2 * WALL_THICKNESS),
     },
     bouncy: true,
   }));
@@ -126,7 +126,7 @@ export function createScene3(props: Scene3Props): Scene {
     physics: {
       x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
       y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
-      w: NET_DEPTH,
+      w: NET_DEPTH + WALL_THICKNESS,
       h: WALL_THICKNESS
     }
   }));
@@ -135,7 +135,7 @@ export function createScene3(props: Scene3Props): Scene {
     physics: {
       x: ARENA_HORIZONTAL_PADDING - NET_DEPTH,
       y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
-      w: NET_DEPTH + WALL_THICKNESS - WALL_THICKNESS,
+      w: NET_DEPTH + WALL_THICKNESS ,
       h: WALL_THICKNESS
     }
   }));
@@ -158,7 +158,7 @@ export function createScene3(props: Scene3Props): Scene {
       x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
       y: ARENA_VERTICAL_PADDING + WALL_THICKNESS,
       w: WALL_THICKNESS,
-      h: NON_NET_HEIGHT - WALL_THICKNESS,
+      h: NON_NET_HEIGHT - (2 * WALL_THICKNESS),
     },
     bouncy: true,
   }));
@@ -166,9 +166,9 @@ export function createScene3(props: Scene3Props): Scene {
     scene: returnScene,
     physics: {
       x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
-      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
+      y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT + WALL_THICKNESS,
       w: WALL_THICKNESS,
-      h: NON_NET_HEIGHT - WALL_THICKNESS,
+      h: NON_NET_HEIGHT - (2 * WALL_THICKNESS),
     },
     bouncy: true,
   }));
@@ -182,18 +182,18 @@ export function createScene3(props: Scene3Props): Scene {
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     physics: {
-      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH,
+      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
       y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT - WALL_THICKNESS,
-      w: NET_DEPTH,
+      w: NET_DEPTH + WALL_THICKNESS,
       h: WALL_THICKNESS
     }
   }));
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     physics: {
-      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH,
+      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH - WALL_THICKNESS,
       y: ARENA_VERTICAL_PADDING + NON_NET_HEIGHT + NET_HEIGHT,
-      w: NET_DEPTH,
+      w: NET_DEPTH + WALL_THICKNESS,
       h: WALL_THICKNESS
     }
   }));

@@ -25,6 +25,7 @@ const ARENA_WIDTH = ARENA_WIDTH_WITH_WALLS - (2 * WALL_THICKNESS)
 const ARENA_HEIGHT = ARENA_HEIGHT_WITH_WALLS - (2 * WALL_THICKNESS)
 
 const MOVING_WALL_GAP_HEIGHT = 3;
+const MOVNIG_WALL_THICKNESS = 0.4;
 
 export interface Scene2Props {
   teams: Team[];
@@ -118,7 +119,7 @@ export function createScene2(props: Scene2Props): Scene {
     physics: {
       x: ARENA_HORIZONTAL_PADDING + WALL_THICKNESS,
       y: ARENA_VERTICAL_PADDING + WALL_THICKNESS,
-      w: WALL_THICKNESS,
+      w: MOVNIG_WALL_THICKNESS,
       h: ARENA_HEIGHT - MOVING_WALL_GAP_HEIGHT,
     },
     variation: {
@@ -132,7 +133,7 @@ export function createScene2(props: Scene2Props): Scene {
     physics: {
       x: ARENA_HORIZONTAL_PADDING + WALL_THICKNESS,
       y: ARENA_VERTICAL_PADDING + WALL_THICKNESS + ARENA_HEIGHT,
-      w: WALL_THICKNESS,
+      w: MOVNIG_WALL_THICKNESS,
       h: 0,
     },
     variation: {
@@ -144,9 +145,9 @@ export function createScene2(props: Scene2Props): Scene {
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     physics: {
-      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH,
+      x: ARENA_HORIZONTAL_PADDING + WALL_THICKNESS + ARENA_WIDTH - MOVNIG_WALL_THICKNESS,
       y: ARENA_VERTICAL_PADDING + WALL_THICKNESS,
-      w: WALL_THICKNESS,
+      w: MOVNIG_WALL_THICKNESS,
       h: 0,
     },
     variation: {
@@ -158,9 +159,9 @@ export function createScene2(props: Scene2Props): Scene {
   returnScene.addGameObject(new Wall({
     scene: returnScene,
     physics: {
-      x: ARENA_HORIZONTAL_PADDING + ARENA_WIDTH,
+      x: ARENA_HORIZONTAL_PADDING + WALL_THICKNESS + ARENA_WIDTH - MOVNIG_WALL_THICKNESS,
       y: ARENA_VERTICAL_PADDING + WALL_THICKNESS + MOVING_WALL_GAP_HEIGHT,
-      w: WALL_THICKNESS,
+      w: MOVNIG_WALL_THICKNESS,
       h: ARENA_HEIGHT - MOVING_WALL_GAP_HEIGHT,
     },
     variation: {

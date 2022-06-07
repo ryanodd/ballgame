@@ -8,7 +8,7 @@ import Peer, { DataConnection } from 'peerjs';
 import { Store } from 'redux';
 import { MyGame } from './myGame';
 import { SET_CURRENT_GAME, SET_NETPLAY_DATA, SET_UI_DATA } from '../../../redux/actions';
-import { INPUT_DELAY_FRAMES, PING_INTERVAL } from '../constants';
+import { GAME_FRAMERATE, INPUT_DELAY_FRAMES, ONLINE_ANIMATION_FRAMERATE, PING_INTERVAL } from '../constants';
 
 export class MyRollbackWrapper {
 
@@ -291,9 +291,7 @@ export class MyRollbackWrapper {
         }})
       }
 
-      // Request another frame.
-      requestAnimationFrame(animate);
     };
-    requestAnimationFrame(animate);
+    setInterval(animate, 1000 / ONLINE_ANIMATION_FRAMERATE);
   }
 }
