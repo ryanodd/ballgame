@@ -8,9 +8,7 @@ import Peer, { DataConnection } from 'peerjs';
 import { Store } from 'redux';
 import { MyGame } from './myGame';
 import { SET_CURRENT_GAME, SET_NETPLAY_DATA, SET_UI_DATA } from '../../../redux/actions';
-
-const PING_INTERVAL = 100;
-const INPUT_DELAY_FRAMES = 2;
+import { INPUT_DELAY_FRAMES, PING_INTERVAL } from '../constants';
 
 export class MyRollbackWrapper {
 

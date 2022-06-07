@@ -2,17 +2,18 @@ import { store } from "../../../../../pages/_app";
 import { SET_CHARACTER_DATA } from "../../../../redux/actions";
 import { normalize } from "../../../../utils/math";
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
+import { GAME_FRAMERATE } from "../../constants";
 import ShipBullet from "../../GameObject/GameObjectFactory/ShipBullet";
 import ShipCharacterObject from "../../GameObject/GameObjectFactory/ShipCharacterObject";
 import { Character, CharacterProps, RESOURCE_GAIN_PER_FRAME } from "../Character";
 import { CharacterType } from "../CharacterType";
 
-const THRUST_COST = 8 / 60
+const THRUST_COST = 8 / GAME_FRAMERATE
 export const BULLET_COOLDOWN = 16
 export const BULLET_COST = 15
 const FAILED_ABILITY_COOLDOWN = 20
 
-const RESOURCE_FILL_TICK_RATE = 30
+const RESOURCE_FILL_TICK_RATE = GAME_FRAMERATE / 2
 
 export interface ShipCharacterProps extends CharacterProps {
   DENSITY: number;

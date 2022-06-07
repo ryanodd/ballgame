@@ -5,10 +5,11 @@ import {NetplayPlayer, NetplayState, TouchControl } from '../../../lib/netplayjs
 import { Store } from 'redux';
 import { defaultInputConfig } from '../../InputService/contants/InputConfigDefaults';
 import { CharacterType } from '../Player/CharacterType';
+import { GAME_FRAMERATE } from '../constants';
 
 export class MyGame extends NetplayState<MyInput> {
   
-  static timestep = 1000 / 60;
+  static timestep = 1000 / GAME_FRAMERATE;
 
   players: Player[]
   session: Session

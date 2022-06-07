@@ -1,6 +1,7 @@
 import { EventQueue, World } from '@dimforge/rapier2d';
 import { JSONObject, JSONValue } from '../../lib/netplayjs';
 import { defaultInputConfig } from '../InputService/contants/InputConfigDefaults';
+import { GAME_FRAMERATE } from './constants';
 import { MyInput, MyInputReader } from './netplayjs/MyInput';
 import { CharacterType } from './Player/CharacterType';
 import { Player } from './Player/Player';
@@ -12,7 +13,7 @@ import { Team } from './Team/Team';
 
 
 export class SingleClientGame {
-  static timestep = 1000 / 60;
+  static timestep = 1000 / GAME_FRAMERATE;
   frame = 0;
 
   canvas = document.getElementById('game-canvas') as HTMLCanvasElement

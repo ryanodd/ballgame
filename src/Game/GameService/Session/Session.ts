@@ -17,22 +17,23 @@ import { SET_GAME_DATA, SET_UI_DATA } from "../../../redux/actions";
 import { createScene2 } from "../Scene/SceneFactory/Scene2";
 import { createScene3 } from "../Scene/SceneFactory/Scene3";
 import { ClientEvent, ClientEventType } from '../../../redux/reducer';
+import { GAME_FRAMERATE } from '../constants';
 
-const COUNTDOWN_FRAMES = 180
-const POST_GOAL_FRAMES = 140
+const COUNTDOWN_FRAMES = 3 * GAME_FRAMERATE
+const POST_GOAL_FRAMES = Math.ceil(2.33 * GAME_FRAMERATE)
 
 // This class is meant to be the first class in common between single-client and multi-client games.
 // - In single-client, SingleClientGame is in charge of its own Session.
 // - In multi-client, each client's MyGame is charge of a Session.
 export interface SessionProps {
-  players: Player[]
+  players: Player[],
   sessionSeed: string, 
 }
 
 export class Session {
   frame = 0
-  //                        FPS  Sec  Min
-  framesRemaining: number = 60 * 60 * 1.5
+  //                        FPS              Sec  Min
+  framesRemaining: number = GAME_FRAMERATE * 60 * 1.5
   ended: boolean = false
 
   countdownFrames: number = COUNTDOWN_FRAMES

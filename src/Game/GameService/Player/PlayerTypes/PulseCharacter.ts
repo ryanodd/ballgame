@@ -4,6 +4,7 @@ import { JSONValue } from "../../../../lib/netplayjs";
 import { SET_CHARACTER_DATA } from "../../../../redux/actions";
 import { normalize } from "../../../../utils/math";
 import { GamepadInputResult, isGamePadInputResult, KeyboardMouseInputResult } from "../../../InputService/model/InputResult";
+import { GAME_FRAMERATE } from "../../constants";
 import { isBallObject } from "../../GameObject/GameObjectFactory/Ball";
 import PulseCharacterObject from "../../GameObject/GameObjectFactory/PulseCharacterObject";
 import { RepelGraphic } from "../../GameObject/GameObjectFactory/RepelGraphic";
@@ -11,7 +12,7 @@ import { Character, CharacterProps, INPUT_BUFFER_FRAMES, RESOURCE_GAIN_PER_FRAME
 import { CharacterType } from "../CharacterType";
 
 const ATTRACT_COOLDOWN = 0
-const ATTRACT_COST = 25 / 60
+const ATTRACT_COST = 25 / GAME_FRAMERATE
 const REPEL_COOLDOWN = 25
 const REPEL_COST = 35
 const FAILED_ABILITY_COOLDOWN = 20

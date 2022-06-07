@@ -1,4 +1,5 @@
 import styled, { keyframes } from "styled-components"
+import { GAME_FRAMERATE } from "../Game/GameService/constants"
 import { useTypedSelector } from "../redux/typedHooks"
 
 const CanvasAnimationOverlayContainer = styled.div`
@@ -46,17 +47,17 @@ export const CanvasAnimationOverlay = () => {
       {
         countdownFrames > 0 && (
           <CountdownAnimationContainer>
-            {Math.ceil(countdownFrames / 60) === 3 && (
+            {Math.ceil(countdownFrames / GAME_FRAMERATE) === 3 && (
               <CountdownNumber>
                 3
               </CountdownNumber>
             )}
-            {Math.ceil(countdownFrames / 60) === 2 && (
+            {Math.ceil(countdownFrames / GAME_FRAMERATE) === 2 && (
               <CountdownNumber>
                 2
               </CountdownNumber>
             )}
-            {Math.ceil(countdownFrames / 60) === 1 && (
+            {Math.ceil(countdownFrames / GAME_FRAMERATE) === 1 && (
               <CountdownNumber>
                 1
               </CountdownNumber>

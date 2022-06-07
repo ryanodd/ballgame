@@ -2,13 +2,14 @@ import { store } from "../../../../pages/_app";
 import { JSONObject, JSONValue } from "../../../lib/netplayjs";
 import { SET_CHARACTER_DATA } from "../../../redux/actions";
 import { GamepadInputResult, KeyboardMouseInputResult } from "../../InputService/model/InputResult";
+import { GAME_FRAMERATE } from "../constants";
 import { MyInput } from "../netplayjs/MyInput";
 import { Scene } from "../Scene/Scene";
 import { CharacterType } from "./CharacterType";
 import { Player } from "./Player";
 
 export const INPUT_BUFFER_FRAMES = 5
-export const RESOURCE_GAIN_PER_FRAME = 10 / 60
+export const RESOURCE_GAIN_PER_FRAME = 10 / GAME_FRAMERATE
 
 export interface CharacterProps {
   player: Player;

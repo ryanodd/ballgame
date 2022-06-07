@@ -1,6 +1,7 @@
 import { Typography } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import styled, { css, keyframes } from "styled-components";
+import { GAME_FRAMERATE } from "../Game/GameService/constants";
 import { useTypedSelector } from "../redux/typedHooks";
 
 const { Text, Title } = Typography;
@@ -63,7 +64,7 @@ export const ScoreBox = () => {
     setScoreAnimationPlaying(false);
   }, []);
 
-  let secondsRemaining = Math.ceil((framesRemaining ?? 0) / 60);
+  let secondsRemaining = Math.ceil((framesRemaining ?? 0) / GAME_FRAMERATE);
   const isFinalCountdown = secondsRemaining <= 10 && secondsRemaining > 0;
   let minutesRemaining = 0;
   if (secondsRemaining > 59) {

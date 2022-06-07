@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 
 const AspectRatioWrapper = styled.div<{ horizontal: boolean }>` //todo rename this param once I understand what it does
