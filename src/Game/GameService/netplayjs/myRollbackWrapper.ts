@@ -10,6 +10,7 @@ import { MyGame } from './myGame';
 import { SET_CURRENT_GAME, SET_NETPLAY_DATA, SET_UI_DATA } from '../../../redux/actions';
 
 const PING_INTERVAL = 100;
+const INPUT_DELAY_FRAMES = 2;
 
 export class MyRollbackWrapper {
 
@@ -152,7 +153,6 @@ export class MyRollbackWrapper {
 
     this.game = new MyGame(hostRoomCode, store);
     store.dispatch({ type: SET_CURRENT_GAME, payload: this.game });
-    const INPUT_DELAY_FRAMES = 2
     store.dispatch({ type: SET_NETPLAY_DATA, payload: { delayFrames: INPUT_DELAY_FRAMES } })
 
     this.rollbackNetcode = new RollbackNetcode(
@@ -212,8 +212,6 @@ export class MyRollbackWrapper {
 
     this.game = new MyGame(this.roomCode ?? '', store);
     store.dispatch({ type: SET_CURRENT_GAME, payload: this.game });
-
-    const INPUT_DELAY_FRAMES = 2
     store.dispatch({ type: SET_NETPLAY_DATA, payload: { delayFrames: INPUT_DELAY_FRAMES } })
 
     this.rollbackNetcode = new RollbackNetcode(

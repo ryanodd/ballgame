@@ -58,6 +58,7 @@ export default class Wall extends GameObject { // extend something general?
     return {
       ...super.serialize(),
       id: this.id,
+      bouncy: this.bouncy,
       variation: this.variation,
     }
   };
@@ -66,6 +67,7 @@ export default class Wall extends GameObject { // extend something general?
     return new Wall({
       scene,
       spawnFrame: value['spawnFrame'],
+      bouncy: value['bouncy'],
       variation: value['variation'],
       physics: {
         colliderHandles: value['colliderHandles'],

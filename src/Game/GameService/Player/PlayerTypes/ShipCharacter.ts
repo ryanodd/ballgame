@@ -8,7 +8,7 @@ import { Character, CharacterProps, RESOURCE_GAIN_PER_FRAME } from "../Character
 import { CharacterType } from "../CharacterType";
 
 const THRUST_COST = 8 / 60
-export const BULLET_COOLDOWN = 10
+export const BULLET_COOLDOWN = 16
 export const BULLET_COST = 15
 const FAILED_ABILITY_COOLDOWN = 20
 
