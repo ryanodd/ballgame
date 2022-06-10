@@ -52,6 +52,8 @@ export const createCharacterForPlayer = (player: Player, scene: Scene, x: number
       DENSITY: 2,
       FRICTION: 0.5,
       RESTITUTION: 0.0,
+      HALF_WIDTH: 0.2,
+      HALF_LENGTH: 0.22,
     })
     scene.addCharacter(character)
     return character

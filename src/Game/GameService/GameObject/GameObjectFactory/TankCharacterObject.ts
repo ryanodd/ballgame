@@ -10,6 +10,9 @@ export interface TankCharacterObjectPhysicsProps extends GameObjectPhysicsProps 
   density: number;
   friction: number;
   restitution: number;
+
+  halfWidth: number;
+  halfLength: number;
 }
 
 export interface TankCharacterObjectPhysicsHandles extends GameObjectPhysicsHandles {
@@ -39,7 +42,7 @@ export default class TankCharacterObject extends GameObject implements BodyGameO
 
     if (isPhysicsProps(props.physics)) {
       const { colliders, rigidBody } = this.createCollidersAndRigidBody(props.physics);
-      this.colliderHandles = [colliders[0].handle, colliders[1].handle]
+      this.colliderHandles = [colliders[0].handle]
       this.rigidBodyHandles = [rigidBody.handle]
     }
     else {
@@ -69,11 +72,12 @@ export default class TankCharacterObject extends GameObject implements BodyGameO
   }
 
   createCollidersAndRigidBody(props: TankCharacterObjectPhysicsProps) {
-    const rigidBodyDesc = RigidBodyDesc.dynamic();
+    const rigidBodyDesc = RigidBodyDesc.dynamic()
+      .setLinearDamping(5)
     const rigidBody = this.scene.world.createRigidBody(rigidBodyDesc);
 
     // // Create a cuboid collider attached to the dynamic rigidBody.
-    const colliderDesc = (ColliderDesc.cuboid(1, 1) as ColliderDesc)
+    const colliderDesc = (ColliderDesc.cuboid(props.halfWidth, props.halfLength) as ColliderDesc)
       .setTranslation(props.x, props.y)
       .setDensity(props.density)
       .setFriction(props.friction)
@@ -85,17 +89,51 @@ export default class TankCharacterObject extends GameObject implements BodyGameO
   }
 
   render(c: CanvasRenderingContext2D, frame: number) {
-    const collider1 = this.scene.world.getCollider(this.colliderHandles[0])
-    const collider2 = this.scene.world.getCollider(this.colliderHandles[1])
+    const collider = this.scene.world.getCollider(this.colliderHandles[0])
     
-    const { x: xPosition, y: yPosition } = collider1.translation()
-    const rotation = collider1.rotation()
-    const listOfVertices1 = collider1.vertices().map(v => v.valueOf())
-    const listOfVertices2 = collider2.vertices().map(v => v.valueOf())
+    const WHEELS_HALF_WIDTH = 0.1
+    const WHEELS_EXTRA_LENGTH = 0.12
+    const FILL = 'rgb(60, 60, 60)'
+
+    const { x: halfWidth, y: halfLength } = collider.halfExtents()
+    const { x: xPosition, y: yPosition } = collider.translation();
+    const rotation = collider.rotation()
 
     const character = this.scene.characters[this.playerIndex] as TankCharacter
 
     c.save()
+
+    c.translate(xPosition, yPosition)
+    c.rotate(rotation)
+    c.translate(-xPosition, -yPosition)
+    
+    c.strokeStyle = this.scene.teams[character.player.teamIndex].color;
+    c.lineCap = "round"
+    c.lineWidth = WHEELS_HALF_WIDTH;
+    c.beginPath()
+    c.moveTo(
+      xPosition - halfWidth,
+      yPosition + halfLength + WHEELS_EXTRA_LENGTH - WHEELS_HALF_WIDTH
+    )
+    c.lineTo(
+      xPosition - halfWidth,
+      yPosition - halfLength - WHEELS_EXTRA_LENGTH + WHEELS_HALF_WIDTH
+    )
+    c.stroke()
+
+    c.beginPath()
+    c.moveTo(
+      xPosition + halfWidth,
+      yPosition + halfLength + WHEELS_EXTRA_LENGTH - WHEELS_HALF_WIDTH
+    )
+    c.lineTo(
+      xPosition + halfWidth,
+      yPosition - halfLength - WHEELS_EXTRA_LENGTH + WHEELS_HALF_WIDTH
+    )
+    c.stroke()
+
+    c.fillStyle = this.scene.teams[character.player.teamIndex].color;
+    c.fillRect(xPosition - halfWidth, yPosition - halfLength, halfWidth * 2, halfLength * 2);
 
     c.restore()
   }

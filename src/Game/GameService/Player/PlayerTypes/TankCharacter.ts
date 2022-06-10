@@ -1,3 +1,4 @@
+import finalPropsSelectorFactory from "react-redux/es/connect/selectorFactory";
 import { store } from "../../../../../pages/_app";
 import { SET_CHARACTER_DATA } from "../../../../redux/actions";
 import { normalize } from "../../../../utils/math";
@@ -19,8 +20,8 @@ export interface TankCharacterProps extends CharacterProps {
   FRICTION: number;
   RESTITUTION: number;
 
-  // HALF_WIDTH: number;
-  // HALF_LENGTH: number;
+  HALF_WIDTH: number;
+  HALF_LENGTH: number;
   // NOSE_WIDTH: number;
   // TAIL_LENGTH: number;
 
@@ -35,6 +36,9 @@ export class TankCharacter extends Character {
   FRICTION: number;
   RESTITUTION: number;
 
+  HALF_WIDTH: number;
+  HALF_LENGTH: number;
+
   TankObject: TankCharacterObject;
 
   constructor(props: TankCharacterProps) {
@@ -43,6 +47,9 @@ export class TankCharacter extends Character {
     this.DENSITY = props.DENSITY;
     this.FRICTION = props.FRICTION;
     this.RESTITUTION = props.RESTITUTION;
+
+    this.HALF_WIDTH = props.HALF_WIDTH;
+    this.HALF_LENGTH = props.HALF_LENGTH;
 
     // this.mostRecentBulletFrame = -BULLET_COOLDOWN
     // this.mostRecentFailedAbilityFrame = -FAILED_ABILITY_COOLDOWN
@@ -57,6 +64,8 @@ export class TankCharacter extends Character {
         density: this.DENSITY,
         friction: this.FRICTION,
         restitution: this.RESTITUTION,
+        halfWidth: this.HALF_WIDTH,
+        halfLength: this.HALF_LENGTH,
       }
     });
     props.scene.addGameObject(this.TankObject);
@@ -108,16 +117,41 @@ export class TankCharacter extends Character {
   }
 
   handleMovement(input: GamepadInputResult | KeyboardMouseInputResult, frame: number) {
-    // const rigidBody = this.scene.world.getRigidBody(this.TankObject.rigidBodyHandles[0])
-    // const velocity = rigidBody.linvel()
-    // const angularVelocity = rigidBody.angvel()
-    // const rotation = rigidBody.rotation()
+
+    const ROTATION_SPEED = Math.PI / 60 // is this being related to pi even a thing
+    const ROTATION_SPEED_DAMPING_FACTOR = 1/70
+
+    let rotationLeftForce = 0
+    let rotationRightForce = 0
+
+    const DRIVE_SPEED = 0.1
+    let driveForce = 0
+
+    const rigidBody = this.scene.world.getRigidBody(this.TankObject.rigidBodyHandles[0])
+    const velocity = rigidBody.linvel()
+    const angularVelocity = rigidBody.angvel()
+    const rotation = rigidBody.rotation()
 
     if (isGamePadInputResult(input)) {
       // rotationLeftForce = input.leftStickXAxis;
       // rotationRightForce = input.leftStickYAxis;
     }
     else {
+      rotationLeftForce = input.buttonRotateLeft ? ROTATION_SPEED : 0;
+      rotationRightForce = input.buttonRotateRight ? ROTATION_SPEED : 0;
+      driveForce = input.buttonUp ? DRIVE_SPEED : 0;
     }
+
+    let angularForce = rotationLeftForce - rotationRightForce
+    angularForce -= (angularVelocity * ROTATION_SPEED_DAMPING_FACTOR) // How does this work... If the subtraction isn't enough it spirals, but if the subtraction is low enough it doesn't matter what we subtract
+
+    rigidBody.applyTorqueImpulse(angularForce, true)
+
+    const ACCELERATION_DAMPING_FACTOR = 1 //not used
+    const thrustImpulse = {
+      x: -Math.sin(rotation) * driveForce,
+      y: Math.cos(rotation) * driveForce,
+    }  
+    rigidBody.applyImpulse(thrustImpulse, true)
   }
 }
