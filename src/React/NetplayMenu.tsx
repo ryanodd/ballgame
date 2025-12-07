@@ -1,19 +1,28 @@
-import { Button, Card, Input, message, Space, Typography } from "antd"
-import { useCallback, useEffect } from "react"
-import { useSelector, useStore } from "react-redux"
-import styled from "styled-components"
-import { MyRollbackWrapper } from "../Game/GameService/netplayjs/myRollbackWrapper"
-import { SET_CURRENT_GAME, SET_NETPLAY_DATA } from "../redux/actions"
-import { AppState } from "../redux/reducer"
-import { useTypedDispatch, useTypedSelector } from "../redux/typedHooks"
+import {
+  Button,
+  Card,
+  Input,
+  message,
+  Row,
+  Space,
+  Tag,
+  Typography,
+} from "antd";
+import { useCallback, useEffect } from "react";
+import { useSelector, useStore } from "react-redux";
+import styled from "styled-components";
+import { MyRollbackWrapper } from "../Game/GameService/netplayjs/myRollbackWrapper";
+import { SET_CURRENT_GAME, SET_NETPLAY_DATA } from "../redux/actions";
+import { AppState } from "../redux/reducer";
+import { useTypedDispatch, useTypedSelector } from "../redux/typedHooks";
 
-const { Text, Title } = Typography
+const { Text, Title } = Typography;
 
 const NetplayMenuWrapper = styled.div`
   /* position: absolute;
   bottom: 5px;
   left: 5px; */
-`
+`;
 
 const NetplayMenuColumn = styled.div`
   display: flex;
@@ -23,65 +32,70 @@ const NetplayMenuColumn = styled.div`
     margin-bottom: 8px;
   }
   padding: 4px;
-`
+`;
 
 export const NetplayMenu = () => {
-
-  const store = useStore()
-  const dispatch = useTypedDispatch()
+  const store = useStore();
+  const dispatch = useTypedDispatch();
   const { joinUrl, isMainMenuOpen } = useTypedSelector((state) => {
     return {
       isMainMenuOpen: state.ui.isMainMenuOpen,
-      joinUrl: state.netplay.joinUrl
-    }
-  })
+      joinUrl: state.netplay.joinUrl,
+    };
+  });
 
   // Start a new game as the host when this menu appears.
   // This starts the peerjs portion of the game, so we can access our room code and listen for joiners
   // inside that, the game will just start when someone joins the session
-  // TODO expose joining interface AND game starting interface, so we can do both separately from react 
+  // TODO expose joining interface AND game starting interface, so we can do both separately from react
   useEffect(() => {
     if (isMainMenuOpen) {
       const rollbackedGame = new MyRollbackWrapper(null);
-      dispatch({type: SET_NETPLAY_DATA, payload: {
-        isHost: true,
-      } })
-      rollbackedGame.start(store)
+      dispatch({
+        type: SET_NETPLAY_DATA,
+        payload: {
+          isHost: true,
+        },
+      });
+      rollbackedGame.start(store);
     }
-  }, [isMainMenuOpen])
+  }, [isMainMenuOpen]);
 
   const copyToClipboard = useCallback(() => {
     if (joinUrl) {
-      message.success('Copied to clipboard.');
-      window.navigator.clipboard.writeText(joinUrl)
+      message.success("Copied to clipboard.");
+      window.navigator.clipboard.writeText(joinUrl);
     }
-
-  }, [joinUrl])
+  }, [joinUrl]);
 
   return (
     <NetplayMenuWrapper>
-      <Card style={{overflowX: 'auto', overflowY: 'hidden'}}>
+      <Card style={{ overflowX: "auto", overflowY: "hidden" }}>
         {/* <Space direction="vertical" size="small"> */}
-          <Title level={2}>
-            Play Online
-          </Title>
-          <Space direction="vertical" size="small">
-            <Text>
-              The game will begin when someone else enters this URL into their browser.
-            </Text>
-            <Space>
-              {/* <Title code level={4}>
+        <Space direction="vertical" size="middle">
+          <Space size="small">
+            <Title level={2} style={{ margin: 0 }}>
+              Play Online
+            </Title>
+            <Tag color="#626262ff">Experimental</Tag>
+          </Space>
+
+          <Text>
+            The game will begin when someone else enters this URL into their
+            browser.
+          </Text>
+          <Space>
+            {/* <Title code level={4}>
                 {joinUrl}
               </Title> */}
-              <Input size="large" value={joinUrl ?? ''} style={{width: 550}} />
-              <Button size="large" type="primary" onClick={copyToClipboard}>
-                Copy
-              </Button>
-            </Space>
-            
+            <Input size="large" value={joinUrl ?? ""} style={{ width: 550 }} />
+            <Button size="large" type="primary" onClick={copyToClipboard}>
+              Copy
+            </Button>
           </Space>
+        </Space>
         {/* </Space> */}
       </Card>
     </NetplayMenuWrapper>
-  )
-}
+  );
+};

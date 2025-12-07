@@ -1,14 +1,16 @@
-import styled from 'styled-components';
-import { useTypedSelector } from '../redux/typedHooks';
-import { AspectRatioLetterbox } from './AspectRatioLetterbox';
-import { GameCanvas } from './GameCanvas';
-import { NetplayMenu } from './NetplayMenu';
-import { Button, Drawer, Modal, Space } from 'antd';
-import { useDispatch } from 'react-redux';
-import { SET_UI_DATA } from '../redux/actions';
-import { LocalPlayMenu } from './LocalPlayMenu';
-import { GameEndMenu } from './GameEndMenu';
-import { NetplayStats } from './NetplayStats';
+import styled from "styled-components";
+import { useTypedSelector } from "../redux/typedHooks";
+import { AspectRatioLetterbox } from "./AspectRatioLetterbox";
+import { GameCanvas } from "./GameCanvas";
+import { NetplayMenu } from "./NetplayMenu";
+import { Button, Drawer, Modal, Space, Typography } from "antd";
+import { useDispatch } from "react-redux";
+import { SET_UI_DATA } from "../redux/actions";
+import { LocalPlayMenu } from "./LocalPlayMenu";
+import { GameEndMenu } from "./GameEndMenu";
+import { NetplayStats } from "./NetplayStats";
+
+const { Title } = Typography;
 
 const MainLayoutContainer = styled.div`
   width: 100%;
@@ -17,7 +19,7 @@ const MainLayoutContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 export const MainLayout = () => {
   const {
@@ -25,17 +27,17 @@ export const MainLayout = () => {
     errorMessage,
     joinUrl,
     isGameEndOpen,
-    isMainMenuOpen
-  } = useTypedSelector(({netplay, ui}) => {
+    isMainMenuOpen,
+  } = useTypedSelector(({ netplay, ui }) => {
     return {
       connectedToPeer: netplay.connectedToPeer,
       errorMessage: netplay.errorMessage,
       joinUrl: netplay.joinUrl,
       isMainMenuOpen: ui.isMainMenuOpen,
       isGameEndOpen: ui.isGameEndOpen,
-    }
-  })
-  const dispatch = useDispatch()
+    };
+  });
+  const dispatch = useDispatch();
 
   return (
     <MainLayoutContainer>
@@ -44,12 +46,22 @@ export const MainLayout = () => {
         closable={false}
         visible={isGameEndOpen}
         footer={[
-          <Button key="ok" type="primary" onClick={() => {
-            dispatch({type: SET_UI_DATA, payload: { isGameEndOpen: false } })
-            dispatch({type: SET_UI_DATA, payload: { isMainMenuOpen: true } })
-          }}>
+          <Button
+            key="ok"
+            type="primary"
+            onClick={() => {
+              dispatch({
+                type: SET_UI_DATA,
+                payload: { isGameEndOpen: false },
+              });
+              dispatch({
+                type: SET_UI_DATA,
+                payload: { isMainMenuOpen: true },
+              });
+            }}
+          >
             OK
-          </Button>
+          </Button>,
         ]}
       >
         <GameEndMenu />
@@ -61,17 +73,16 @@ export const MainLayout = () => {
         footer={null}
         visible={isMainMenuOpen}
       >
-        <Space direction="vertical" style={{width: '100%'}}>
-          <NetplayMenu />
+        <Space direction="vertical" style={{ width: "100%" }}>
+          <Title level={1}>Ball Game</Title>
           <LocalPlayMenu />
+          <NetplayMenu />
         </Space>
       </Modal>
       <AspectRatioLetterbox>
         <GameCanvas />
       </AspectRatioLetterbox>
-      { connectedToPeer && (
-        <NetplayStats />
-      )}
+      {connectedToPeer && <NetplayStats />}
     </MainLayoutContainer>
   );
-}
+};
